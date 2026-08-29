@@ -1,0 +1,15 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+*.log
+.vite
+
+# dev scratch
+v_*.png
+_verify*.py
+extract.py
+
+# 临时打包(可删)
+_src.tgz
