@@ -4,6 +4,7 @@ import { reactive } from 'vue'
 export const store = reactive({
   view: 'discover',
   sidebarCollapsed: false,
+  mastersCollapsed: false,
 })
 
 export function show(v) {

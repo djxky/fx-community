@@ -13,8 +13,8 @@ import { LOCAL_MASTERS, LOCAL_POSTS } from '../data/local'
         <div class="tbar">
           <div class="tbar-in">
             <div class="tbar-tabs">
-              <span class="tbtab nav-discover">发现</span>
               <span class="tbtab nav-discover">关注</span>
+              <span class="tbtab nav-discover">发现</span>
               <span class="tbtab on nav-local">本地</span>
               <span class="tbtab nav-rank">排行榜</span>
             </div>

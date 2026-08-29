@@ -41,7 +41,7 @@ const TYPE_LABEL = { press: '出版社', research: '教研组', school: '名校'
 </template>
 
 <style scoped>
-.mc { flex:0 0 auto; width:340px; background:#fff; border:1px solid #ECECEC; border-radius:16px; padding:18px; cursor:pointer; transition:box-shadow .15s; }
+.mc { flex:0 0 auto; width:340px; box-sizing:border-box; background:#fff; border:1px solid #ECECEC; border-radius:16px; padding:18px; cursor:pointer; transition:box-shadow .15s; display:flex; flex-direction:column; }
 .mc:hover { box-shadow:0 4px 24px rgba(89,98,84,0.06); }
 .mc-top { display:flex; gap:13px; align-items:flex-start; }
 .mc-av { width:54px; height:54px; border-radius:50%; flex-shrink:0; overflow:hidden; }
@@ -49,16 +49,18 @@ const TYPE_LABEL = { press: '出版社', research: '教研组', school: '名校'
 .mc-av.ring { box-shadow:0 0 0 2px #fff, 0 0 0 3.5px #D9AF3C; }
 .mc-av.inst { border-radius:14px; background:#F6F6F6; display:flex; align-items:center; justify-content:center; }
 .mc-av.initial { background:#ECECEC; color:#141F1B; font-size:19px; font-weight:600; display:flex; align-items:center; justify-content:center; }
-.mc-head { min-width:0; padding-top:2px; }
-.mc-name { font-size:15.5px; font-weight:600; color:#141F1B; display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
-.mc-ck { display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; border-radius:50%; background:#D9AF3C; }
-.mc-type { font-size:11px; font-weight:500; color:#7A7C7C; background:#F6F6F6; border:1px solid #ECECEC; padding:1px 7px; border-radius:6px; }
-.mc-cred { font-size:12px; color:#7A7C7C; margin-top:4px; line-height:1.45; }
+/* 预留两行名字高度,让不同长度的名字下方(职衔/简介)对齐 */
+.mc-head { min-width:0; padding-top:1px; min-height:46px; }
+.mc-name { font-size:15.5px; font-weight:600; color:#141F1B; line-height:1.35; display:flex; align-items:flex-start; flex-wrap:wrap; gap:6px; }
+.mc-ck { display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; border-radius:50%; background:#D9AF3C; margin-top:2px; }
+.mc-type { font-size:11px; font-weight:500; color:#7A7C7C; background:#F6F6F6; border:1px solid #ECECEC; padding:1px 7px; border-radius:6px; margin-top:1px; }
+.mc-cred { font-size:12px; color:#7A7C7C; margin-top:6px; line-height:1.5; }
 .mc-bio { font-size:12.5px; color:#7A7C7C; line-height:1.6; margin-top:12px; height:60px; overflow:hidden; }
-.mc-foot { display:flex; align-items:center; gap:18px; margin-top:12px; }
+/* 数字+关注锁到卡片底部,跨卡对齐 */
+.mc-foot { display:flex; align-items:center; gap:18px; margin-top:auto; padding-top:16px; }
 .mc-stat { display:flex; flex-direction:column; }
 .mc-stat b { font-size:16px; font-weight:700; color:#141F1B; }
-.mc-stat span { font-size:11px; color:#9A9A9A; margin-top:1px; }
-.mc-follow { margin-left:auto; background:#141F1B; color:#fff; border:none; border-radius:9px; padding:8px 16px; font-size:13px; font-weight:500; cursor:pointer; }
+.mc-stat span { font-size:11px; color:#9A9A9A; margin-top:2px; }
+.mc-follow { margin-left:auto; align-self:center; background:#141F1B; color:#fff; border:none; border-radius:9px; padding:8px 16px; font-size:13px; font-weight:500; cursor:pointer; white-space:nowrap; }
 .mc-follow:hover { background:#2C3632; }
 </style>
