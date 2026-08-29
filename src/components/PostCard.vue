@@ -52,7 +52,7 @@ defineProps({ post: { type: Object, required: true } })
       <span class="pc-nm">{{ post.author }}</span>
       <span v-if="post.verify === 'expert'" class="pc-ck gold"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>
       <span v-else-if="post.verify === 'teacher'" class="pc-ck plain"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>
-      <span class="pc-metric"><b>{{ post.evi.use }}</b> 使用 · <b>{{ post.evi.star }}</b> 收藏</span>
+      <span class="pc-metric"><b>{{ post.evi.use }}</b> 使用<template v-if="post.evi.star"> · <b>{{ post.evi.star }}</b> 收藏</template></span>
     </div>
   </div>
 </template>

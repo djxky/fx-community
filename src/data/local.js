@@ -15,7 +15,7 @@ export const LOCAL_POSTS = [
     title: '《北京的春节》整本单元设计——从庙会到胡同,把课文上成一次城市漫步',
     proof: { type: 'expert', by: '东城教研室' },
     meta: '小学语文 · 六年级 · 人教版', verified: true,
-    evi: { use: '3,204', adapt: '120' }, views: '4.1万',
+    evi: { use: '3,204', adapt: '120', star: '8,340' }, views: '4.1万',
   },
   {
     to: 'res', cover: COVERS[3], badge: '数学 · 应用', region: '北京', live: false,
@@ -23,7 +23,7 @@ export const LOCAL_POSTS = [
     title: '海淀区期末高频错题——圆柱圆锥自适应练习,对着近三年区卷做的',
     proof: { type: 'hot', text: '海淀老师都在用' },
     meta: '小学数学 · 六年级 · 期末复习', verified: true,
-    evi: { use: '2,780', adapt: '96' }, views: '3.5万',
+    evi: { use: '2,780', adapt: '96', star: '7,120' }, views: '3.5万',
   },
   {
     to: 'res', cover: COVERS[4], badge: '英语 · 教学游戏', region: '北京', live: false,
@@ -31,7 +31,7 @@ export const LOCAL_POSTS = [
     title: 'Unit 6 单词闯关——北京版教材同步,西城这套词表完全对得上',
     proof: { type: 'new', text: '本周上新' },
     meta: '小学英语 · 北京版 · 游戏化', verified: false,
-    evi: { use: '1,690', adapt: '58' }, views: '2.2万',
+    evi: { use: '1,690', adapt: '58', star: '4,280' }, views: '2.2万',
   },
   {
     to: 'res', cover: COVERS[7], badge: '物理 · 教案', region: '北京', live: false,
@@ -39,6 +39,6 @@ export const LOCAL_POSTS = [
     title: '朝阳一模力学专题——分层讲义,本地一模刚考完趁热做的复盘',
     proof: null,
     meta: '高中物理 · 力学 · 一模复盘', verified: false,
-    evi: { use: '980', adapt: '41' }, views: '1.3万',
+    evi: { use: '980', adapt: '41', star: '2,460' }, views: '1.3万',
   },
 ]
