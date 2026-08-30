@@ -16,6 +16,7 @@ import MonthlyView from './views/MonthlyView.vue'
 import ActivityView from './views/ActivityView.vue'
 import LineageView from './views/LineageView.vue'
 import NotifyView from './views/NotifyView.vue'
+import MyLibraryView from './views/MyLibraryView.vue'
 
 onMounted(() => installDelegation())
 </script>
@@ -35,4 +36,5 @@ onMounted(() => installDelegation())
   <ActivityView v-show="store.view === 'activity'" />
   <LineageView v-show="store.view === 'lineage'" />
   <NotifyView v-show="store.view === 'notify'" />
+  <MyLibraryView v-show="store.view === 'mylib'" />
 </template>

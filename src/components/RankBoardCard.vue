@@ -23,8 +23,9 @@ defineProps({ board: { type: Object, required: true } })
           <img v-if="it.portrait" :src="it.portrait" alt="" />
           <span v-else>{{ it.initial }}</span>
         </div>
-        <div v-else class="rb-inst">
-          <svg v-if="it.icon === 'book'" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h13v18H6a2 2 0 00-2 2z"></path><path d="M19 3v18"></path></svg>
+        <div v-else class="rb-inst" :class="{ publisher: it.logoCrop === 'left' }">
+          <img v-if="it.logo" :src="it.logo" alt="" />
+          <svg v-else-if="it.icon === 'book'" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h13v18H6a2 2 0 00-2 2z"></path><path d="M19 3v18"></path></svg>
           <svg v-else-if="it.icon === 'school'" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-5h6v5"></path></svg>
           <svg v-else-if="it.icon === 'studio'" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"></path></svg>
           <svg v-else width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19a5.5 5.5 0 0111 0"></path><circle cx="17" cy="8" r="2.6"></circle><path d="M15.5 13.6A5 5 0 0121 18.5"></path></svg>
@@ -66,7 +67,9 @@ defineProps({ board: { type: Object, required: true } })
 .rb-av { width:34px; height:34px; border-radius:50%; overflow:hidden; background:#ECECEC; color:#141F1B; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .rb-av img { width:100%; height:100%; object-fit:cover; }
 .rb-av.ring { box-shadow:0 0 0 1.5px #fff, 0 0 0 3px #D9AF3C; }
-.rb-inst { width:34px; height:34px; border-radius:9px; background:#F6F6F6; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.rb-inst { width:34px; height:34px; border-radius:50%; overflow:hidden; border:1px solid #ECECEC; background:#F6F6F6; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.rb-inst img { width:100%; height:100%; object-fit:cover; }
+.rb-inst.publisher img { object-position:left center; }
 
 .rb-body { min-width:0; flex-grow:1; }
 .rb-name { font-size:13px; font-weight:500; color:#141F1B; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }

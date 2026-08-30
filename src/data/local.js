@@ -1,11 +1,13 @@
 import { COVERS } from './covers'
+import haidianMathResearchAvatar from '../assets/institution-avatars/haidian-math-research-avatar.png'
+import beijingElevenCurriculumAvatar from '../assets/institution-avatars/beijing-eleven-curriculum-avatar.png'
 
 // 本地(北京)—— 复用发现的卡片/名师组件,数据是本地过滤 + 适用北京。
 export const LOCAL_MASTERS = [
   { kind: 'expert', name: '王丽敏', initial: '王', cred: '语文特级 · 东城区教研员', bio: '深耕小学语文整本书阅读与单元整体设计,东城区教研成果被全区一线老师采用。', use: '4.1万', follow: '9.8万', local: true },
   { kind: 'expert', name: '张一凡', initial: '张', cred: '数学正高级 · 海淀名师', bio: '海淀区数学学科带头人,擅长分层教学与期末高频错题专项,课例在本区广泛使用。', use: '3.6万', follow: '7.2万', local: true },
-  { kind: 'research', name: '海淀区数学教研室', icon: 'people', cred: '教研组 · 集体备课', bio: '汇聚全区名师的单元设计与分层作业,本区老师拿来即用,教材版本完全对得上。', use: '6.8万', follow: '2.1万' },
-  { kind: 'school', name: '北京十一学校 · 学科基地', icon: 'school', cred: '名校 · 校本课程', bio: '走班制下沉淀的项目式与跨学科课例,面向北京学校开放参考与改编。', use: '5.5万', follow: '1.9万' },
+  { kind: 'research', name: '海淀区数学教研室', icon: 'people', logo: haidianMathResearchAvatar, cred: '教研组 · 集体备课', bio: '汇聚全区名师的单元设计与分层作业,本区老师拿来即用,教材版本完全对得上。', use: '6.8万', follow: '2.1万' },
+  { kind: 'school', name: '北京十一学校 · 学科基地', icon: 'school', logo: beijingElevenCurriculumAvatar, cred: '名校 · 校本课程', bio: '走班制下沉淀的项目式与跨学科课例,面向北京学校开放参考与改编。', use: '5.5万', follow: '1.9万' },
 ]
 
 export const LOCAL_POSTS = [

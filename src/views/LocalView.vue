@@ -13,7 +13,7 @@ import { LOCAL_MASTERS, LOCAL_POSTS } from '../data/local'
         <div class="tbar">
           <div class="tbar-in">
             <div class="tbar-tabs">
-              <span class="tbtab nav-discover">关注</span>
+              <span class="tbtab nav-feed">关注</span>
               <span class="tbtab nav-discover">发现</span>
               <span class="tbtab on nav-local">本地</span>
               <span class="tbtab nav-rank">排行榜</span>
@@ -68,7 +68,12 @@ import { LOCAL_MASTERS, LOCAL_POSTS } from '../data/local'
 .sec-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
 .sec-t { font-size:16px; font-weight:700; color:#141F1B; }
 .sec-more { font-size:13px; color:#9A9A9A; cursor:pointer; }
-.mrow { display:flex; gap:14px; overflow-x:auto; padding-bottom:6px; margin-bottom:28px; }
-.flow { display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; }
+.mrow { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); align-items:stretch; gap:14px; overflow:visible; padding-bottom:6px; margin-bottom:28px; }
+.mrow .mc { width:auto; min-width:0; flex:initial; }
+.flow { display:grid; grid-template-columns:repeat(3, 1fr); align-items:stretch; gap:18px; }
 @media (max-width:1180px){ .flow { grid-template-columns:repeat(2, 1fr); } }
+@media (max-width:1199px){
+  .mrow { grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; overflow:visible; }
+  .mrow .mc { width:auto; min-width:0; }
+}
 </style>

@@ -1,17 +1,17 @@
 <script setup>
 import { ref } from 'vue'
-// 消息中心:影响力(飞象独有·主线B) / 互动(标准社交) / 私信(首版未开放)
+import Sidebar from '../components/Sidebar.vue'
+// 消息中心:通知(大事·被看见) / 互动(标准社交) / 私信(首版未开放)
 const tab = ref('impact')
 
-const IMPACT_TODAY = [
-  { kind: 'use', unread: true, time: '12 分钟前', text: '云南昭通 · 王老师 把你的《谁杀了祥林嫂 · 沉浸式剧本杀》<b>用进了今天的语文课</b>', action: '看 TA 的课堂反馈' },
-  { kind: 'milestone', unread: true, time: '2 小时前', text: '你的《谁杀了祥林嫂》冲上「真实课堂使用榜」<b>TOP 2</b>' },
-  { kind: 'expert', unread: true, time: '3 小时前', text: '名师 <b>刘彭芝</b> 推荐了你的《谁杀了祥林嫂》,推荐后新增 <b>320</b> 次使用' },
-  { kind: 'adapt', time: '5 小时前', text: '周涛 基于你的 V10 <b>改编</b>了「县中简化版」,已被 340 位老师使用', action: '看改编脉络' },
+const NOTIFY_TODAY = [
+  { kind: 'flip', pinned: true, gold: true, unread: true, time: '12 分钟前', text: '名师 <b>刘彭芝</b> 翻牌了你的《谁杀了祥林嫂》', action: '查看名师点评', to: 'creator' },
+  { kind: 'adopt', gold: true, unread: true, time: '2 小时前', text: '周涛 采纳了你关于“两轮庭审”的建议,你进入了《谁杀了祥林嫂》的<b>共创名单</b>', action: '进入创作者中心', to: 'creator' },
+  { kind: 'rank', gold: true, unread: true, time: '3 小时前', text: '你的《谁杀了祥林嫂》冲上「真实课堂使用榜」<b>TOP 2</b>' },
+  { kind: 'milestone', gold: true, time: '5 小时前', text: '你的作品累计被 <b>4,900</b> 位老师用进课堂,达成「真实课堂」里程碑' },
 ]
-const IMPACT_WEEK = [
-  { kind: 'adopt', time: '2 天前', text: '李明 采纳了你的建议,你进入了《圆柱体积》的<b>共创名单</b>' },
-  { kind: 'summary', time: '本周', text: '本周你的作品共被 <b>1,280</b> 位老师用进课堂,覆盖 <b>14</b> 个省' },
+const NOTIFY_WEEK = [
+  { kind: 'announcement', time: '昨天', text: '<b>平台公告</b>：飞象社区共创季开启,欢迎提交你的课堂改编' },
 ]
 const INTERACT = [
   { kind: 'flip', time: '昨天', avatar: '苏', text: '特级教师 <b>苏窈</b> 置顶回复了你的评论:"拆成两轮太好了"' },
@@ -20,53 +20,51 @@ const INTERACT = [
   { kind: 'collect', time: '3 天前', avatar: '张', text: '<b>张伟</b> 等 <b>56</b> 人收藏了你的《谁杀了祥林嫂》' },
   { kind: 'follow', time: '3 天前', avatar: '刘', text: '<b>刘洋</b> 等 <b>32</b> 位老师 关注了你' },
 ]
-const EMO = { use: '📖', milestone: '🏆', expert: '🏅', adapt: '', adopt: '', summary: '📊', flip: '💬', comment: '💬', like: '👍', collect: '', follow: '' }
+const EMO = { flip: '🏅', adopt: '🤝', rank: '🏆', milestone: '🎉', announcement: '📣' }
 </script>
 
 <template>
   <div id="view-notify">
-    <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#F7F7F7;">
+    <div class="page">
+      <Sidebar active="community" />
+      <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#F7F7F7;">
       <div class="nt-wrap">
-        <div class="nt-back nav-discover">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>返回社区
-        </div>
-
         <div class="nt-head">
           <div class="nt-title">消息中心</div>
           <span class="nt-read">全部已读</span>
         </div>
 
         <div class="nt-tabs">
-          <span class="nt-tab" :class="{ on: tab === 'impact' }" @click="tab = 'impact'">影响力<span class="nt-badge">3</span></span>
+          <span class="nt-tab" :class="{ on: tab === 'impact' }" @click="tab = 'impact'">通知<span class="nt-badge">3</span></span>
           <span class="nt-tab" :class="{ on: tab === 'interact' }" @click="tab = 'interact'">互动</span>
           <span class="nt-tab off" title="首版未开放">私信</span>
         </div>
 
-        <!-- 影响力(飞象独有) -->
+        <!-- 通知:大事·被看见 + 平台系统通知 -->
         <template v-if="tab === 'impact'">
           <div class="nt-hl">
-            <b>1,280</b><span>位老师用进课堂</span><span class="nt-dot">·</span>
+            <b>4,900</b><span>位老师用进课堂</span><span class="nt-dot">·</span>
             <b>14</b><span>个省</span><span class="nt-dot">·</span>
-            <b>76</b><span>次被改编</span>
-            <span style="margin-left:auto;font-size:12px;color:#9A9A9A;">近 7 天</span>
+            <b>58</b><span>次被改编</span>
+            <span style="margin-left:auto;font-size:12px;color:#9A9A9A;">累计</span>
           </div>
           <div class="nt-sec">今天</div>
           <div class="nt-card">
-            <div v-for="(n, i) in IMPACT_TODAY" :key="i" class="nt-row">
+            <div v-for="(n, i) in NOTIFY_TODAY" :key="i" class="nt-row" :class="{ 'nt-row-gold': n.gold, 'nt-row-pinned': n.pinned }">
               <span class="nt-ic" :class="n.kind">
                 <span v-if="EMO[n.kind]">{{ EMO[n.kind] }}</span>
                 <svg v-else width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v6a3 3 0 003 3h6"></path><path d="M15 9l3 3-3 3"></path></svg>
               </span>
               <div class="nt-body">
                 <div class="nt-text" v-html="n.text"></div>
-                <div class="nt-meta"><span>{{ n.time }}</span><span v-if="n.action" class="nt-act">· {{ n.action }} ›</span></div>
+                <div class="nt-meta"><span>{{ n.time }}</span><span v-if="n.action" class="nt-act" :class="{ 'nav-creator': n.to === 'creator' }">· {{ n.action }} ›</span></div>
               </div>
               <span v-if="n.unread" class="nt-unread"></span>
             </div>
           </div>
           <div class="nt-sec">本周</div>
           <div class="nt-card">
-            <div v-for="(n, i) in IMPACT_WEEK" :key="i" class="nt-row">
+            <div v-for="(n, i) in NOTIFY_WEEK" :key="i" class="nt-row" :class="{ 'nt-row-gold': n.gold, 'nt-row-pinned': n.pinned }">
               <span class="nt-ic" :class="n.kind">
                 <span v-if="EMO[n.kind]">{{ EMO[n.kind] }}</span>
                 <svg v-else width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
@@ -100,7 +98,8 @@ const EMO = { use: '📖', milestone: '🏆', expert: '🏅', adapt: '', adopt: 
           </div>
         </template>
       </div>
-    </main>
+      </main>
+    </div>
   </div>
 </template>
 
@@ -127,7 +126,10 @@ const EMO = { use: '📖', milestone: '🏆', expert: '🏅', adapt: '', adopt: 
 .nt-row { display:flex; align-items:flex-start; gap:13px; padding:14px 0; border-top:1px solid #F6F6F6; position:relative; }
 .nt-row:first-child { border-top:none; }
 .nt-ic { flex-shrink:0; width:34px; height:34px; border-radius:10px; background:#F6F6F6; display:flex; align-items:center; justify-content:center; font-size:16px; }
-.nt-ic.expert, .nt-ic.milestone { background:#FFF6DF; border:1px solid #FBEFC6; }
+.nt-ic.flip, .nt-ic.adopt, .nt-ic.rank, .nt-ic.milestone { background:#FFF6DF; border:1px solid #FBEFC6; }
+.nt-row-gold { background:#FFF6DF; border:1px solid #FBEFC6; border-left:3px solid #D9AF3C; border-radius:12px; padding:13px 12px; margin:8px 0; }
+.nt-row-gold + .nt-row-gold { border-top:1px solid #FBEFC6; }
+.nt-row-pinned { box-shadow:0 2px 0 rgba(217,175,60,.12); }
 .nt-av { flex-shrink:0; width:34px; height:34px; border-radius:50%; background:#ECECEC; color:#141F1B; font-size:13px; display:flex; align-items:center; justify-content:center; }
 .nt-body { flex-grow:1; min-width:0; }
 .nt-text { font-size:13.5px; color:#141F1B; line-height:1.6; }

@@ -1,3 +1,150 @@
-<div class="page">
-<main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#141F1B;"><div style="max-width:520px;margin:0 auto;padding:30px 28px 70px;"><div class="nav-discover" style="display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:#9A9A9A;cursor:pointer;margin-bottom:18px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>返回社区</div><div style="display:flex;align-items:center;justify-content:space-between;"><div><div style="font-size:13px;color:#D9AF3C;letter-spacing:2px;font-weight:600;">飞象老师 · 2026</div><div style="font-size:28px;font-weight:700;color:#fff;margin-top:8px;">你的年度创作报告</div></div><div class="avatar" style="width:52px;height:52px;background:rgba(255,255,255,0.12);color:#fff;font-size:18px;box-shadow:0 0 0 2px #fff,0 0 0 3.5px #D9AF3C;">樱</div></div><div style="padding:44px 0;border-bottom:1px solid rgba(255,255,255,0.08);"><div style="font-size:13px;color:#9A9A9A;letter-spacing:1px;">今年,你一共创作了</div><div style="font-size:44px;font-weight:700;color:#fff;margin:10px 0 8px;line-height:1.1;">37 件作品</div><div style="font-size:14px;color:#D4D4D4;line-height:1.6;">课件 21 · 应用 9 · 教案 5 · skill 2,产量超过 92% 的老师。</div></div><div style="padding:44px 0;border-bottom:1px solid rgba(255,255,255,0.08);"><div style="font-size:13px;color:#9A9A9A;letter-spacing:1px;">它们被带进了课堂</div><div style="font-size:44px;font-weight:700;color:#fff;margin:10px 0 8px;line-height:1.1;">1.2 万次真实使用</div><div style="font-size:14px;color:#D4D4D4;line-height:1.6;">相当于每天都有 33 位老师,在用你做的东西上课。</div></div><div style="padding:44px 0;border-bottom:1px solid rgba(255,255,255,0.08);"><div style="font-size:13px;color:#9A9A9A;letter-spacing:1px;">你的一课,开了千枝</div><div style="font-size:44px;font-weight:700;color:#fff;margin:10px 0 8px;line-height:1.1;">被改编 148 次</div><div style="font-size:14px;color:#D4D4D4;line-height:1.6;">别的老师在你的基础上,改出了适合自己班的版本。</div></div><div style="padding:44px 0;border-bottom:1px solid rgba(255,255,255,0.08);"><div style="font-size:13px;color:#9A9A9A;letter-spacing:1px;">你被看见了</div><div style="font-size:44px;font-weight:700;color:#fff;margin:10px 0 8px;line-height:1.1;">新增 2,860 位关注 · 被名师翻牌 6 次</div><div style="font-size:14px;color:#D4D4D4;line-height:1.6;">苏窈、沈知微都置顶回复过你——这是今年的职业高光。</div></div><div style="padding:44px 0 10px;"><div style="font-size:13px;color:#9A9A9A;letter-spacing:1px;margin-bottom:14px;">你的年度关键词</div><div style="display:flex;flex-wrap:wrap;gap:10px;"><span style="background:rgba(255,255,255,0.08);color:#fff;font-size:14px;font-weight:600;padding:8px 16px;border-radius:999px;">大单元</span><span style="background:rgba(255,255,255,0.08);color:#fff;font-size:14px;font-weight:600;padding:8px 16px;border-radius:999px;">沉浸式</span><span style="background:rgba(255,255,255,0.08);color:#fff;font-size:14px;font-weight:600;padding:8px 16px;border-radius:999px;">古文</span><span style="background:rgba(255,255,255,0.08);color:#fff;font-size:14px;font-weight:600;padding:8px 16px;border-radius:999px;">被改编王</span><span style="background:rgba(255,255,255,0.08);color:#fff;font-size:14px;font-weight:600;padding:8px 16px;border-radius:999px;">高产</span></div><div style="margin-top:30px;display:flex;align-items:center;gap:12px;background:rgba(217,175,60,0.12);border:1px solid rgba(217,175,60,0.35);border-radius:14px;padding:16px 18px;"><span style="font-size:24px;">🏅</span><div><div style="font-size:15px;font-weight:600;color:#F4E7C9;">年度新锐创作者</div><div style="font-size:12.5px;color:#D4D4D4;margin-top:3px;">2026 年度,你解锁了这枚荣誉徽章。</div></div></div></div><button style="width:100%;margin-top:34px;background:#fff;color:#141F1B;border:none;border-radius:12px;padding:14px;font-size:14.5px;font-weight:700;cursor:pointer;">保存并分享我的年度报告</button></div></main>
-</div>
+<style>
+  #view-report { min-height:100vh; background:#F5F2EA; color:#141F1B; }
+  #view-report .report-main { min-height:100vh; box-sizing:border-box; padding:0 42px 72px; overflow-y:auto; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif; }
+  #view-report .report-topbar { max-width:1120px; height:72px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; }
+  #view-report .report-back { display:inline-flex; align-items:center; gap:5px; color:#141F1B; font-size:14px; font-weight:650; cursor:pointer; }
+  #view-report .report-back-mark { font-size:23px; font-weight:400; line-height:1; margin-top:-2px; }
+  #view-report .report-context { color:#9A9388; font-size:12px; letter-spacing:.08em; }
+  #view-report .report-context strong { color:#141F1B; font-weight:700; }
+  #view-report .report-wrap { max-width:1040px; margin:26px auto 0; }
+  #view-report .report-hero { position:relative; overflow:hidden; border-radius:22px; background:#141F1B; color:#fff; border:1px solid rgba(20,31,27,.08); box-shadow:0 20px 58px rgba(54,49,38,.12); }
+  #view-report .report-hero:after { content:""; position:absolute; right:-100px; top:-150px; width:320px; height:320px; border:1px solid rgba(217,175,60,.42); border-radius:50%; box-shadow:0 0 0 22px rgba(217,175,60,.06),0 0 0 46px rgba(217,175,60,.035); }
+  #view-report .report-hero-inner { position:relative; z-index:1; display:grid; grid-template-columns:1fr 260px; gap:34px; padding:40px 42px 38px; }
+  #view-report .report-kicker { color:#D9AF3C; font-size:11px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; }
+  #view-report .report-hero h1 { margin:14px 0 12px; font-size:clamp(34px,5vw,58px); line-height:1.05; font-weight:700; letter-spacing:0; }
+  #view-report .report-hero p { max-width:590px; margin:0; color:rgba(255,255,255,.72); font-size:14px; line-height:1.75; }
+  #view-report .report-profile { align-self:end; justify-self:end; width:220px; box-sizing:border-box; border:1px solid rgba(255,255,255,.16); border-radius:16px; padding:18px; background:rgba(255,255,255,.08); }
+  #view-report .report-avatar { width:54px; height:54px; display:flex; align-items:center; justify-content:center; border:3px solid #fff; border-radius:50%; background:#E9E1D3; color:#141F1B; font-size:21px; font-weight:700; box-shadow:0 0 0 1px #D9AF3C; }
+  #view-report .report-name { margin-top:13px; font-size:16px; font-weight:700; }
+  #view-report .report-role { margin-top:5px; color:rgba(255,255,255,.62); font-size:12px; line-height:1.55; }
+  #view-report .report-summary { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; margin-top:22px; overflow:hidden; border:1px solid #E6E0D6; border-radius:18px; background:#E6E0D6; }
+  #view-report .report-stat { min-height:126px; padding:22px 22px 20px; box-sizing:border-box; background:#FFFDFC; }
+  #view-report .report-stat span { display:block; color:#9A9388; font-size:12px; line-height:1.45; }
+  #view-report .report-stat strong { display:block; margin-top:10px; color:#141F1B; font-size:30px; line-height:1; font-weight:700; letter-spacing:0; }
+  #view-report .report-sections { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px; }
+  #view-report .report-section { min-height:190px; padding:24px; border:1px solid #E6E0D6; border-radius:16px; background:#FFFDFC; box-sizing:border-box; }
+  #view-report .report-section h2 { margin:0 0 12px; color:#141F1B; font-size:17px; font-weight:700; letter-spacing:0; }
+  #view-report .report-section p { margin:0; color:#7A7C7C; font-size:13px; line-height:1.7; }
+  #view-report .keyword-row { display:flex; flex-wrap:wrap; gap:9px; margin-top:16px; }
+  #view-report .keyword-row span { display:inline-flex; align-items:center; min-height:30px; padding:0 12px; border-radius:999px; background:#F5F2EA; color:#141F1B; font-size:12px; font-weight:700; }
+  #view-report .honor-box { display:flex; gap:14px; align-items:flex-start; margin-top:18px; padding:16px; border:1px solid rgba(217,175,60,.36); border-radius:14px; background:#FBF1D4; }
+  #view-report .honor-medal { width:34px; height:34px; display:flex; align-items:center; justify-content:center; flex:0 0 auto; border-radius:50%; background:#D9AF3C; color:#141F1B; font-size:15px; font-weight:700; }
+  #view-report .honor-box strong { display:block; color:#8A6D00; font-size:14px; font-weight:700; }
+  #view-report .honor-box span { display:block; margin-top:4px; color:#8A6D00; font-size:12px; line-height:1.55; }
+  #view-report .report-work { display:flex; gap:16px; align-items:stretch; margin-top:16px; padding:14px; border:1px solid #ECE7DF; border-radius:13px; background:#FFFDFC; cursor:pointer; }
+  #view-report .report-work-cover { position:relative; width:136px; min-height:122px; flex:0 0 auto; overflow:hidden; border-radius:10px; background:linear-gradient(145deg,#3B2E2A 0%,#77564B 45%,#D0A56D 100%); }
+  #view-report .report-work-cover:after { content:""; position:absolute; right:-34px; top:-24px; width:116px; height:116px; border:1px solid rgba(255,244,210,.62); border-radius:50%; box-shadow:0 0 0 14px rgba(255,244,210,.08),0 0 0 28px rgba(255,244,210,.06); }
+  #view-report .report-work-cover span { position:absolute; z-index:1; left:13px; bottom:13px; color:#fff; font-family:Georgia,"Songti SC",serif; font-size:18px; font-weight:700; line-height:1.2; }
+  #view-report .report-work-copy { min-width:0; padding:5px 0; }
+  #view-report .report-work-copy strong { display:block; color:#141F1B; font-size:15px; font-weight:700; line-height:1.5; }
+  #view-report .report-work-copy span { display:block; margin-top:7px; color:#9A9388; font-size:12px; line-height:1.6; }
+  #view-report .report-work-meta { display:inline-flex; align-items:center; gap:6px; margin-top:14px; color:#8A6D00; font-size:11px; font-weight:700; }
+  #view-report .report-work-meta i { width:6px; height:6px; border-radius:50%; background:#D9AF3C; }
+  #view-report .report-journey { margin-top:18px; padding:24px; border:1px solid #E6E0D6; border-radius:16px; background:#141F1B; color:#fff; }
+  #view-report .report-journey h2 { margin:0; color:#fff; font-size:17px; font-weight:700; }
+  #view-report .report-journey p { margin:8px 0 0; color:rgba(255,255,255,.62); font-size:13px; line-height:1.65; }
+  #view-report .journey-line { position:relative; display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:24px; }
+  #view-report .journey-line:before { content:""; position:absolute; top:7px; left:8px; right:8px; height:1px; background:rgba(255,255,255,.2); }
+  #view-report .journey-step { position:relative; z-index:1; }
+  #view-report .journey-step i { display:block; width:15px; height:15px; border:3px solid #141F1B; border-radius:50%; background:#D9AF3C; box-shadow:0 0 0 1px #D9AF3C; }
+  #view-report .journey-step span { display:block; margin-top:11px; color:rgba(255,255,255,.58); font-size:11px; line-height:1.45; }
+  #view-report .journey-step strong { display:block; margin-top:3px; color:#fff; font-size:13px; font-weight:700; }
+  #view-report .report-actions { display:flex; justify-content:center; gap:10px; margin-top:22px; }
+  #view-report .report-actions button { min-width:152px; padding:12px 18px; border-radius:10px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+  #view-report .report-primary { border:1px solid #141F1B; background:#141F1B; color:#fff; }
+  #view-report .report-secondary { border:1px solid #DCD6CC; background:transparent; color:#141F1B; }
+  #view-report .report-back:focus-visible, #view-report .report-actions button:focus-visible, #view-report .report-work:focus-visible { outline:2px solid #D9AF3C; outline-offset:3px; }
+  @media (max-width:820px) {
+    #view-report .report-main { padding:0 20px 50px; }
+    #view-report .report-topbar { height:62px; }
+    #view-report .report-wrap { margin-top:18px; }
+    #view-report .report-hero-inner { grid-template-columns:1fr; gap:24px; padding:28px 24px 26px; }
+    #view-report .report-profile { justify-self:start; width:100%; display:flex; align-items:center; gap:13px; padding:13px 15px; }
+    #view-report .report-name { margin-top:0; }
+    #view-report .report-role { margin-top:3px; }
+    #view-report .report-summary { grid-template-columns:repeat(2,1fr); }
+    #view-report .report-sections { grid-template-columns:1fr; }
+  }
+  @media (max-width:500px) {
+    #view-report .report-context { display:none; }
+    #view-report .report-hero h1 { font-size:38px; }
+    #view-report .report-stat { min-height:108px; padding:17px 16px; }
+    #view-report .report-stat strong { font-size:25px; }
+    #view-report .report-section, #view-report .report-journey { padding:19px; }
+    #view-report .report-work-cover { width:112px; }
+    #view-report .journey-line { grid-template-columns:repeat(2,1fr); row-gap:20px; }
+    #view-report .journey-line:before { display:none; }
+    #view-report .report-actions { flex-direction:column; }
+    #view-report .report-actions button { width:100%; }
+  }
+</style>
+<main class="report-main">
+  <div class="report-topbar">
+    <div class="report-back nav-discover" tabindex="0" role="button"><span class="report-back-mark">‹</span><span>返回</span></div>
+    <div class="report-context"><strong>年度报告</strong>　/　2026 成长回顾</div>
+  </div>
+  <div class="report-wrap">
+    <section class="report-hero" aria-label="樱桃小魔丸子的年度报告开篇">
+      <div class="report-hero-inner">
+        <div>
+          <div class="report-kicker">Feixiang annual report · 2026</div>
+          <h1>这一年，<br>你把一堂课交给了同行。</h1>
+          <p>从被看见，到被带进课堂；从一个人的做法，到更多老师手里的新版本。你的作品正在真实发生。</p>
+        </div>
+        <div class="report-profile">
+          <div class="report-avatar">樱</div>
+          <div>
+            <div class="report-name">樱桃小魔丸子</div>
+            <div class="report-role">语文老师 · 大单元教学<br>达人 · Lv.3</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="report-summary" aria-label="年度核心数据">
+      <div class="report-stat"><span>作品被带进课堂</span><strong>4,900</strong></div>
+      <div class="report-stat"><span>一课千枝 · 被改编</span><strong>58</strong></div>
+      <div class="report-stat"><span>同行关注</span><strong>1.2万</strong></div>
+      <div class="report-stat"><span>年度创作</span><strong>37 件</strong></div>
+    </section>
+    <div class="report-sections">
+      <section class="report-section" aria-label="年度高光作品">
+        <h2>年度高光 · 一课千枝</h2>
+        <p>你最亮的一课，不只完成了一次教学，也给了同行继续改编的起点。</p>
+        <div class="report-work nav-resource" data-resource-id="res-xianglin" tabindex="0" role="button">
+          <div class="report-work-cover"><span>《祥林嫂<br>剧本杀》</span></div>
+          <div class="report-work-copy">
+            <strong>《祥林嫂剧本杀》</strong>
+            <span>把经典文本变成学生愿意投入的课堂。</span>
+            <div class="report-work-meta"><i></i>年度代表作 · 58 次改编</div>
+          </div>
+        </div>
+      </section>
+      <section class="report-section" aria-label="年度连接">
+        <h2>你被看见，也被记住</h2>
+        <p>1.2 万位同行关注你做的事。苏窈、沈知微置顶回复过你，这是作品与同行发生连接的职业高光。</p>
+        <div class="honor-box">
+          <div class="honor-medal">★</div>
+          <div><strong>年度达人创作者</strong><span>你在 2026 年解锁的荣誉，不是头衔，是被使用和被回应留下的证据。</span></div>
+        </div>
+      </section>
+    </div>
+    <section class="report-journey" aria-label="年度成长路径">
+      <h2>从做出来，到被更多教室看见</h2>
+      <p>你走过的不是一条数据曲线，而是一条作品被同行接住的路径。</p>
+      <div class="journey-line">
+        <div class="journey-step"><i></i><span>起点</span><strong>做出第一课</strong></div>
+        <div class="journey-step"><i></i><span>发生</span><strong>被带进课堂</strong></div>
+        <div class="journey-step"><i></i><span>连接</span><strong>被同行改编</strong></div>
+        <div class="journey-step"><i></i><span>这一刻</span><strong>达人 · Lv.3</strong></div>
+      </div>
+    </section>
+    <section class="report-section" style="margin-top:18px;min-height:0;" aria-label="年度关键词">
+      <h2>这一年的关键词</h2>
+      <div class="keyword-row"><span>大单元</span><span>沉浸式课堂</span><span>古文</span><span>被改编</span><span>真实使用</span></div>
+    </section>
+    <div class="report-actions">
+      <button class="report-primary nav-share" type="button">生成分享名片</button>
+      <button class="report-secondary nav-creator" type="button">回到创作者中心</button>
+    </div>
+  </div>
+</main>

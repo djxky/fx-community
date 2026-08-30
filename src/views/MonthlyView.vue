@@ -1,11 +1,14 @@
 <script setup>
+import Sidebar from '../components/Sidebar.vue'
 // 教学月志 —— 月度镜子:值得 / 链接 / 自己。"数据不是监控,是镜子。"
 const KW = ['大单元教学', '沉浸式课堂', '整本书阅读', '分层作业', '课堂追问']
 </script>
 
 <template>
   <div id="view-monthly">
-    <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#F7F7F7;">
+    <div class="page">
+      <Sidebar active="" />
+      <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#F7F7F7;">
       <div class="mz-wrap">
         <div class="mz-back nav-creator">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>返回创作者中心
@@ -26,8 +29,8 @@ const KW = ['大单元教学', '沉浸式课堂', '整本书阅读', '分层作�
           <div class="mz-stats">
             <div class="mz-stat"><b>7</b><span>本月产出</span></div>
             <div class="mz-stat"><b>34</b><span>打磨轮次</span></div>
-            <div class="mz-stat"><b>1,280</b><span>被收藏</span></div>
-            <div class="mz-stat"><b>96</b><span>被改编</span></div>
+            <div class="mz-stat"><b>1,280</b><span>本月被使用</span></div>
+            <div class="mz-stat"><b>23</b><span>被改编</span></div>
           </div>
           <div class="mz-note">把"打磨轮次"和"被改编次数"放在一起看——你反复改的那几处,正是别人最愿意拿走的地方。</div>
         </div>
@@ -54,7 +57,8 @@ const KW = ['大单元教学', '沉浸式课堂', '整本书阅读', '分层作�
 
         <button class="mz-share">保存并分享我的教学月志</button>
       </div>
-    </main>
+      </main>
+    </div>
   </div>
 </template>
 

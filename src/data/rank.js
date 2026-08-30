@@ -1,5 +1,10 @@
 import { COVERS } from './covers'
 import { PORTRAITS } from './portraits'
+import pepLogo from '../assets/institution-logos/people-education-press-logo.png'
+import haidianMathResearchAvatar from '../assets/institution-avatars/haidian-math-research-avatar.png'
+import beijingElevenCurriculumAvatar from '../assets/institution-avatars/beijing-eleven-curriculum-avatar.png'
+import poeticChineseStudioAvatar from '../assets/institution-avatars/poetic-chinese-studio-avatar.png'
+import nanjingXuanwuChineseResearchAvatar from '../assets/institution-avatars/nanjing-xuanwu-chinese-research-avatar.png'
 
 // 排行榜落地 = 多榜单墙(类热搜)。每个榜带具体内容(封面/头像/数字),不做纯文字。
 // layout: 'cover'(资源,带封面缩略) | 'avatar'(人,带头像) | 'inst'(机构,带图标)
@@ -52,11 +57,11 @@ export const BOARDS = [
     key: 'institution', title: '名校 · 教研组 · 出版社榜', tag: '机构', hot: false, period: '本月',
     desc: '整建制在贡献的组织', layout: 'inst',
     items: [
-      { name: '人民教育出版社 · 数学编辑部', sub: '出版社', metric: '12.4万', unit: '使用', icon: 'book' },
-      { name: '海淀区数学教研室', sub: '教研组', metric: '6.8万', unit: '使用', icon: 'people' },
-      { name: '王崧舟 · 诗意语文工作室', sub: '工作室', metric: '7.3万', unit: '使用', icon: 'studio' },
-      { name: '北京十一学校 · 学科基地', sub: '名校', metric: '5.5万', unit: '使用', icon: 'school' },
-      { name: '南京市玄武区语文教研组', sub: '教研组', metric: '3.9万', unit: '使用', icon: 'people' },
+      { name: '人民教育出版社 · 数学编辑部', sub: '出版社', metric: '12.4万', unit: '使用', icon: 'book', logo: pepLogo, logoCrop: 'left' },
+      { name: '海淀区数学教研室', sub: '教研组', metric: '6.8万', unit: '使用', icon: 'people', logo: haidianMathResearchAvatar },
+      { name: '王崧舟 · 诗意语文工作室', sub: '工作室', metric: '7.3万', unit: '使用', icon: 'studio', logo: poeticChineseStudioAvatar },
+      { name: '北京十一学校 · 学科基地', sub: '名校', metric: '5.5万', unit: '使用', icon: 'school', logo: beijingElevenCurriculumAvatar },
+      { name: '南京市玄武区语文教研组', sub: '教研组', metric: '3.9万', unit: '使用', icon: 'people', logo: nanjingXuanwuChineseResearchAvatar },
     ],
   },
   {

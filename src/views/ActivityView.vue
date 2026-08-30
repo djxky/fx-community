@@ -1,5 +1,6 @@
 <script setup>
 import { COVERS } from '../data/covers'
+import Sidebar from '../components/Sidebar.vue'
 // 同课异构:同一个起点,不同的抵达。(≈ GitHub 的 "同一 issue 多个解法" / 一个题目多条 PR)
 const ENTRIES = [
   { angle: '手法拆解', cover: COVERS[0], title: '《石灰吟》托物言志——把"清白"拆成四层意象', who: '林若水', role: '杭州求是小学', use: '1,240', hot: true },
@@ -13,7 +14,9 @@ const ENTRIES = [
 
 <template>
   <div id="view-activity">
-    <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#F7F7F7;">
+    <div class="page">
+      <Sidebar active="community" />
+      <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#F7F7F7;">
       <div class="ac-wrap">
         <div class="ac-back nav-discover">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>返回社区
@@ -56,7 +59,8 @@ const ENTRIES = [
           </div>
         </div>
       </div>
-    </main>
+      </main>
+    </div>
   </div>
 </template>
 

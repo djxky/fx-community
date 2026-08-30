@@ -1,9 +1,10 @@
 <script setup>
 import { computed } from 'vue'
 import { store } from '../store'
-const props = defineProps({ active: { type: String, default: '' } }) // 'community' | 'academy' | ''
+const props = defineProps({ active: { type: String, default: '' } }) // 'community' | 'academy' | 'mylib' | ''
 const sqOn = computed(() => props.active === 'community')
 const acOn = computed(() => props.active === 'academy')
+const mlOn = computed(() => props.active === 'mylib')
 function collapse() { store.sidebarCollapsed = true }
 function expand() { store.sidebarCollapsed = false }
 const history = [
@@ -38,8 +39,8 @@ const history = [
       <div class="nav nav-academy" :class="{ on: acOn }" style="cursor:pointer;">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" :stroke="acOn ? '#141F1B' : '#7A7C7C'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v4.5c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5V12"></path></svg>飞象学院
       </div>
-      <div class="nav">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h13v18H6a2 2 0 00-2 2z"></path><path d="M19 3v18"></path></svg>我的知识库
+      <div class="nav nav-mylib" :class="{ on: mlOn }" style="cursor:pointer;">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" :stroke="mlOn ? '#141F1B' : '#7A7C7C'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h13v18H6a2 2 0 00-2 2z"></path><path d="M19 3v18"></path></svg>我的知识库
       </div>
       <div class="nav nav-notify" style="cursor:pointer;">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 01-3.4 0"></path></svg>消息
@@ -79,12 +80,6 @@ const history = [
           <div class="amenu-item nav-mypage" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:13.5px;color:#141F1B;font-weight:500;cursor:pointer;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"></circle><path d="M5.5 20a6.5 6.5 0 0113 0"></path></svg>我的主页
           </div>
-          <div class="amenu-item nav-share" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:13.5px;color:#141F1B;font-weight:500;cursor:pointer;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.4"></circle><circle cx="6" cy="12" r="2.4"></circle><circle cx="18" cy="19" r="2.4"></circle><path d="M8.2 10.8l7.6-4.3M8.2 13.2l7.6 4.3"></path></svg>分享名片
-          </div>
-          <div class="amenu-item nav-report" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:13.5px;color:#141F1B;font-weight:500;cursor:pointer;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>年度报告
-          </div>
         </div>
       </div>
     </div>
@@ -106,8 +101,8 @@ const history = [
       <div class="sm-ic nav-academy" :class="{ on: acOn }" title="飞象学院">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" :stroke="acOn ? '#141F1B' : '#7A7C7C'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v4.5c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5V12"></path></svg>
       </div>
-      <div class="sm-ic" title="我的知识库">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h13v18H6a2 2 0 00-2 2z"></path><path d="M19 3v18"></path></svg>
+      <div class="sm-ic nav-mylib" :class="{ on: mlOn }" title="我的知识库">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" :stroke="mlOn ? '#141F1B' : '#7A7C7C'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h13v18H6a2 2 0 00-2 2z"></path><path d="M19 3v18"></path></svg>
       </div>
       <div class="sm-ic nav-notify" title="消息">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 01-3.4 0"></path></svg>
@@ -123,12 +118,6 @@ const history = [
           </div>
           <div class="amenu-item nav-mypage" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:13.5px;color:#141F1B;font-weight:500;cursor:pointer;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"></circle><path d="M5.5 20a6.5 6.5 0 0113 0"></path></svg>我的主页
-          </div>
-          <div class="amenu-item nav-share" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:13.5px;color:#141F1B;font-weight:500;cursor:pointer;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.4"></circle><circle cx="6" cy="12" r="2.4"></circle><circle cx="18" cy="19" r="2.4"></circle><path d="M8.2 10.8l7.6-4.3M8.2 13.2l7.6 4.3"></path></svg>分享名片
-          </div>
-          <div class="amenu-item nav-report" style="display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;font-size:13.5px;color:#141F1B;font-weight:500;cursor:pointer;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></svg>年度报告
           </div>
         </div>
       </div>
