@@ -66,10 +66,6 @@ const CHIPS = ['推荐', '互动课件', '教学游戏', '应用', '技能', '�
             <span v-for="(c, i) in CHIPS" :key="i" class="tchip2" :class="{ on: i === 0 }">{{ c }}</span>
           </div>
 
-          <div class="sec-hd flow-hd">
-            <span class="flow-t">精选教学灵感</span>
-            <span class="sec-more">换一批</span>
-          </div>
           <div class="flow">
             <PostCard v-for="(p, i) in POSTS" :key="i" :post="p" />
           </div>
@@ -108,8 +104,6 @@ const CHIPS = ['推荐', '互动课件', '教学游戏', '应用', '技能', '�
 
 .chips { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:32px; }
 
-.flow-hd { margin-bottom:16px; }
-.flow-t { font-size:16px; font-weight:700; color:#141F1B; }
 .flow { display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; }
 @media (max-width:1180px){ .flow { grid-template-columns:repeat(2, 1fr); } }
 </style>
