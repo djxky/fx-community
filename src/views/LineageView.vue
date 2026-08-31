@@ -7,12 +7,12 @@ const mother = RESOURCES_BY_ID[MOTHER_ID]
 const visibleForkIds = ['res-xl-zhoutao', 'res-xl-limin', 'res-xl-l2']
 const flowBack = mother.contributors.find(({ mergedInto }) => mergedInto)
 
-const NODE_W = 224
-const NODE_H = 104
+const NODE_W = 286
+const NODE_H = 120
 const X0 = 24
-const DX = 236
+const DX = 300
 const Y0 = 46
-const DY = 132
+const DY = 150
 const nx = (t) => X0 + t * DX
 const ny = (lane) => Y0 + lane * DY
 
@@ -94,27 +94,27 @@ function edgePath(node) {
 
               <g v-for="node in resourceNodes" :key="node.id" class="lg-node" :data-resource-id="node.resourceId" role="link" tabindex="0">
                 <rect v-if="node.root" class="lg-root-ring" :x="nx(node.t) - 4" :y="ny(node.lane) - 4" :width="NODE_W + 8" :height="NODE_H + 8" rx="15" fill="none" stroke="#D9AF3C" stroke-width="2" />
-                <rect class="lg-card" :x="nx(node.t)" :y="ny(node.lane)" :width="NODE_W" :height="NODE_H" rx="12" fill="#fff" :stroke="node.root ? '#141F1B' : '#141F1B'" stroke-width="1.5" />
-                <rect v-if="node.root" :x="nx(node.t)" :y="ny(node.lane)" :width="NODE_W" :height="NODE_H" rx="12" fill="#141F1B" />
-                <rect :x="nx(node.t) + 10" :y="ny(node.lane) + 10" width="42" height="84" rx="8" :fill="node.root ? '#2B3833' : '#F6F6F6'" />
-                <text :x="nx(node.t) + 31" :y="ny(node.lane) + 56" text-anchor="middle" font-size="10" :fill="node.root ? '#D9AF3C' : '#9A9A9A'">{{ node.thumbLabel }}</text>
-                <circle :cx="nx(node.t) + 72" :cy="ny(node.lane) + 24" r="12" :fill="node.root ? '#2B3833' : '#ECECEC'" :stroke="node.root ? '#D9AF3C' : 'none'" :stroke-width="node.root ? 1.5 : 0" />
-                <text :x="nx(node.t) + 72" :y="ny(node.lane) + 28" text-anchor="middle" font-size="11" font-weight="700" :fill="node.root ? '#fff' : '#141F1B'">{{ node.resource.author.name.slice(0, 1) }}</text>
-                <text :x="nx(node.t) + 90" :y="ny(node.lane) + 28" font-size="11.5" font-weight="600" :fill="node.root ? '#fff' : '#141F1B'">{{ node.resource.author.name }}</text>
-                <text v-for="(line, index) in node.titleLines" :key="`${node.id}-title-${index}`" :x="nx(node.t) + 64" :y="ny(node.lane) + 50 + index * 14" font-size="11.5" font-weight="600" :fill="node.root ? '#fff' : '#141F1B'">{{ line }}</text>
-                <text :x="nx(node.t) + NODE_W - 12" :y="ny(node.lane) + 28" text-anchor="end" font-size="14" font-weight="700" :fill="node.root ? '#fff' : '#141F1B'">{{ node.resource.stats.use.toLocaleString('en-US') }}</text>
-                <text :x="nx(node.t) + NODE_W - 12" :y="ny(node.lane) + 44" text-anchor="end" font-size="10.5" :fill="node.root ? '#D4D4D4' : '#9A9A9A'">位老师使用</text>
+                <rect class="lg-card" :x="nx(node.t)" :y="ny(node.lane)" :width="NODE_W" :height="NODE_H" rx="14" fill="#fff" :stroke="node.root ? '#141F1B' : '#141F1B'" stroke-width="1.5" />
+                <rect v-if="node.root" :x="nx(node.t)" :y="ny(node.lane)" :width="NODE_W" :height="NODE_H" rx="14" fill="#141F1B" />
+                <rect :x="nx(node.t) + 12" :y="ny(node.lane) + 12" width="48" :height="NODE_H - 24" rx="10" :fill="node.root ? '#2B3833' : '#F6F6F6'" />
+                <text :x="nx(node.t) + 36" :y="ny(node.lane) + 67" text-anchor="middle" font-size="10.5" :fill="node.root ? '#D9AF3C' : '#9A9A9A'">{{ node.thumbLabel }}</text>
+                <circle :cx="nx(node.t) + 80" :cy="ny(node.lane) + 28" r="13" :fill="node.root ? '#2B3833' : '#ECECEC'" :stroke="node.root ? '#D9AF3C' : 'none'" :stroke-width="node.root ? 1.5 : 0" />
+                <text :x="nx(node.t) + 80" :y="ny(node.lane) + 32" text-anchor="middle" font-size="11.5" font-weight="700" :fill="node.root ? '#fff' : '#141F1B'">{{ node.resource.author.name.slice(0, 1) }}</text>
+                <text :x="nx(node.t) + 100" :y="ny(node.lane) + 32" font-size="12" font-weight="600" :fill="node.root ? '#fff' : '#141F1B'">{{ node.resource.author.name }}</text>
+                <text v-for="(line, index) in node.titleLines" :key="`${node.id}-title-${index}`" :x="nx(node.t) + 64" :y="ny(node.lane) + 60 + index * 16" font-size="12" font-weight="600" :fill="node.root ? '#fff' : '#141F1B'">{{ line }}</text>
+                <text :x="nx(node.t) + NODE_W - 14" :y="ny(node.lane) + 32" text-anchor="end" font-size="15" font-weight="700" :fill="node.root ? '#fff' : '#141F1B'">{{ node.resource.stats.use.toLocaleString('en-US') }}</text>
+                <text :x="nx(node.t) + NODE_W - 14" :y="ny(node.lane) + 50" text-anchor="end" font-size="10.5" :fill="node.root ? '#D4D4D4' : '#9A9A9A'">位老师使用</text>
                 <g v-if="node.honorLabel">
-                  <rect :x="nx(node.t) + 64" :y="ny(node.lane) + 78" width="98" height="16" rx="6" fill="#FFF6DF" stroke="#FBEFC6" />
-                  <text :x="nx(node.t) + 113" :y="ny(node.lane) + 89.5" text-anchor="middle" font-size="9.5" font-weight="600" fill="#8A6D00">{{ node.honorLabel }}</text>
+                  <rect :x="nx(node.t) + 64" :y="ny(node.lane) + 94" width="130" height="17" rx="7" fill="#FFF6DF" stroke="#FBEFC6" />
+                  <text :x="nx(node.t) + 129" :y="ny(node.lane) + 106" text-anchor="middle" font-size="9.5" font-weight="600" fill="#8A6D00">{{ node.honorLabel }}</text>
                 </g>
               </g>
 
               <g class="lg-fold" :transform="`translate(${nx(foldedNode.t)}, ${ny(foldedNode.lane)})`">
                 <rect :width="NODE_W" :height="NODE_H" rx="12" fill="#F6F6F6" stroke="#D4D4D4" stroke-width="1.5" stroke-dasharray="5 4" />
-                <text x="20" y="42" font-size="22" font-weight="700" fill="#141F1B">+{{ foldedNode.foldedCount }}</text>
-                <text x="20" y="64" font-size="12" font-weight="600" fill="#7A7C7C">其余社区改编折叠</text>
-                <text x="20" y="82" font-size="11" fill="#9A9A9A">母版共 {{ mother.stats.adapt }} 次改编</text>
+                <text x="20" y="48" font-size="23" font-weight="700" fill="#141F1B">+{{ foldedNode.foldedCount }}</text>
+                <text x="20" y="72" font-size="12.5" font-weight="600" fill="#7A7C7C">其余社区改编折叠</text>
+                <text x="20" y="92" font-size="11" fill="#9A9A9A">母版共 {{ mother.stats.adapt }} 次改编</text>
               </g>
             </svg>
           </div>

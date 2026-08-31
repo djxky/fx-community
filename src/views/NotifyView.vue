@@ -42,12 +42,6 @@ const EMO = { flip: '🏅', adopt: '🤝', rank: '🏆', milestone: '🎉', anno
 
         <!-- 通知:大事·被看见 + 平台系统通知 -->
         <template v-if="tab === 'impact'">
-          <div class="nt-hl">
-            <b>4,900</b><span>位老师用进课堂</span><span class="nt-dot">·</span>
-            <b>14</b><span>个省</span><span class="nt-dot">·</span>
-            <b>58</b><span>次被改编</span>
-            <span style="margin-left:auto;font-size:12px;color:#9A9A9A;">累计</span>
-          </div>
           <div class="nt-sec">今天</div>
           <div class="nt-card">
             <div v-for="(n, i) in NOTIFY_TODAY" :key="i" class="nt-row" :class="{ 'nt-row-gold': n.gold, 'nt-row-pinned': n.pinned }">
