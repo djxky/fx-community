@@ -1,6 +1,6 @@
   <style>
-    .fg-actions .fg-aux-light { width:auto; min-width:0; height:32px; padding:0 4px; border:0; border-bottom:1px solid #ECECEC; border-radius:0; background:transparent; color:#141F1B; gap:5px; font-size:12px; font-weight:600; box-sizing:border-box; }
-    .fg-actions .fg-aux-light:hover { border-color:#ECECEC; background:transparent; }
+    .fg-actions .fg-aux-light { width:100%; min-width:0; height:40px; padding:0 12px; border:1px solid #E0E4E2; border-radius:9px; background:#fff; color:#141F1B; gap:6px; font-size:12px; font-weight:600; box-sizing:border-box; }
+    .fg-actions .fg-aux-light:hover { border-color:#BFC8C3; background:#F7F8F7; }
   </style>
   <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#fff;">
     <div class="fg-top">
@@ -15,19 +15,14 @@
 
       <div class="fg-hero">
         <div class="fg-hero-l">
-          <div class="fg-author"><div class="av">__RES_AUTHOR_INITIAL__</div><span class="nm">__RES_AUTHOR_NAME__ <span class="vf"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span></span><span style="font-size:11px;color:#8A6D00;background:#FFF6DF;border:1px solid #FBEFC6;border-radius:6px;padding:2px 7px;">__RES_AUTHOR_CERT__</span></div>
           <h1>__RES_TITLE__</h1>
-          <div class="rd-topic-strip" style="display:inline-flex;align-items:center;gap:8px;background:#F6F6F6;border:1px solid #ECECEC;border-radius:999px;padding:6px 14px;margin:10px 0 2px;"><span style="font-size:12.5px;color:#7A7C7C;">适用</span><span style="font-size:12.5px;color:#141F1B;font-weight:600;">__RES_FIT_DETAIL__</span></div>
-          <div class="fg-meta">
-            <span class="mi">__RES_KIND__</span><span class="dot">·</span>
-            <span class="mi">__RES_FIT__</span><span class="dot">·</span>
-            <span class="mi"><b>__RES_USE__</b> 位老师使用</span><span class="dot">·</span>
-            <span class="mi"><b>__RES_ADAPT__</b> 次改编</span>
-          </div>
+          <div class="fg-author"><div class="av">__RES_AUTHOR_INITIAL__</div><span class="nm">__RES_AUTHOR_NAME__ <span class="vf"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span></span><span style="font-size:11px;color:#8A6D00;background:#FFF6DF;border:1px solid #FBEFC6;border-radius:6px;padding:2px 7px;">__RES_AUTHOR_CERT__</span></div>
+          <p class="fg-summary">__RES_DIFF__</p>
           <div class="fg-actions">
-            <button class="fg-use fg-save-copy">保存副本</button><button class="fg-adapt nav-adapt" style="display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #ECECEC;color:#141F1B;font-weight:600;border-radius:10px;padding:10px 16px;font-size:14px;cursor:pointer;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4 4.1.6-3 3 .7 4.4L12 17l-3.7 2 .7-4.4-3-3 4.1-.6z"></path></svg>一键改编</button><button class="fg-ic fg-labeled fg-share-action fg-aux-light" title="分享" aria-label="分享"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"></path><path d="M7 9l5-5 5 5"></path><path d="M5 13v6h14v-6"></path></svg><span class="fg-action-label">分享</span></button>
+            <div class="fg-action-primary"><button class="fg-use fg-save-copy">保存副本</button><button class="fg-adapt nav-adapt"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 4 4.1.6-3 3 .7 4.4L12 17l-3.7 2 .7-4.4-3-3 4.1-.6z"></path></svg>继续改编</button></div>
+            <div class="fg-action-secondary"><button class="fg-ic fg-labeled fg-share-action fg-aux-light" title="分享" aria-label="分享"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"></path><path d="M7 9l5-5 5 5"></path><path d="M5 13v6h14v-6"></path></svg><span class="fg-action-label">分享</span></button></div>
           </div>
-          <div class="fg-origin nav-res" data-resource-id="__RES_PARENT_ID__" style="display:inline-flex;align-items:center;gap:6px;margin-top:18px;color:#8A6D00;font-size:13px;font-weight:600;cursor:pointer;">↩ __RES_PARENT_LABEL__ ›</div>
+          <div class="fg-meta"><span class="mi"><b>__RES_USE__</b> 位老师使用</span><span class="dot">·</span><span class="mi"><b>__RES_ADAPT__</b> 次改编</span></div>
         </div>
         <div class="fg-hero-r">
           <div class="fg-prev" style="min-height:248px;background:#F6F6F6;">
@@ -36,7 +31,7 @@
               <div style="font-size:23px;font-weight:700;line-height:1.4;margin-top:28px;">把原版方法<br><span style="color:#8A6D00;">落到自己的课堂</span></div>
               <div style="font-size:13px;line-height:1.75;color:#7A7C7C;margin-top:18px;max-width:330px;">__RES_DIFF__</div>
             </div>
-            <div class="fg-prevbar"><span class="fg-chip">改编自原版</span><span class="fg-chip">__RES_LATEST_VERSION__</span></div>
+            <div class="fg-prevbar"><span class="fg-chip">__RES_LATEST_VERSION__</span></div>
           </div>
         </div>
       </div>
@@ -52,9 +47,21 @@
           </div>
 
           <div>
-            <div class="fg-sec-h">改编自 <span class="sub">· 当前版本 __RES_LATEST_VERSION__</span></div>
+            <div class="fg-sec-h">原作者 <span class="sub">· 你的改编已署名 TA</span></div>
             <div class="fg-origin-card nav-res" data-resource-id="__RES_PARENT_ID__" style="border:1px solid #ECECEC;border-radius:12px;padding:16px 18px;cursor:pointer;">
-              <div style="font-size:12px;color:#9A9A9A;font-weight:600;margin-bottom:7px;">母版资源</div><div style="font-size:15px;font-weight:700;color:#141F1B;line-height:1.5;">__RES_PARENT_LABEL__</div><div style="font-size:12.5px;color:#7A7C7C;margin-top:8px;">点击返回母版，查看完整作者手记、版本迭代与社区共创。</div>
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div class="av" style="width:44px;height:44px;flex-shrink:0;background:#141F1B;color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:17px;font-weight:600;">__RES_PARENT_INITIAL__</div>
+                <div style="min-width:0;flex-grow:1;">
+                  <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;"><span style="font-size:15px;font-weight:700;color:#141F1B;">__RES_PARENT_AUTHOR__</span><span style="font-size:11px;color:#8A6D00;background:#FFF6DF;border:1px solid #FBEFC6;border-radius:6px;padding:1px 7px;">__RES_PARENT_CERT__</span><span style="font-size:11px;color:#fff;background:#8A6D00;border-radius:6px;padding:1px 7px;">原作者</span></div>
+                  <div style="font-size:12.5px;color:#7A7C7C;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">原版《__RES_PARENT_TITLE__》</div>
+                </div>
+                <button style="flex-shrink:0;background:#141F1B;color:#fff;border:none;border-radius:9px;padding:8px 15px;font-size:13px;font-weight:600;cursor:pointer;">查看原版</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:24px;margin-top:14px;padding-top:14px;border-top:1px solid #EFEFEF;">
+                <div><span style="font-size:16px;font-weight:700;color:#141F1B;">__RES_PARENT_USE__</span> <span style="font-size:11.5px;color:#9A9A9A;">位老师使用原版</span></div>
+                <div><span style="font-size:16px;font-weight:700;color:#141F1B;">__RES_PARENT_ADAPT__</span> <span style="font-size:11.5px;color:#9A9A9A;">次改编</span></div>
+                <span style="margin-left:auto;font-size:12.5px;color:#8A6D00;font-weight:600;">你的改编已署名 TA ›</span>
+              </div>
             </div>
           </div>
 
@@ -79,15 +86,12 @@
         </div>
 
         <div class="fg-body-r">
-          <div><div class="fg-side-h">改编关系</div><div class="fg-incl">保留原作者署名，当前版本独立维护；所有使用与改编数据均对应本版资源。</div></div>
-          <div><div class="fg-side-h">硬指标</div><div class="fg-drow"><span>老师使用</span><b>__RES_USE__</b></div><div class="fg-drow"><span>再次改编</span><b>__RES_ADAPT__</b></div><div class="fg-drow"><span>版本</span><b>__RES_VERSION_RANGE__</b></div></div>
           <div><div class="fg-side-h">适用</div><div class="fg-tags"><span class="fg-tagpill">__RES_TOPIC_LABEL__</span><span class="fg-tagpill">__RES_FIT__</span></div></div>
           <div><div class="fg-side-h">作品信息</div><div class="fg-inforow"><span class="ico">#</span>作品 ID <b style="margin-left:auto;">__RES_RESOURCE_ID__</b></div><div class="fg-inforow"><span class="ico">✓</span>状态 <b style="margin-left:auto;">改编版</b></div><div class="fg-inforow"><span class="ico">↗</span>最新版本 <b style="margin-left:auto;">__RES_LATEST_VERSION__</b></div></div>
         </div>
       </div>
 
-      <div class="fg-foot"><span class="fb">飞象老师</span><a class="nav-discover">社区</a><a>教学资源</a><a>名师</a><a>校园版</a><span class="fspacer">© 2026 飞象老师 · 让好课被更多人用到</span></div>
     </div>
   </main>
 
-  <div class="adapt-modal" style="display:none;position:fixed;inset:0;z-index:200;align-items:center;justify-content:center;"><div class="adapt-backdrop" style="position:absolute;inset:0;background:rgba(20,31,27,0.45);"></div><div style="position:relative;width:520px;max-width:92vw;background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.2);padding:24px;"><div style="display:flex;align-items:center;justify-content:space-between;font-size:16px;font-weight:700;color:#141F1B;"><span>AI 改成你的班</span><span class="adapt-close" style="cursor:pointer;color:#9A9A9A;font-size:22px;">×</span></div><p style="font-size:13px;line-height:1.8;color:#7A7C7C;margin:22px 0;">将在当前改编版基础上生成新的课堂版本，并保留母版与当前改编版链路。</p><button class="adapt-close" style="background:#141F1B;color:#fff;border:none;border-radius:10px;padding:11px 18px;font-size:14px;font-weight:600;cursor:pointer;">用这版 · 已存副本</button></div></div>
+  <div class="adapt-modal" style="display:none;position:fixed;inset:0;z-index:200;align-items:center;justify-content:center;"><div class="adapt-backdrop" style="position:absolute;inset:0;background:rgba(20,31,27,0.45);"></div><div style="position:relative;width:520px;max-width:92vw;background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.2);padding:24px;"><div style="display:flex;align-items:center;justify-content:space-between;font-size:16px;font-weight:700;color:#141F1B;"><span>AI 改成你的班</span><span class="adapt-close" style="cursor:pointer;color:#9A9A9A;font-size:22px;">×</span></div><p style="font-size:13px;line-height:1.8;color:#7A7C7C;margin:22px 0;">将基于当前版本创建你的改编版，并<b style="color:#8A6D00;">自动署名原作者、保留回到原版的引用链路</b>（署名不可移除）。</p><button class="adapt-close" style="background:#141F1B;color:#fff;border:none;border-radius:10px;padding:11px 18px;font-size:14px;font-weight:600;cursor:pointer;">用这版 · 已存副本</button></div></div>

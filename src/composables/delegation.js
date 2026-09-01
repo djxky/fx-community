@@ -58,6 +58,38 @@ export function installDelegation() {
     }
     if (!e.target.closest('.avatar-menu')) closeMenus()
 
+    var slideThumb = e.target.closest('.fg-slide-thumb')
+    if (slideThumb) {
+      var slideRail = slideThumb.closest('.fg-slide-rail')
+      var slideShell = slideThumb.closest('.fg-preview-shell')
+      var slideThumbs = Array.from(slideRail.querySelectorAll('.fg-slide-thumb'))
+      var slideIndex = slideThumbs.indexOf(slideThumb)
+      slideThumbs.forEach(function (item) {
+        var isCurrent = item === slideThumb
+        item.classList.toggle('is-active', isCurrent)
+        if (isCurrent) item.setAttribute('aria-current', 'page')
+        else item.removeAttribute('aria-current')
+      })
+      var slideLabel = slideShell && slideShell.querySelector('.fg-prevbar .fg-chip')
+      if (slideLabel) slideLabel.textContent = '课件 · ' + (slideIndex + 1) + ' / ' + slideThumbs.length
+      return
+    }
+
+    var detailTab = e.target.closest('.fg-tab[data-section]')
+    if (detailTab) {
+      var detailView = detailTab.closest('#view-res')
+      var tabRow = detailTab.closest('.fg-tabs')
+      var sectionId = detailTab.getAttribute('data-section')
+      var section = detailView && detailView.querySelector('#' + sectionId)
+      if (!section && sectionId === 'fg-versions') {
+        var lineageLink = detailView.querySelector('.nav-lineage')
+        section = lineageLink && lineageLink.parentElement && lineageLink.parentElement.parentElement
+      }
+      tabRow.querySelectorAll('.fg-tab').forEach(function (item) { item.classList.toggle('on', item === detailTab) })
+      if (section) section.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' })
+      return
+    }
+
     var resourceLink = e.target.closest('[data-resource-id]')
     if (resourceLink) {
       store.resourceId = resourceLink.getAttribute('data-resource-id')
