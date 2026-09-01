@@ -21,14 +21,13 @@ export function installDelegation() {
       c.style.display = (rt === 'all' || c.getAttribute('data-t') === rt) ? '' : 'none'
     })
   }
-  function switchTab(view) {
-    var d = document.getElementById('view-discover'); if (!d) return
-    var db = d.querySelector('#disc-body'), fb = d.querySelector('#feed-body')
-    if (!db || !fb) return
-    d.querySelectorAll('.ntab').forEach(function (t) { t.classList.toggle('on', t.getAttribute('data-view') === view) })
-    db.style.display = (view === 'feed') ? 'none' : ''
-    fb.style.display = (view === 'feed') ? '' : 'none'
-    var m = d.querySelector('main'); if (m) m.scrollTop = 0
+  function normalizeCommunityTabs() {
+    var rankTabs = document.querySelector('#view-rank .tbar-tabs')
+    if (!rankTabs) return
+    rankTabs.querySelectorAll('.nav-feed, .nav-local').forEach(function (tab) { tab.remove() })
+    var rankTab = rankTabs.querySelector('.nav-rank')
+    var discoverTab = rankTabs.querySelector('.nav-discover')
+    if (rankTab && discoverTab) rankTabs.insertBefore(rankTab, discoverTab)
   }
   function switchSPanel(id) {
     var v = document.getElementById('view-studio'); if (!v) return
@@ -45,6 +44,8 @@ export function installDelegation() {
     document.body.appendChild(toast)
     window.setTimeout(function () { toast.remove() }, 1600)
   }
+
+  normalizeCommunityTabs()
 
   document.addEventListener('click', function (e) {
     // 头像下拉菜单
@@ -119,13 +120,10 @@ export function installDelegation() {
     }
 
     var sp = e.target.closest('[data-stab]'); if (sp) { switchSPanel(sp.getAttribute('data-stab')); return }
-    var tb = e.target.closest('.ntab'); if (tb) { switchTab(tb.getAttribute('data-view')); return }
-    var feedNav = e.target.closest('.nav-feed')
-    if (feedNav) { go('discover'); switchTab('feed'); return }
     var map = [
       ['.nav-res', 'res'], ['.nav-skill', 'skill'], ['.nav-studio', 'studio'],
       ['.nav-mypage', 'studio'], ['.nav-discover', 'discover'], ['.nav-rank', 'rank'],
-      ['.nav-local', 'local'], ['.nav-academy', 'academy'], ['.nav-share', 'share'],
+      ['.nav-academy', 'academy'], ['.nav-share', 'share'],
       ['.nav-report', 'report'], ['.nav-creator', 'creator'],
       ['.nav-monthly', 'monthly'], ['.nav-activity', 'activity'], ['.nav-lineage', 'lineage'], ['.nav-notify', 'notify'], ['.nav-mylib', 'mylib'],
     ]

@@ -1,13 +1,88 @@
 <script setup>
-import { store } from '../store'
+import { computed, ref } from 'vue'
 import Sidebar from '../components/Sidebar.vue'
-import MasterCard from '../components/MasterCard.vue'
 import PostCard from '../components/PostCard.vue'
-import { MASTERS } from '../data/masters'
 import { POSTS } from '../data/discover'
-import feed from './raw/discover_feed.html?raw'
+import { FEED } from '../data/feed'
+import { LOCAL_POSTS } from '../data/local'
 
-const CHIPS = ['推荐', '互动课件', '教学游戏', '应用', '技能', '教案', '题单']
+const SOURCE_CHIPS = [
+  { key: 'recommend', label: '推荐' },
+  { key: 'follow', label: '关注' },
+  { key: 'local', label: '本地' },
+]
+const TYPE_CHIPS = [
+  { key: 'all', label: '全部' },
+  { key: 'interactive', label: '互动课件' },
+  { key: 'game', label: '教学游戏' },
+  { key: 'app', label: '应用' },
+  { key: 'skill', label: '技能' },
+  { key: 'lesson', label: '教案' },
+  { key: 'question', label: '题单' },
+]
+const activeSource = ref('recommend')
+const activeType = ref('all')
+
+const FOLLOW_POSTS = FEED.map((item) => {
+  const resource = item.resource
+  return {
+    to: resource.to || 'res',
+    cover: resource.cover,
+    badge: resource.meta?.split(' · ')[0] || '资源',
+    author: item.actor,
+    avatar: item.mark || item.actor.slice(0, 1),
+    role: item.orgType || (item.expert ? '认证名师' : '关注作者'),
+    verify: item.expert ? 'expert' : '',
+    title: resource.title,
+    proof: null,
+    meta: resource.meta,
+    verified: false,
+    evi: { use: resource.use, adapt: '', star: resource.save },
+  }
+})
+
+const LOCAL_RESOURCE_POSTS = LOCAL_POSTS.map((post) => ({
+  to: 'res',
+  cover: post.cover,
+  badge: post.badge,
+  region: '北京 · 同城',
+  author: post.author,
+  avatar: post.avatar,
+  role: post.role,
+  verify: post.verify,
+  title: post.title,
+  proof: null,
+  meta: post.meta,
+  verified: false,
+  evi: { use: post.use, adapt: post.adapt, star: post.star },
+  resourceId: post.resourceId,
+}))
+
+const sourcePosts = computed(() => ({
+  recommend: POSTS,
+  follow: FOLLOW_POSTS,
+  local: LOCAL_RESOURCE_POSTS,
+}[activeSource.value]))
+
+const TYPE_RULES = {
+  interactive: /互动课件|互动|课件/,
+  game: /教学游戏|游戏化|游戏/,
+  app: /应用/,
+  skill: /技能|Skill/i,
+  lesson: /教案|课例/,
+  question: /题单/,
+}
+
+const visiblePosts = computed(() => {
+  if (activeType.value === 'all') return sourcePosts.value
+  const rule = TYPE_RULES[activeType.value]
+  return sourcePosts.value.filter((post) => rule.test(`${post.badge} ${post.meta}`))
+})
+
+function selectSource(source) {
+  activeSource.value = source
+  activeType.value = 'all'
+}
 </script>
 
 <template>
@@ -19,10 +94,8 @@ const CHIPS = ['推荐', '互动课件', '教学游戏', '应用', '技能', '�
         <div class="tbar">
           <div class="tbar-in">
             <div class="tbar-tabs">
-              <span class="ntab" data-view="feed">关注</span>
-              <span class="ntab on" data-view="discover">发现</span>
-              <span class="tbtab nav-local">本地</span>
               <span class="tbtab nav-rank">排行榜</span>
+              <span class="tbtab on nav-discover">发现</span>
             </div>
             <div class="tbar-right">
               <div class="tbar-subj" title="切换学科·学段(通常不常改)">
@@ -39,40 +112,31 @@ const CHIPS = ['推荐', '互动课件', '教学游戏', '应用', '技能', '�
         </div>
 
         <!-- 发现 -->
-        <div id="disc-body" style="padding:24px 32px 48px;">
-          <!-- 名师·上新播报位:有新入驻才展示,可收起(收起后只在有新时再冒头) -->
-          <template v-if="!store.mastersCollapsed">
-            <div class="sec-hd">
-              <span class="sec-t">名师智库 · 特邀专家<span class="nr-new">本周 3 位新入驻</span></span>
-              <div class="nr-hd-r">
-                <span class="sec-more">查看专家名录 ›</span>
-                <span class="nr-collapse" @click="store.mastersCollapsed = true" title="收起(有新入驻时再提醒你)">
-                  收起
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"></path></svg>
-                </span>
-              </div>
-            </div>
-            <div class="mrow">
-              <MasterCard v-for="(m, i) in MASTERS" :key="i" :m="m" />
-            </div>
-          </template>
-          <div v-else class="nr-mini" @click="store.mastersCollapsed = false">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v4.5c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5V12"></path></svg>
-            <span>本周 <b>3 位专家</b> · <b>2 家机构</b> 新入驻飞象</span>
-            <span class="nr-expand">展开 ›</span>
+        <div id="disc-body" class="discover-body">
+          <div class="filter-group source-filter" aria-label="来源筛选">
+            <span class="filter-label">来源</span>
+            <button v-for="chip in SOURCE_CHIPS" :key="chip.key" class="tchip2" :class="{ on: activeSource === chip.key }" type="button" @click="selectSource(chip.key)">
+              {{ chip.label }}
+            </button>
           </div>
 
-          <div class="chips">
-            <span v-for="(c, i) in CHIPS" :key="i" class="tchip2" :class="{ on: i === 0 }">{{ c }}</span>
+          <div v-if="activeSource === 'local'" class="local-context">
+            <span>北京 · 同城资源</span>
+            <button type="button">切换城市</button>
+          </div>
+
+          <div class="filter-group type-filter" aria-label="资源类型筛选">
+            <span class="filter-label">类型</span>
+            <button v-for="chip in TYPE_CHIPS" :key="chip.key" class="tchip2" :class="{ on: activeType === chip.key }" type="button" @click="activeType = chip.key">
+              {{ chip.label }}
+            </button>
           </div>
 
           <div class="flow">
-            <PostCard v-for="(p, i) in POSTS" :key="i" :post="p" />
+            <PostCard v-for="(post, i) in visiblePosts" :key="post.resourceId || post.title || i" :post="post" />
           </div>
+          <div v-if="visiblePosts.length === 0" class="empty-state">该来源下暂无此类型资源</div>
         </div>
-
-        <!-- 关注(保留迁移内容) -->
-        <div id="feed-body" style="display:none; padding:28px 48px 56px;" v-html="feed"></div>
       </main>
     </div>
   </div>
@@ -87,22 +151,15 @@ const CHIPS = ['推荐', '互动课件', '教学游戏', '应用', '技能', '�
 .tbar-subj:hover { background:#F6F6F6; }
 .tbar-search { display:flex; align-items:center; gap:8px; background:#F6F6F6; border:1px solid #ECECEC; border-radius:10px; padding:9px 14px; width:260px; font-size:13px; color:#9A9A9A; }
 
-.sec-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
-.sec-t { font-size:16px; font-weight:700; color:#141F1B; display:flex; align-items:center; }
-.sec-more { font-size:13px; color:#9A9A9A; cursor:pointer; }
-.mrow { display:flex; align-items:stretch; gap:16px; overflow-x:auto; padding-bottom:6px; margin-bottom:32px; }
-
-/* 名师上新播报位 */
-.nr-new { margin-left:10px; font-size:11.5px; font-weight:600; color:#8A6D00; background:#FFF6DF; border:1px solid #FBEFC6; border-radius:7px; padding:2px 8px; }
-.nr-hd-r { display:flex; align-items:center; gap:16px; }
-.nr-collapse { display:inline-flex; align-items:center; gap:3px; font-size:13px; color:#9A9A9A; cursor:pointer; }
-.nr-collapse:hover { color:#141F1B; }
-.nr-mini { display:flex; align-items:center; gap:9px; padding:12px 16px; margin-bottom:26px; background:#FAFAF8; border:1px solid #EFEFEF; border-radius:12px; cursor:pointer; font-size:13.5px; color:#7A7C7C; }
-.nr-mini:hover { background:#F4F4F1; }
-.nr-mini b { color:#141F1B; font-weight:600; }
-.nr-expand { margin-left:auto; font-size:13px; color:#141F1B; font-weight:500; }
-
-.chips { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:32px; }
+.discover-body { padding:24px 32px 48px; }
+.filter-group { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.source-filter { margin-bottom:12px; }
+.type-filter { margin-bottom:28px; }
+.filter-label { width:32px; flex:0 0 32px; color:#7A7C7C; font-size:13px; }
+.tchip2 { border:none; }
+.local-context { display:flex; align-items:center; justify-content:space-between; margin:2px 0 14px; padding:11px 14px; background:#FAFAF8; border:1px solid #EFEFEF; border-radius:10px; color:#7A7C7C; font-size:13px; }
+.local-context button { border:1px solid #D4D4D4; border-radius:8px; padding:5px 11px; background:#fff; color:#141F1B; font-size:12px; cursor:pointer; }
+.empty-state { padding:56px 0; color:#9A9A9A; font-size:13px; text-align:center; }
 
 .flow { display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; }
 @media (max-width:1180px){ .flow { grid-template-columns:repeat(2, 1fr); } }

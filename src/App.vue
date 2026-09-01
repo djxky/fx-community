@@ -3,7 +3,6 @@ import { onMounted } from 'vue'
 import { store } from './store'
 import { installDelegation } from './composables/delegation'
 import DiscoverView from './views/DiscoverView.vue'
-import LocalView from './views/LocalView.vue'
 import RankView from './views/RankView.vue'
 import AcademyView from './views/AcademyView.vue'
 import CreatorView from './views/CreatorView.vue'
@@ -18,12 +17,13 @@ import LineageView from './views/LineageView.vue'
 import NotifyView from './views/NotifyView.vue'
 import MyLibraryView from './views/MyLibraryView.vue'
 
+store.view = 'rank'
+
 onMounted(() => installDelegation())
 </script>
 
 <template>
   <DiscoverView v-show="store.view === 'discover'" />
-  <LocalView v-show="store.view === 'local'" />
   <RankView v-show="store.view === 'rank'" />
   <AcademyView v-show="store.view === 'academy'" />
   <CreatorView v-show="store.view === 'creator'" />
