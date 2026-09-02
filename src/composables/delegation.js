@@ -89,7 +89,7 @@ export function installDelegation() {
     }
     if (!e.target.closest('.avatar-menu')) closeMenus()
 
-    // AI 工作坊课程详情:进入/返回时把 academy 滚动容器复位到顶部(纯 CSS radio 切换不会重置滚动)
+    // AI 教学工坊课程详情:进入/返回时把 academy 滚动容器复位到顶部(纯 CSS radio 切换不会重置滚动)
     var lpLabel = e.target.closest('label[for^="lp-"]')
     if (lpLabel) {
       requestAnimationFrame(function () {

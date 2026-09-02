@@ -86,7 +86,8 @@ test('课程渲染结果提供全部筛选、可点击卡片和直播回放式�
   const coverUrls = Object.fromEntries(academyCourses.map((course) => [course.coverFile, `/covers/${course.coverFile}`]))
   const rendered = renderAcademyCourseUi({ courses: academyCourses, filters: academyFilters, coverUrls })
 
-  assert.match(rendered.library, /全部 <span class="c">23<\/span>/)
+  assert.match(rendered.library, />全部<\/label>/)
+  assert.doesNotMatch(rendered.library, /<span class="c">/)
   assert.equal((rendered.library.match(/class="lcard course-card/g) || []).length, 23)
   assert.equal((rendered.details.match(/class="lesson-page course-lesson-page"/g) || []).length, 23)
   assert.match(rendered.details, /课程目标/)
@@ -118,4 +119,31 @@ test('分类单选框与课程网格保持同级，让跨分类 CSS 能显示卡
   assert.ok(allRadioPosition > -1 && allRadioPosition < filterBarPosition)
   assert.match(rendered.visibilityCss, /#course-type-all:checked ~ \.lgrid \.course-card\{display:flex\}/)
   assert.match(rendered.visibilityCss, /#course-type-animation:checked ~ \.lib-filter label\[for="course-type-animation"\]/)
+})
+
+test('分类、课程卡和详情导航可通过键盘激活对应单选框', async () => {
+  const { academyCourses, academyFilters } = await loadCatalog()
+  const renderer = await loadRenderer()
+  const coverUrls = Object.fromEntries(academyCourses.map((course) => [course.coverFile, `/covers/${course.coverFile}`]))
+  const rendered = renderer.renderAcademyCourseUi({ courses: academyCourses, filters: academyFilters, coverUrls })
+
+  assert.match(rendered.library, /class="chip" for="course-type-animation" tabindex="0" role="button"/)
+  assert.match(rendered.library, /class="lcard course-card[^>]+tabindex="0" role="button"/)
+  assert.match(rendered.details, /class="pl-item"[^>]+tabindex="0" role="button"/)
+  assert.match(rendered.details, /class="lp-back" for="lp-home" tabindex="0" role="button"/)
+
+  let clicked = 0
+  const radio = { type: 'radio', click: () => { clicked += 1 } }
+  const label = { getAttribute: () => 'lp-course-1' }
+  let prevented = false
+  const event = {
+    key: 'Enter',
+    target: { closest: () => label },
+    preventDefault: () => { prevented = true },
+  }
+  const activated = renderer.activateRadioLabelFromKeyboard(event, { getElementById: () => radio })
+
+  assert.equal(activated, true)
+  assert.equal(clicked, 1)
+  assert.equal(prevented, true)
 })

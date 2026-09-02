@@ -9,6 +9,18 @@ const courseRadioId = (course) => `lp-course-${course.id}`
 const coursePageId = (course) => `LP-course-${course.id}`
 const filterId = (filter) => `course-type-${filter.key}`
 
+export function activateRadioLabelFromKeyboard(event, ownerDocument = globalThis.document) {
+  if (event.key !== 'Enter' && event.key !== ' ') return false
+  const label = event.target?.closest?.('label[for]')
+  const targetId = label?.getAttribute?.('for')
+  const radio = targetId ? ownerDocument?.getElementById?.(targetId) : null
+  if (radio?.type !== 'radio') return false
+
+  event.preventDefault()
+  radio.click()
+  return true
+}
+
 function labelsByKey(filters) {
   return Object.fromEntries(filters.map((filter) => [filter.key, filter.label]))
 }
@@ -24,10 +36,7 @@ function renderLibrary(courses, filters, coverUrls) {
     `<input type="radio" name="course-type" id="${filterId(filter)}" class="chip-radio"${index === 0 ? ' checked' : ''}>`
   )).join('\n')
   const filterLabels = filters.map((filter) => {
-    const count = filter.key === 'all'
-      ? courses.length
-      : courses.filter((course) => course.categories.includes(filter.key)).length
-    return `<label class="chip" for="${filterId(filter)}">${escapeHtml(filter.label)} <span class="c">${count}</span></label>`
+    return `<label class="chip" for="${filterId(filter)}" tabindex="0" role="button">${escapeHtml(filter.label)}</label>`
   }).join('\n')
 
   const labels = labelsByKey(filters)
@@ -38,7 +47,7 @@ function renderLibrary(courses, filters, coverUrls) {
       .slice(0, 2)
       .map((key) => `<span>${escapeHtml(labels[key])}</span>`)
       .join('')
-    return `<label class="lcard course-card ${categoryClasses}" for="${courseRadioId(course)}" tabindex="0" aria-label="查看课程：${escapeHtml(course.title)}">
+    return `<label class="lcard course-card ${categoryClasses}" for="${courseRadioId(course)}" tabindex="0" role="button" aria-label="查看课程：${escapeHtml(course.title)}">
       <div class="lthumb course-cover" style="background-image:url('${escapeHtml(coverUrl)}')">
         <span class="dur">${escapeHtml(course.duration)}</span><span class="p" aria-hidden="true">▶</span>
       </div>
@@ -70,14 +79,14 @@ function renderDetails(courses, filters, coverUrls) {
     const categoryText = course.categories.map((key) => labels[key]).join(' · ')
     const goals = course.goals.map((goal) => `<li>${escapeHtml(goal)}</li>`).join('')
     const related = relatedCoursesFor(course, courses).map((relatedCourse) => (
-      `<label class="pl-item" for="${courseRadioId(relatedCourse)}">
+      `<label class="pl-item" for="${courseRadioId(relatedCourse)}" tabindex="0" role="button">
         <span class="pl-thumb" style="background-image:url('${escapeHtml(coverUrls[relatedCourse.coverFile])}')"><span class="pl-dur">${escapeHtml(relatedCourse.duration)}</span></span>
         <span class="pl-t">${escapeHtml(relatedCourse.title)}</span>
       </label>`
     )).join('')
 
     return `<div class="lesson-page course-lesson-page" id="${coursePageId(course)}">
-      <label class="lp-back" for="lp-home">← 返回 AI 工作坊</label>
+      <label class="lp-back" for="lp-home" tabindex="0" role="button">← 返回 AI 教学工坊</label>
       <div class="lp-video"><video controls preload="metadata" poster="${escapeHtml(coverUrl)}" src="${escapeHtml(course.videoUrl)}"></video></div>
       <div class="lp-cols">
         <div class="lp-main">
@@ -101,8 +110,7 @@ function renderVisibilityCss(courses, filters) {
   const filterRules = filters.map((filter) => {
     const selector = filter.key === 'all' ? '.course-card' : `.course-card.cat-${filter.key}`
     return `#view-academy #${filterId(filter)}:checked ~ .lgrid ${selector}{display:flex}
-#view-academy #${filterId(filter)}:checked ~ .lib-filter label[for="${filterId(filter)}"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
-#view-academy #${filterId(filter)}:checked ~ .lib-filter label[for="${filterId(filter)}"] .c{color:rgba(255,255,255,.55)}`
+#view-academy #${filterId(filter)}:checked ~ .lib-filter label[for="${filterId(filter)}"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}`
   }).join('\n')
   return `${coursePages}{display:block}\n${filterRules}`
 }

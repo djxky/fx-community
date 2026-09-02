@@ -7,7 +7,11 @@ import mathVisualization from '../assets/academy/math-visualization.jpg'
 import peerReview from '../assets/academy/peer-review.jpg'
 import learningFeedback from '../assets/academy/learning-feedback.jpg'
 import { academyCourses, academyFilters } from '../data/academy-courses.mjs'
-import { composeAcademyMarkup, renderAcademyCourseUi } from '../lib/academy-course-renderer.mjs'
+import {
+  activateRadioLabelFromKeyboard,
+  composeAcademyMarkup,
+  renderAcademyCourseUi,
+} from '../lib/academy-course-renderer.mjs'
 
 const courseCoverModules = import.meta.glob('../assets/academy/course-covers/*.jpg', {
   eager: true,
@@ -27,6 +31,10 @@ const renderedCourseUi = renderAcademyCourseUi({
 
 const renderedRaw = composeAcademyMarkup(raw, renderedCourseUi)
 
+function handleCourseNavigationKeydown(event) {
+  activateRadioLabelFromKeyboard(event, event.currentTarget?.ownerDocument)
+}
+
 const academyImages = {
   '--academy-img-workshop': `url(${workshopCollaboration})`,
   '--academy-img-courseware': `url(${coursewarePractice})`,
@@ -40,7 +48,7 @@ const academyImages = {
   <div id="view-academy" :style="academyImages">
     <div class="page">
       <Sidebar active="academy" />
-      <div style="display:contents" v-html="renderedRaw"></div>
+      <div style="display:contents" @keydown="handleCourseNavigationKeydown" v-html="renderedRaw"></div>
     </div>
   </div>
 </template>
