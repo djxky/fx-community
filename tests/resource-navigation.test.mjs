@@ -89,6 +89,7 @@ test('改编页来源信息始终指向原作者与被改编的版本', () => {
   assert.deepEqual(attribution, {
     adapterName: '周涛',
     originalResourceId: 'res-xianglin',
+    originalAuthorInitial: '林',
     originalAuthorName: '林若水',
     originalTitle: '我把〈祝福〉上成一场庭审·祥林嫂剧本杀',
     sourceVersion: 'V10',

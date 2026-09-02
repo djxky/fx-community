@@ -142,10 +142,11 @@ function renderAdaptedAuthorLine(resource, attribution) {
 
 function renderAdaptedAboutSource(attribution) {
   return `<div class="fg-origin-about" data-resource-id="${escapeHtml(attribution.originalResourceId)}" role="link" tabindex="0" aria-label="查看原作：${escapeHtml(attribution.originalTitle)}">
-    <span class="fg-origin-about-label">原创来源</span>
+    <div class="fg-origin-about-avatar">${escapeHtml(attribution.originalAuthorInitial)}</div>
     <div class="fg-origin-about-copy">
-      <div><strong>${escapeHtml(attribution.originalAuthorName)}</strong><span>${escapeHtml(attribution.originalTitle)}</span></div>
-      <small>基于原作 ${escapeHtml(attribution.sourceVersion)} 改编</small>
+      <div class="fg-origin-about-meta"><span class="fg-origin-about-label">原创来源</span><strong>${escapeHtml(attribution.originalAuthorName)}</strong><em>原创作者</em></div>
+      <div class="fg-origin-about-work">${escapeHtml(attribution.originalTitle)}</div>
+      <small>基于原作 <b>${escapeHtml(attribution.sourceVersion)}</b> 改编</small>
     </div>
     <span class="fg-origin-about-link">查看原作 <span aria-hidden="true">→</span></span>
   </div>`

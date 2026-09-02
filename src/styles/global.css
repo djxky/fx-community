@@ -622,15 +622,20 @@ a:hover { color: #141F1B; }
     .fg-adapted-inline { display:inline-flex; align-items:center; gap:7px; color:#858D89; font-size:12.5px; font-weight:500; }
     .fg-origin-inline { color:#68736E; font-weight:650; cursor:pointer; transition:color .16s ease; }
     .fg-origin-inline:hover { color:#10231C; }
-    .fg-origin-about { display:grid; grid-template-columns:76px minmax(0,1fr) auto; align-items:center; gap:14px; margin:0 0 28px; padding:14px 0; border-top:1px solid #E2E7E4; border-bottom:1px solid #E2E7E4; cursor:pointer; }
-    .fg-origin-about-label { color:#68736E; font-size:12px; font-weight:700; }
+    .fg-origin-about { position:relative; display:grid; grid-template-columns:42px minmax(0,1fr) auto; align-items:center; gap:14px; margin:0 0 28px; padding:16px 18px 16px 20px; overflow:hidden; border:1px solid #E9D9BB; border-radius:11px; background:linear-gradient(96deg,#FFF9ED 0%,#FFFCF6 58%,#FFF 100%); cursor:pointer; transition:border-color .16s ease,background .16s ease; }
+    .fg-origin-about::before { content:""; position:absolute; left:0; top:18%; bottom:18%; width:4px; border-radius:0 3px 3px 0; background:#C9902C; }
+    .fg-origin-about:hover { border-color:#DCC397; background:linear-gradient(96deg,#FFF7E7 0%,#FFFBF2 58%,#FFF 100%); }
+    .fg-origin-about-avatar { width:38px; height:38px; border:1px solid #E3D4B8; border-radius:50%; background:#F4EAD8; color:#26322D; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:750; }
     .fg-origin-about-copy { min-width:0; }
-    .fg-origin-about-copy > div { display:flex; align-items:baseline; gap:8px; min-width:0; }
-    .fg-origin-about-copy strong { flex:0 0 auto; color:#10231C; font-size:13.5px; }
-    .fg-origin-about-copy span { overflow:hidden; color:#3D4843; font-size:13px; text-overflow:ellipsis; white-space:nowrap; }
-    .fg-origin-about-copy small { display:block; margin-top:3px; color:#929995; font-size:11.5px; }
-    .fg-origin-about-link { color:#68736E; font-size:12px; font-weight:650; white-space:nowrap; transition:color .16s ease; }
-    .fg-origin-about:hover .fg-origin-about-link { color:#10231C; }
+    .fg-origin-about-meta { display:flex; align-items:center; gap:7px; min-width:0; }
+    .fg-origin-about-label { color:#A56B0B; font-size:11.5px; font-weight:750; }
+    .fg-origin-about-meta strong { color:#10231C; font-size:14px; }
+    .fg-origin-about-meta em { padding:1px 6px; border:1px solid #E7C98F; border-radius:5px; background:#FFF4D8; color:#9B650B; font-size:10px; font-style:normal; font-weight:700; white-space:nowrap; }
+    .fg-origin-about-work { margin-top:4px; overflow:hidden; color:#26322D; font-size:13.5px; font-weight:650; text-overflow:ellipsis; white-space:nowrap; }
+    .fg-origin-about-copy small { display:block; margin-top:4px; color:#858D89; font-size:11.5px; }
+    .fg-origin-about-copy small b { color:#6C5529; font-weight:750; }
+    .fg-origin-about-link { padding:8px 11px; border:1px solid #DCC9A7; border-radius:8px; background:rgba(255,255,255,.74); color:#5F6965; font-size:12px; font-weight:700; white-space:nowrap; transition:border-color .16s ease,color .16s ease,background .16s ease; }
+    .fg-origin-about:hover .fg-origin-about-link { border-color:#CBAE79; background:#fff; color:#10231C; }
     .fg-adapted-prev { background:#EDE9DE; }
     .fg-adapted-prev > img { visibility:hidden; }
     .fg-adapted-cover { position:absolute; inset:0; z-index:1; overflow:hidden; padding:5.5% 6.5%; box-sizing:border-box; color:#10231C; background:
@@ -1046,12 +1051,11 @@ a:hover { color: #141F1B; }
   #view-res .fg-hero-l h1 { margin-bottom:18px; font-size:27px; line-height:1.3; }
   #view-res .fg-summary { font-size:13.5px; }
   #view-res .fg-author { margin-bottom:14px; }
-  #view-res .fg-origin-about { grid-template-columns:minmax(0,1fr) auto; gap:6px 12px; }
-  #view-res .fg-origin-about-label { grid-column:1; }
-  #view-res .fg-origin-about-link { grid-column:2; grid-row:1; }
-  #view-res .fg-origin-about-copy { grid-column:1 / -1; grid-row:2; }
-  #view-res .fg-origin-about-copy > div { align-items:flex-start; }
-  #view-res .fg-origin-about-copy span { white-space:normal; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+  #view-res .fg-origin-about { grid-template-columns:38px minmax(0,1fr); align-items:start; gap:9px 11px; padding:15px 14px 14px 17px; }
+  #view-res .fg-origin-about-avatar { grid-column:1; grid-row:1 / span 2; width:36px; height:36px; }
+  #view-res .fg-origin-about-copy { grid-column:2; grid-row:1; }
+  #view-res .fg-origin-about-work { white-space:normal; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+  #view-res .fg-origin-about-link { grid-column:2; grid-row:2; justify-self:start; }
   #view-res .fg-action-primary { gap:8px; }
   #view-res .fg-use,
   #view-res .fg-adapt { min-height:46px; }
