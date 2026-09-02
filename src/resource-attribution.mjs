@@ -10,3 +10,16 @@ export function getAdaptedAttribution(resource, parent) {
     sourceVersion: resource.forkedFromVersion || parent.versions.at(-1)?.v || '',
   }
 }
+
+export function getResourceCredits(resource, parent) {
+  if (resource?.forkedFrom && parent) {
+    return [
+      { role: '原创作者', name: parent.author.name, resourceId: parent.id },
+      { role: '改编者', name: resource.author.name, resourceId: null },
+    ]
+  }
+
+  return resource?.author
+    ? [{ role: '原创作者', name: resource.author.name, resourceId: null }]
+    : []
+}

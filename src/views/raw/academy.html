@@ -21,15 +21,15 @@
 #view-academy .campaign .txt{color:#6B5600}
 #view-academy .campaign .txt b{color:var(--ink)}
 #view-academy .campaign .go{margin-left:auto;color:var(--gold);font-weight:700;white-space:nowrap}
-#view-academy /* 顶部运营位 hero — 可切换轮播（图片占位） */
+#view-academy /* 顶部运营位 hero — 可切换轮播 */
 .hero{position:relative;border-radius:18px;overflow:hidden;margin-bottom:26px;height:236px}
 #view-academy .hero .hs-radio{position:absolute;width:0;height:0;opacity:0;pointer-events:none}
-#view-academy .hero .hslide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none}
+#view-academy .hero .hslide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none;background-size:cover;background-position:center}
 #view-academy .hero #hs1:checked~.s1, #view-academy .hero #hs2:checked~.s2, #view-academy .hero #hs3:checked~.s3{opacity:1;pointer-events:auto}
-#view-academy .hero .s1{background:linear-gradient(115deg,#141F1B,#233128)}
-#view-academy .hero .s2{background:linear-gradient(115deg,#1A2430,#2B3A47)}
-#view-academy .hero .s3{background:linear-gradient(115deg,#2A2018,#3A2A1E)}
-#view-academy .hero .hslide::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.05) 1px,transparent 0);background-size:22px 22px}
+#view-academy .hero .s1{background-image:var(--academy-img-workshop);background-position:center 46%}
+#view-academy .hero .s2{background-image:var(--academy-img-courseware);background-position:center 52%}
+#view-academy .hero .s3{background-image:var(--academy-img-math);background-position:center 45%}
+#view-academy .hero .hslide::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,31,27,0) 58%,rgba(20,31,27,.22) 100%)}
 #view-academy .hero .ph{position:relative;text-align:center;color:#fff}
 #view-academy .hero .ph-ic{width:54px;height:54px;margin:0 auto 12px;border:1.5px dashed rgba(255,255,255,.4);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;color:rgba(255,255,255,.55)}
 #view-academy .hero .ph-t{font-size:17px;font-weight:700}
@@ -112,6 +112,12 @@
 #view-academy .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 #view-academy .vcard{background:var(--surface);border:1px solid var(--hair);border-radius:13px;overflow:hidden}
 #view-academy .vthumb{aspect-ratio:16/10;background:linear-gradient(135deg,#20241F,#333A31);position:relative}
+#view-academy .vthumb.academy-photo,#view-academy .lthumb.academy-photo{background-size:cover;background-position:center;background-repeat:no-repeat}
+#view-academy .academy-img-workshop{background-image:linear-gradient(180deg,rgba(20,31,27,.02),rgba(20,31,27,.12)),var(--academy-img-workshop)}
+#view-academy .academy-img-courseware{background-image:linear-gradient(180deg,rgba(20,31,27,.02),rgba(20,31,27,.12)),var(--academy-img-courseware)}
+#view-academy .academy-img-math{background-image:linear-gradient(180deg,rgba(20,31,27,.02),rgba(20,31,27,.12)),var(--academy-img-math)}
+#view-academy .academy-img-review{background-image:linear-gradient(180deg,rgba(20,31,27,.02),rgba(20,31,27,.12)),var(--academy-img-review)}
+#view-academy .academy-img-feedback{background-image:linear-gradient(180deg,rgba(20,31,27,.02),rgba(20,31,27,.12)),var(--academy-img-feedback)}
 #view-academy .vthumb .dur{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.62);color:#fff;font-size:11px;border-radius:6px;padding:2px 6px}
 #view-academy .vthumb .live{position:absolute;left:8px;top:8px;background:#FF4832;color:#fff;font-size:10px;font-weight:700;border-radius:6px;padding:2px 7px}
 #view-academy .vthumb.preview{background:linear-gradient(135deg,#1D2A22,#22301F)}
@@ -252,15 +258,15 @@
         <input type="radio" name="hs" id="hs1" class="hs-radio" checked>
         <input type="radio" name="hs" id="hs2" class="hs-radio">
         <input type="radio" name="hs" id="hs3" class="hs-radio">
-        <div class="hslide s1"><div class="ph"><div class="ph-ic">&#9636;</div><div class="ph-t">运营位 Banner &middot; 01</div><div class="ph-d">图片占位 · 建议 1440 × 360</div></div></div>
-        <div class="hslide s2"><div class="ph"><div class="ph-ic">&#9636;</div><div class="ph-t">运营位 Banner &middot; 02</div><div class="ph-d">图片占位 · 建议 1440 × 360</div></div></div>
-        <div class="hslide s3"><div class="ph"><div class="ph-ic">&#9636;</div><div class="ph-t">运营位 Banner &middot; 03</div><div class="ph-d">图片占位 · 建议 1440 × 360</div></div></div>
+        <div class="hslide s1"></div>
+        <div class="hslide s2"></div>
+        <div class="hslide s3"></div>
         <div class="dots"><label for="hs1"></label><label for="hs2"></label><label for="hs3"></label></div>
       </div>
 
       <!-- 场景 1：按水平找教程 -->
       <section class="sec">
-        <div class="sec-h"><h2>飞象课程</h2></div>
+        <div class="sec-h"><h2>AI 教学成长路径</h2></div>
         <div class="who">
           <input type="radio" name="lvl" id="lv-a" class="lvl-radio" checked>
           <label class="tab lv1" for="lv-a"><div class="lvl"><i></i><i></i><i></i></div><div><div class="nm">新手入门</div><div class="d">第一次用 AI 上课</div></div></label>
@@ -272,10 +278,10 @@
         <div class="mainline">
           <div class="coll-head"><span class="ct">新手推荐合集</span></div>
           <div class="grid4">
-            <div class="vcard"><div class="vthumb"><span class="idx">01</span><span class="dur">06:00</span><span class="p">▶</span></div><div class="vbody"><h4>平台上手：AI 能帮你的课做什么</h4><div class="meta">推荐先看 · 快速了解</div></div></div>
-            <div class="vcard"><div class="vthumb"><span class="idx">02</span><span class="dur">08:30</span><span class="p">▶</span></div><div class="vbody"><h4>跟着做第一份：用模板做一份课堂作品</h4><div class="meta">动手实操</div></div></div>
-            <div class="vcard"><div class="vthumb"><span class="idx">03</span><span class="dur">07:12</span><span class="p">▶</span></div><div class="vbody"><h4>常用玩法速览：动画 / 课件 / 题单怎么生成</h4><div class="meta">功能速览</div></div></div>
-            <div class="vcard"><div class="vthumb"><span class="idx">04</span><span class="dur">05:40</span><span class="p">▶</span></div><div class="vbody"><h4>把作品用到课上：布置给学生与回收数据</h4><div class="meta">落地课堂</div></div></div>
+            <div class="vcard"><div class="vthumb academy-photo academy-img-courseware"><span class="idx">01</span><span class="dur">06:00</span><span class="p">▶</span></div><div class="vbody"><h4>平台上手：AI 能帮你的课做什么</h4><div class="meta">推荐先看 · 快速了解</div></div></div>
+            <div class="vcard"><div class="vthumb academy-photo academy-img-math"><span class="idx">02</span><span class="dur">08:30</span><span class="p">▶</span></div><div class="vbody"><h4>跟着做第一份：用模板做一份课堂作品</h4><div class="meta">动手实操</div></div></div>
+            <div class="vcard"><div class="vthumb academy-photo academy-img-review"><span class="idx">03</span><span class="dur">07:12</span><span class="p">▶</span></div><div class="vbody"><h4>常用玩法速览：动画 / 课件 / 题单怎么生成</h4><div class="meta">功能速览</div></div></div>
+            <div class="vcard"><div class="vthumb academy-photo academy-img-feedback"><span class="idx">04</span><span class="dur">05:40</span><span class="p">▶</span></div><div class="vbody"><h4>把作品用到课上：布置给学生与回收数据</h4><div class="meta">落地课堂</div></div></div>
           </div>
           <div class="submit-strip"><div class="st-ic">↑</div><div><div class="st-t">看完动手做一个，提交你的作品</div><div class="st-d">完成并提交即可参加案例征集：30 积分 · 电子结业证 · 社区展示</div></div><button class="st-btn">提交作品</button></div>
         </div>
@@ -306,7 +312,7 @@
 
       <!-- 场景 3：按资源类型找教程 -->
       <section class="sec">
-        <div class="sec-h"><h2>专项课程</h2></div>
+        <div class="sec-h"><h2>使用技巧攻略</h2></div>
         <div class="lib-filter">
           <input type="radio" name="ctype" id="t1" class="chip-radio" checked>
           <label class="chip" for="t1">教学动画 <span class="c">28</span></label>
@@ -322,12 +328,12 @@
           <label class="chip" for="t6">教案 · 题单 <span class="c">34</span></label>
         </div>
         <div class="lgrid">
-          <div class="lcard"><div class="lthumb"><span class="lv">新手</span><span class="dur">08:12</span><span class="p">▶</span></div><div class="lbody"><h4>从零做一个教学动画：讲解型动画的完整搭建流程</h4><div class="lc-by">北京市海淀区中关村第二小学 · 王雪 老师</div></div></div>
-          <div class="lcard"><div class="lthumb"><span class="lv">新手</span><span class="dur">05:30</span><span class="p">▶</span></div><div class="lbody"><h4>一张图生成同款：图片转动态讲解片</h4><div class="lc-by">上海市静安区教育学院附属学校 · 李航 老师</div></div></div>
-          <div class="lcard"><div class="lthumb"><span class="lv">进阶</span><span class="dur">11:48</span><span class="p">▶</span></div><div class="lbody"><h4>抽象概念可视化：让函数图像与化学反应动起来</h4><div class="lc-by">杭州第二中学 · 陈晓 老师</div></div></div>
-          <div class="lcard"><div class="lthumb"><span class="lv">进阶</span><span class="dur">09:20</span><span class="p">▶</span></div><div class="lbody"><h4>分镜到成片：多镜头教学动画的组织方法</h4><div class="lc-by">南京市琅琊路小学 · 刘敏 老师</div></div></div>
-          <div class="lcard"><div class="lthumb"><span class="lv">新手</span><span class="dur">04:05</span><span class="p">▶</span></div><div class="lbody"><h4>配音与字幕：为动画加旁白和逐字字幕</h4><div class="lc-by">成都市实验小学 · 张伟 老师</div></div></div>
-          <div class="lcard"><div class="lthumb"><span class="lv">新手</span><span class="dur">03:40</span><span class="p">▶</span></div><div class="lbody"><h4>套用模板出片：动画模板库快速上手</h4><div class="lc-by">广州市天河区华阳小学 · 黄丽 老师</div></div></div>
+          <div class="lcard"><div class="lthumb academy-photo academy-img-math"><span class="lv">新手</span><span class="dur">08:12</span><span class="p">▶</span></div><div class="lbody"><h4>从零做一个教学动画：讲解型动画的完整搭建流程</h4><div class="lc-by">北京市海淀区中关村第二小学 · 王雪 老师</div></div></div>
+          <div class="lcard"><div class="lthumb academy-photo academy-img-courseware"><span class="lv">新手</span><span class="dur">05:30</span><span class="p">▶</span></div><div class="lbody"><h4>一张图生成同款：图片转动态讲解片</h4><div class="lc-by">上海市静安区教育学院附属学校 · 李航 老师</div></div></div>
+          <div class="lcard"><div class="lthumb academy-photo academy-img-math"><span class="lv">进阶</span><span class="dur">11:48</span><span class="p">▶</span></div><div class="lbody"><h4>抽象概念可视化：让函数图像与化学反应动起来</h4><div class="lc-by">杭州第二中学 · 陈晓 老师</div></div></div>
+          <div class="lcard"><div class="lthumb academy-photo academy-img-review"><span class="lv">进阶</span><span class="dur">09:20</span><span class="p">▶</span></div><div class="lbody"><h4>分镜到成片：多镜头教学动画的组织方法</h4><div class="lc-by">南京市琅琊路小学 · 刘敏 老师</div></div></div>
+          <div class="lcard"><div class="lthumb academy-photo academy-img-feedback"><span class="lv">新手</span><span class="dur">04:05</span><span class="p">▶</span></div><div class="lbody"><h4>配音与字幕：为动画加旁白和逐字字幕</h4><div class="lc-by">成都市实验小学 · 张伟 老师</div></div></div>
+          <div class="lcard"><div class="lthumb academy-photo academy-img-workshop"><span class="lv">新手</span><span class="dur">03:40</span><span class="p">▶</span></div><div class="lbody"><h4>套用模板出片：动画模板库快速上手</h4><div class="lc-by">广州市天河区华阳小学 · 黄丽 老师</div></div></div>
         </div>
       </section>
 

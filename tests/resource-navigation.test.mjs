@@ -9,7 +9,7 @@ import {
   isResourceActivationKey,
   isSlideResourceKind,
 } from '../src/resource-navigation.mjs'
-import { getAdaptedAttribution } from '../src/resource-attribution.mjs'
+import { getAdaptedAttribution, getResourceCredits } from '../src/resource-attribution.mjs'
 
 test('改编卡片会保留各自的资源 ID，点击后能识别目标版本', () => {
   const html = [
@@ -94,4 +94,27 @@ test('改编页来源信息始终指向原作者与被改编的版本', () => {
     originalTitle: '我把〈祝福〉上成一场庭审·祥林嫂剧本杀',
     sourceVersion: 'V10',
   })
+})
+
+test('原创资源的信息栏只展示原创作者', () => {
+  const credits = getResourceCredits(
+    { author: { name: '林若水' }, forkedFrom: null },
+    null,
+  )
+
+  assert.deepEqual(credits, [
+    { role: '原创作者', name: '林若水', resourceId: null },
+  ])
+})
+
+test('改编资源的信息栏同时展示可追溯的原创作者与改编者', () => {
+  const credits = getResourceCredits(
+    { author: { name: '周涛' }, forkedFrom: 'res-xianglin' },
+    { id: 'res-xianglin', author: { name: '林若水' } },
+  )
+
+  assert.deepEqual(credits, [
+    { role: '原创作者', name: '林若水', resourceId: 'res-xianglin' },
+    { role: '改编者', name: '周涛', resourceId: null },
+  ])
 })

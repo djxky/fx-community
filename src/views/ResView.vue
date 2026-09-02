@@ -5,7 +5,7 @@ import Sidebar from '../components/Sidebar.vue'
 import { RESOURCES_BY_ID } from '../data/resources'
 import { store } from '../store'
 import { bindForkCardResourceIds, isSlideResourceKind } from '../resource-navigation.mjs'
-import { getAdaptedAttribution } from '../resource-attribution.mjs'
+import { getAdaptedAttribution, getResourceCredits } from '../resource-attribution.mjs'
 
 const DEFAULT_RESOURCE_ID = 'res-xianglin'
 
@@ -70,6 +70,20 @@ function renderForkSection(resource) {
   return `<div class="fg-community-remix-heading" style="font-size:13px;color:#9A9A9A;font-weight:600;margin:20px 0 12px;">社区改编 · ${formatNumber(resource.stats.adapt)} 个版本</div>${cards}</div></div>`
 }
 
+function renderResourceCredits(resource) {
+  const parent = resource.forkedFrom ? RESOURCES_BY_ID[resource.forkedFrom] : null
+  const shieldIcon = '<span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>'
+
+  return getResourceCredits(resource, parent).map((credit) => {
+    const linkAttributes = credit.resourceId
+      ? ` class="fg-inforow fg-credit-link" data-resource-id="${escapeHtml(credit.resourceId)}" role="link" tabindex="0" aria-label="查看原创作者 ${escapeHtml(credit.name)} 的原作"`
+      : ' class="fg-inforow"'
+    const linkMark = credit.resourceId ? '<span class="fg-credit-arrow" aria-hidden="true">↗</span>' : ''
+
+    return `<div${linkAttributes}>${shieldIcon}${escapeHtml(credit.role)} <b style="margin-left:auto;">${escapeHtml(credit.name)}${linkMark}</b></div>`
+  }).join('')
+}
+
 function replaceMotherForkSection(html, resource) {
   return html.replace(
     /<div style="font-size:13px;color:#9A9A9A;font-weight:600;margin:20px 0 12px;">社区改编 · [\s\S]*?<\/div><\/div>(?=\n\s*<\/div>\n\s*<div>\n\s*<div class="fg-sec-h">🤝 共创贡献)/,
@@ -96,6 +110,7 @@ function renderMotherResourceHtml(template, resource) {
     __RES_ADAPT__: formatNumber(resource.stats.adapt),
     __RES_CONTRIBUTOR_NAME__: contributor.name,
     __RES_LATEST_VERSION__: latestVersion.v,
+    __RES_CREDIT_ROWS__: renderResourceCredits(resource),
     __RES_CONTRIBUTOR_COUNT__: resource.contributors.length,
     __RES_CONTRIBUTORS__: renderContributors(resource.contributors),
     __RES_TOPIC_LABEL__: topicLabel,
@@ -105,7 +120,7 @@ function renderMotherResourceHtml(template, resource) {
     __RES_PREVIEW_LABEL__: slideResource ? '课件 · 1 / 6' : `${kindLabel} · 运行预览`,
   }
 
-  let html = renderSlots(template, slots, ['__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__'])
+  let html = renderSlots(template, slots, ['__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__'])
 
   html = html.replace('data-count="1334">1,334', `data-count="${resource.stats.star}">${formatNumber(resource.stats.star)}`)
   html = html.replace('社区改编 · 12 个版本', `社区改编 · ${formatNumber(resource.stats.adapt)} 个版本`)
@@ -192,7 +207,6 @@ function renderAdaptedResourceHtml(template, resource) {
   html = html.replace('<div id="fg-about">', `<div id="fg-about">${aboutSource}`)
   html = html.replace('<button class="fg-use fg-save-copy">保存副本</button>', '<button class="fg-use fg-save-copy">使用此版本</button>')
   html = html.replace('>改编</button></div>', '>继续改编</button></div>')
-  html = html.replace('原创作者 <b style="margin-left:auto;">', '改编者 <b style="margin-left:auto;">')
   return html
 }
 

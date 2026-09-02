@@ -763,6 +763,12 @@ a:hover { color: #141F1B; }
     .fg-inforow:first-child { border-top:none; padding-top:0; }
     .fg-inforow .ico { width:16px; color:#D4D4D4; display:flex; }
     .fg-inforow b { color:#141F1B; font-weight:600; }
+    .fg-credit-link { cursor:pointer; transition:color .16s ease; }
+    .fg-credit-link b { display:inline-flex; align-items:center; gap:5px; }
+    .fg-credit-arrow { color:#9A9A9A; font-size:11px; transition:color .16s ease,transform .16s ease; }
+    .fg-credit-link:hover b,
+    .fg-credit-link:hover .fg-credit-arrow { color:#9B650B; }
+    .fg-credit-link:hover .fg-credit-arrow { transform:translate(1px,-1px); }
     /* 页脚 */
     .fg-foot { border-top:1px solid #ECECEC; margin-top:40px; padding:22px 0 26px; display:flex; align-items:center; gap:16px; color:#9A9A9A; font-size:12px; }
     .fg-foot .fb { font-size:16px; font-weight:700; color:#141F1B; letter-spacing:.3px; }
