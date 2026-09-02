@@ -136,7 +136,7 @@ test('成长阶段会切换整组真实课程和对应行动入口', async () =>
   assert.doesNotMatch(rendered.growthPath, /新手推荐合集/)
   assert.match(rendered.growthPath, /看完动手做一个，提交你的作品/)
   assert.match(rendered.growthPath, /完成并提交即可参加案例征集：30 积分 · 电子结业证 · 社区展示/)
-  assert.match(rendered.growthPath, /<button type="button" class="st-btn">提交作品<\/button>/)
+  assert.match(rendered.growthPath, /<button type="button" class="st-btn" data-academy-submit-open>提交作品<\/button>/)
 })
 
 test('新手提交作品会提供完整的审核信息弹窗', async () => {
@@ -157,6 +157,7 @@ test('新手提交作品会提供完整的审核信息弹窗', async () => {
   assert.match(rendered.growthPath, /name="certificateName"[^>]*required/)
   assert.match(rendered.growthPath, />提交审核<\/button>/)
   assert.match(rendered.growthPath, /class="academy-submission-success" hidden/)
+  assert.match(rendered.visibilityCss, /\.academy-submission-modal\[hidden\]\{display:none\}/)
 })
 
 test('提交弹窗可以打开，并在必填信息有效后切换到审核状态', async () => {

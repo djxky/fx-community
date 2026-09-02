@@ -85,12 +85,11 @@ function renderGrowthPath(courses, filters, coverUrls) {
     }).join('\n')
     const firstCourse = levelCourses[0]
     const actionControl = level.actionType === 'submit'
-      ? `<button type="button" class="st-btn">${escapeHtml(level.actionLabel)}</button>`
+      ? `<button type="button" class="st-btn" data-academy-submit-open>${escapeHtml(level.actionLabel)}</button>`
       : `<label class="st-btn" for="${courseRadioId(firstCourse)}" tabindex="0" role="button">${escapeHtml(level.actionLabel)}</label>`
-    const submitActionAttribute = level.actionType === 'submit' ? ' data-academy-submit-open' : ''
     return `<div class="growth-panel growth-panel-${level.key}" id="growth-panel-${level.key}">
       <div class="grid4">${cards}</div>
-      <div class="submit-strip"${submitActionAttribute}><div class="st-ic" aria-hidden="true">↑</div><div><div class="st-t">${escapeHtml(level.actionTitle)}</div><div class="st-d">${escapeHtml(level.actionDescription)}</div></div>${actionControl}</div>
+      <div class="submit-strip"><div class="st-ic" aria-hidden="true">↑</div><div><div class="st-t">${escapeHtml(level.actionTitle)}</div><div class="st-d">${escapeHtml(level.actionDescription)}</div></div>${actionControl}</div>
     </div>`
   }).join('\n')
 
@@ -102,26 +101,26 @@ function renderGrowthPath(courses, filters, coverUrls) {
       <div class="academy-submission-backdrop" data-academy-submit-close></div>
       <div class="academy-submission-dialog">
         <button type="button" class="academy-submission-close" data-academy-submit-close aria-label="关闭">×</button>
-        <div class="academy-submission-kicker">新手作品审核</div>
-        <h3 id="academy-submission-title">提交你的第一份 AI 课堂作品</h3>
-        <p class="academy-submission-intro">填写下面的信息，老师审核通过后即可获得积分、电子结业证和社区展示机会。</p>
+        <div class="academy-submission-kicker">WORK SUBMISSION</div>
+        <h3 id="academy-submission-title">提交你的课堂作品</h3>
+        <p class="academy-submission-intro">完成对应课程并提交作品后，我们会进行作品反馈与记录。</p>
         <form class="academy-submission-form">
           <div class="academy-submission-grid">
-            <label>省份<select name="province" required><option value="">请选择省份</option><option>北京市</option><option>上海市</option><option>广东省</option><option>浙江省</option><option>江苏省</option></select></label>
-            <label>城市<input name="city" type="text" placeholder="请输入城市" required></label>
-            <label class="academy-submission-wide">学校<input name="school" type="text" placeholder="请输入学校名称" required></label>
-            <label>教师姓名<input name="teacherId" type="text" placeholder="请输入姓名"></label>
-            <label>作品链接<input name="workUrl" type="url" placeholder="https://" required></label>
-            <label>联系邮箱<input name="email" type="email" placeholder="用于接收审核结果" required></label>
-            <label class="academy-submission-wide">证书署名<input name="certificateName" type="text" placeholder="电子结业证上的姓名" required></label>
-            <label class="academy-submission-wide">参与活动<input value="飞象老师 AI 工作坊·开学第一课·2026 秋" readonly></label>
+            <label><span class="academy-field-label">您所在地区 <b>*</b></span><select name="province" required><option value="">请选择省份</option><option>北京市</option><option>上海市</option><option>广东省</option><option>浙江省</option><option>江苏省</option><option>山东省</option><option>四川省</option><option>湖北省</option><option>湖南省</option><option>其他</option></select></label>
+            <label><span class="academy-field-label">城市 / 行政区 <b>*</b></span><input name="city" type="text" placeholder="请输入城市或行政区" required></label>
+            <label class="academy-submission-wide"><span class="academy-field-label">关联工作坊 <b>*</b></span><input name="workshop" value="飞象老师 AI 工作坊·开学第一课·2026 秋" readonly></label>
+            <label class="academy-submission-wide"><span class="academy-field-label">学校 <b>*</b></span><input name="school" type="text" placeholder="请输入学校全称" required></label>
+            <label class="academy-submission-wide"><span class="academy-field-label">教师 ID（个人防伪码） <em>选填</em></span><input name="teacherId" type="text" placeholder="请输入教师 ID（个人防伪码）"></label>
+            <label class="academy-submission-wide"><span class="academy-field-label">已发布在飞象老师的作品链接 <b>*</b></span><input name="workUrl" type="url" placeholder="https://www.feixianglaoshi.com/#/chat?..." required><small>仅支持当前登录账号发布的飞象老师作品，提交时将自动校验归属。</small></label>
+            <label class="academy-submission-wide"><span class="academy-field-label">证书发放邮箱 <b>*</b></span><input name="email" type="email" placeholder="仅用于证书发放" required></label>
+            <label class="academy-submission-wide"><span class="academy-field-label">证书姓名 <b>*</b></span><input name="certificateName" type="text" placeholder="证书上的姓名" required></label>
           </div>
           <div class="academy-submission-form-actions"><button type="button" class="academy-submission-cancel" data-academy-submit-close>暂不提交</button><button type="submit" class="academy-submission-submit">提交审核</button></div>
         </form>
         <div class="academy-submission-success" hidden>
           <div class="academy-submission-success-icon">✓</div>
-          <h4>已提交审核</h4>
-          <p>我们会在 3 个工作日内完成审核，结果将发送到你的联系邮箱。</p>
+          <h4>作品已提交审核</h4>
+          <p>我们会核验作品信息，并将反馈与证书发放结果发送到你的邮箱。</p>
           <button type="button" class="academy-submission-submit" data-academy-submit-close>返回课程</button>
         </div>
       </div>
@@ -213,7 +212,7 @@ function renderVisibilityCss(courses, filters) {
   const growthRules = growthLevels.map((level) => (
     `#view-academy #growth-level-${level.key}:checked ~ .growth-panels .growth-panel-${level.key}{display:block}\n#view-academy #growth-level-${level.key}:checked ~ .who label[for="growth-level-${level.key}"]{background:#F1F4F2;box-shadow:inset 0 -3px 0 var(--goldsolid);color:var(--ink)}`
   )).join('\n')
-  return `${coursePages}{display:block}\n${filterRules}\n${growthRules}`
+  return `${coursePages}{display:block}\n${filterRules}\n${growthRules}\n#view-academy .academy-submission-modal[hidden]{display:none}`
 }
 
 export function renderAcademyCourseUi({ courses, filters, coverUrls }) {
