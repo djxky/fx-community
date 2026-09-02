@@ -20,6 +20,8 @@ const filteredItems = computed(() => {
 // 主榜：前 3 名重点位（金银铜），其余两列平铺、不标号、不展开
 const podiumItems = computed(() => filteredItems.value.slice(0, 3))
 const restItems = computed(() => filteredItems.value.slice(3, 9))
+const creatorTopItems = computed(() => filteredItems.value.slice(0, 3).map((item, index) => ({ item, index })))
+const creatorRestItems = computed(() => filteredItems.value.slice(3, 10).map((item, index) => ({ item, index: index + 3 })))
 
 // 创作者 compact：默认 6 条，可展开
 const compactItems = computed(() => (compactExpanded.value ? filteredItems.value : filteredItems.value.slice(0, 6)))
@@ -34,7 +36,7 @@ function placeClass(index) {
   <article class="rank-board" :class="`rank-${variant}-board`">
     <header v-if="variant !== 'main' && variant !== 'grid' && variant !== 'remix'" class="rank-board-head">
       <div class="rank-board-title"><span v-if="board.hot" class="rank-board-mark">●</span>{{ board.title }}</div>
-      <span class="rank-board-period">{{ period }} · {{ board.period }}</span>
+      <span class="rank-board-period">{{ period }} · {{ variant === 'creator' ? '作品数量' : board.period }}</span>
     </header>
 
     <!-- 主榜：三名重点位 + 两列密集列表 -->
@@ -108,6 +110,32 @@ function placeClass(index) {
             </div>
           </div>
         </article>
+      </div>
+    </template>
+
+    <!-- 创作者贡献榜：左侧前三名 + 右侧其余排名 -->
+    <template v-else-if="variant === 'creator'">
+      <div class="creator-split">
+        <section class="creator-top" aria-label="前三名">
+          <div class="creator-subhead"><strong>TOP 3</strong><span>贡献作品最多</span></div>
+          <article v-for="entry in creatorTopItems" :key="entry.item.rankKey || entry.item.name" class="creator-top-row" :class="{ 'creator-top-first': entry.index === 0 }">
+            <span class="rank-place" :class="placeClass(entry.index)"><b>{{ medals[entry.index] }}</b>{{ entry.index + 1 }}</span>
+            <span class="rank-avatar creator-top-avatar"><img v-if="entry.item.portrait" :src="entry.item.portrait" alt="" /><b v-else>{{ entry.item.initial }}</b></span>
+            <span class="creator-top-copy"><strong>{{ entry.item.name }}</strong><small>{{ entry.item.sub }}</small></span>
+            <span class="creator-top-score"><b>{{ entry.item.metric }}</b><small>{{ entry.item.unit || board.metricLabel }}</small></span>
+          </article>
+        </section>
+        <section class="creator-rest" aria-label="其他创作者">
+          <div class="creator-subhead"><strong>其他创作者</strong><span>第 4–10 名</span></div>
+          <div class="creator-rest-grid">
+            <div v-for="entry in creatorRestItems" :key="entry.item.rankKey || entry.item.name" class="creator-rank-row nav-studio" tabindex="0" role="button">
+              <span class="rank-place" :class="placeClass(entry.index)">{{ entry.index + 1 }}</span>
+              <span class="rank-avatar rank-compact-avatar"><img v-if="entry.item.portrait" :src="entry.item.portrait" alt="" /><b v-else>{{ entry.item.initial }}</b></span>
+              <span class="creator-rank-copy"><strong>{{ entry.item.name }}</strong><small>{{ entry.item.sub }}</small></span>
+              <span class="creator-rank-metric"><b>{{ entry.item.metric }}</b><small>{{ entry.item.unit || board.metricLabel }}</small></span>
+            </div>
+          </div>
+        </section>
       </div>
     </template>
 
@@ -203,6 +231,36 @@ button { font:inherit; }
 .rank-remix-foot strong small { margin-left:3px; color:#9A9A9A; font-size:9px; font-weight:500; }
 .rank-remix-role { display:inline-block; margin-left:6px; padding:1px 6px; border:1px solid #D9AF3C; border-radius:7px; color:#8A6D00; font-size:9px; font-weight:700; white-space:nowrap; }
 
+/* 创作者贡献榜：左侧前三名 + 右侧其余排名 */
+.creator-split { display:grid; grid-template-columns:minmax(280px,.78fr) minmax(0,1.22fr); gap:24px; align-items:start; }
+.creator-top { min-width:0; padding-right:24px; border-right:1px solid #ECECEC; }
+.creator-subhead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:8px; }
+.creator-subhead strong { color:#141F1B; font-size:12px; font-weight:700; }
+.creator-subhead span { color:#9A9A9A; font-size:10px; white-space:nowrap; }
+.creator-top-row { position:relative; display:flex; align-items:center; gap:11px; min-height:66px; padding:10px 8px; border-top:1px solid #ECECEC; border-radius:10px; }
+.creator-top-row:first-of-type { border-top:0; }
+.creator-top-first { min-height:94px; border:1px solid #FBEFC6; background:#FFF6DF; box-shadow:0 4px 12px rgba(217,175,60,.1); }
+.creator-top-row > .rank-place { position:static; flex:0 0 28px; }
+.creator-top-avatar { width:42px; height:42px; flex-basis:42px; font-size:14px; }
+.creator-top-first .creator-top-avatar { width:58px; height:58px; flex-basis:58px; border:2px solid #D9AF3C; font-size:18px; }
+.creator-top-copy { display:flex; min-width:0; flex:1; flex-direction:column; gap:4px; }
+.creator-top-copy strong { overflow:hidden; color:#141F1B; font-size:14px; font-weight:700; text-overflow:ellipsis; white-space:nowrap; }
+.creator-top-copy small { overflow:hidden; color:#9A9A9A; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+.creator-top-score { flex:0 0 auto; text-align:right; white-space:nowrap; }
+.creator-top-score b { display:block; color:#141F1B; font-size:17px; font-weight:750; font-variant-numeric:tabular-nums; }
+.creator-top-score small { display:block; margin-top:2px; color:#9A9A9A; font-size:9px; }
+.creator-rest { min-width:0; }
+.creator-rest-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:18px; }
+.creator-rank-row { display:flex; align-items:center; gap:10px; min-width:0; min-height:58px; padding:9px 4px; border-top:1px solid #ECECEC; cursor:pointer; transition:background .15s ease; }
+.creator-rank-row:hover { background:#F7F7F7; }
+.creator-rank-row > .rank-place { position:static; flex:0 0 28px; }
+.creator-rank-copy { display:flex; min-width:0; flex:1; flex-direction:column; gap:3px; }
+.creator-rank-copy strong { overflow:hidden; color:#141F1B; font-size:13px; font-weight:650; text-overflow:ellipsis; white-space:nowrap; }
+.creator-rank-copy small { overflow:hidden; color:#9A9A9A; font-size:10px; text-overflow:ellipsis; white-space:nowrap; }
+.creator-rank-metric { flex:0 0 auto; min-width:76px; text-align:right; white-space:nowrap; }
+.creator-rank-metric b { display:block; color:#141F1B; font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; }
+.creator-rank-metric small { display:block; margin-top:2px; color:#9A9A9A; font-size:9px; }
+
 /* 通用 */
 .rank-mini-author { display:flex; align-items:center; gap:5px; min-width:0; overflow:hidden; color:#7A7C7C; font-size:11px; white-space:nowrap; text-overflow:ellipsis; }
 .rank-avatar { width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; overflow:hidden; border:1px solid #ECECEC; border-radius:50%; background:#F7F7F7; color:#141F1B; font-size:10px; }
@@ -232,5 +290,6 @@ button { font:inherit; }
 @media (max-width:1100px) { .rank-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media (max-width:980px) { .rank-list-2col { grid-template-columns:1fr; } .rank-list-2col > .rank-list-row:nth-child(2) { border-top:1px solid #F1F1F1; } }
 @media (max-width:900px) { .rank-podium { grid-template-columns:1fr; } .rank-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .rank-remix { grid-template-columns:1fr; } }
-@media (max-width:720px) { .rank-board { padding:16px; } .rank-list-chip { display:none; } .rank-list-cite { display:none; } }
+@media (max-width:780px) { .creator-split { grid-template-columns:1fr; gap:16px; } .creator-top { padding-right:0; padding-bottom:16px; border-right:0; border-bottom:1px solid #ECECEC; } }
+@media (max-width:720px) { .rank-board { padding:16px; } .rank-list-chip { display:none; } .rank-list-cite { display:none; } .creator-rest-grid { grid-template-columns:1fr; } }
 </style>

@@ -1,4 +1,11 @@
 import { show, store } from '../store'
+import {
+  buildResourceUrl,
+  getResourceNavigationState,
+  getResourceRouteFromSearch,
+  isResourceActivationKey,
+} from '../resource-navigation.mjs'
+import { RESOURCES_BY_ID } from '../data/resources'
 
 // 全局点击委托:顶层视图切换走 store(响应式),视图内部的小交互(tab/榜单维度/筛选/头像菜单)保留 DOM 操作。
 // 这套逻辑沿用原型里跑通的委托,只把 show() 换成写 store.view。
@@ -6,9 +13,13 @@ export function installDelegation() {
   function closeMenus() {
     document.querySelectorAll('.avatar-menu').forEach(function (mn) { mn.style.display = 'none' })
   }
-  function go(which) {
+  function go(which, options) {
+    var opts = options || {}
     closeMenus()
     show(which)
+    if (opts.syncUrl !== false && which !== 'res' && window.location.search) {
+      window.history.pushState({ view: which }, '', window.location.pathname)
+    }
     window.scrollTo(0, 0)
     // 下一帧把该视图 main 滚到顶
     requestAnimationFrame(function () {
@@ -46,6 +57,26 @@ export function installDelegation() {
   }
 
   normalizeCommunityTabs()
+
+  window.addEventListener('popstate', function () {
+    var resourceRoute = getResourceRouteFromSearch(
+      window.location.search,
+      new Set(Object.keys(RESOURCES_BY_ID)),
+    )
+    if (resourceRoute) {
+      store.resourceId = resourceRoute.resourceId
+      go(resourceRoute.view, { syncUrl: false })
+      return
+    }
+    go('rank', { syncUrl: false })
+  })
+
+  document.addEventListener('keydown', function (e) {
+    var resourceLink = e.target.closest('[data-resource-id][role="link"]')
+    if (!resourceLink || !isResourceActivationKey(e.key)) return
+    e.preventDefault()
+    resourceLink.click()
+  })
 
   document.addEventListener('click', function (e) {
     // 头像下拉菜单
@@ -92,8 +123,18 @@ export function installDelegation() {
 
     var resourceLink = e.target.closest('[data-resource-id]')
     if (resourceLink) {
-      store.resourceId = resourceLink.getAttribute('data-resource-id')
-      go('res')
+      var resourceNavigation = getResourceNavigationState(
+        resourceLink.getAttribute('data-resource-id'),
+        new Set(Object.keys(RESOURCES_BY_ID)),
+      )
+      if (resourceNavigation) {
+        store.resourceId = resourceNavigation.resourceId
+        var resourceUrl = buildResourceUrl(window.location.pathname, resourceNavigation.resourceId)
+        if (window.location.pathname + window.location.search !== resourceUrl) {
+          window.history.pushState(resourceNavigation, '', resourceUrl)
+        }
+        go(resourceNavigation.view, { syncUrl: false })
+      }
       return
     }
 

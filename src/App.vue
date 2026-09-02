@@ -2,6 +2,8 @@
 import { onMounted } from 'vue'
 import { store } from './store'
 import { installDelegation } from './composables/delegation'
+import { RESOURCES_BY_ID } from './data/resources'
+import { getResourceRouteFromSearch } from './resource-navigation.mjs'
 import DiscoverView from './views/DiscoverView.vue'
 import RankView from './views/RankView.vue'
 import AcademyView from './views/AcademyView.vue'
@@ -17,7 +19,17 @@ import LineageView from './views/LineageView.vue'
 import NotifyView from './views/NotifyView.vue'
 import MyLibraryView from './views/MyLibraryView.vue'
 
-store.view = 'rank'
+const initialResourceRoute = getResourceRouteFromSearch(
+  window.location.search,
+  new Set(Object.keys(RESOURCES_BY_ID)),
+)
+
+if (initialResourceRoute) {
+  store.view = initialResourceRoute.view
+  store.resourceId = initialResourceRoute.resourceId
+} else {
+  store.view = 'rank'
+}
 
 onMounted(() => installDelegation())
 </script>

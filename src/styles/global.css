@@ -617,6 +617,41 @@ a:hover { color: #141F1B; }
     .fg-author .nm { font-size:14.5px; font-weight:600; color:#141F1B; display:flex; align-items:center; gap:6px; }
     .fg-follow { background:#EFEFEF; color:#141F1B; border:1px solid #D4D4D4; border-radius:7px; padding:3px 10px; font-size:11.5px; font-weight:700; cursor:pointer; margin-left:4px; }
     .fg-author .vf { width:13px; height:13px; border-radius:50%; background:#141F1B; display:inline-flex; align-items:center; justify-content:center; }
+    .fg-adapted-author { flex-wrap:wrap; column-gap:9px; row-gap:5px; }
+    .fg-adapted-author .vf { background:#EAA52B; }
+    .fg-adapted-inline { display:inline-flex; align-items:center; gap:7px; color:#858D89; font-size:12.5px; font-weight:500; }
+    .fg-origin-inline { color:#68736E; font-weight:650; cursor:pointer; transition:color .16s ease; }
+    .fg-origin-inline:hover { color:#10231C; }
+    .fg-origin-about { display:grid; grid-template-columns:76px minmax(0,1fr) auto; align-items:center; gap:14px; margin:0 0 28px; padding:14px 0; border-top:1px solid #E2E7E4; border-bottom:1px solid #E2E7E4; cursor:pointer; }
+    .fg-origin-about-label { color:#68736E; font-size:12px; font-weight:700; }
+    .fg-origin-about-copy { min-width:0; }
+    .fg-origin-about-copy > div { display:flex; align-items:baseline; gap:8px; min-width:0; }
+    .fg-origin-about-copy strong { flex:0 0 auto; color:#10231C; font-size:13.5px; }
+    .fg-origin-about-copy span { overflow:hidden; color:#3D4843; font-size:13px; text-overflow:ellipsis; white-space:nowrap; }
+    .fg-origin-about-copy small { display:block; margin-top:3px; color:#929995; font-size:11.5px; }
+    .fg-origin-about-link { color:#68736E; font-size:12px; font-weight:650; white-space:nowrap; transition:color .16s ease; }
+    .fg-origin-about:hover .fg-origin-about-link { color:#10231C; }
+    .fg-adapted-prev { background:#EDE9DE; }
+    .fg-adapted-prev > img { visibility:hidden; }
+    .fg-adapted-cover { position:absolute; inset:0; z-index:1; overflow:hidden; padding:5.5% 6.5%; box-sizing:border-box; color:#10231C; background:
+      radial-gradient(circle at 84% 28%,rgba(16,35,28,.075) 0 1px,transparent 1.5px) 0 0/18px 18px,
+      linear-gradient(112deg,rgba(255,255,255,.9),rgba(244,240,229,.96) 58%,rgba(224,218,201,.98));
+      font-family:"Songti SC","STSong","Noto Serif SC",serif; pointer-events:none; }
+    .fg-adapted-cover::before { content:""; position:absolute; inset:4.2%; border:1px solid rgba(16,35,28,.32); }
+    .fg-adapted-cover::after { content:""; position:absolute; top:4.2%; bottom:4.2%; left:15%; width:1px; background:rgba(16,35,28,.18); }
+    .fg-cover-paper-mark { position:absolute; top:5%; right:5%; color:rgba(16,35,28,.06); font-size:clamp(118px,18vw,240px); font-weight:800; line-height:.85; transform:rotate(-5deg); }
+    .fg-cover-topline { position:relative; z-index:1; display:flex; justify-content:space-between; margin-left:11%; padding-bottom:2.4%; border-bottom:1px solid rgba(16,35,28,.28); font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; color:#59635F; font-size:clamp(8px,.78vw,12px); font-weight:650; letter-spacing:.14em; }
+    .fg-cover-docket { position:relative; z-index:1; display:flex; align-items:center; gap:10px; margin:5.5% 0 0 11%; color:#25312C; font-size:clamp(12px,1.22vw,18px); font-weight:700; letter-spacing:.12em; }
+    .fg-cover-docket i { padding:3px 7px; border:1px solid rgba(16,35,28,.32); font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; font-size:clamp(7px,.7vw,10px); font-style:normal; font-weight:650; letter-spacing:.08em; }
+    .fg-cover-edition { position:relative; z-index:1; margin:1.7% 0 0 11%; font-size:clamp(30px,4.2vw,60px); font-weight:900; line-height:1.05; letter-spacing:.03em; }
+    .fg-cover-rule { position:relative; z-index:1; display:flex; align-items:center; gap:12px; width:62%; margin:4.2% 0 0 11%; color:#48534E; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; font-size:clamp(8px,.9vw,13px); letter-spacing:.1em; }
+    .fg-cover-rule span { flex:1; height:1px; background:#A5543A; }
+    .fg-cover-rule b { font-weight:650; }
+    .fg-cover-credit { position:absolute; z-index:1; left:17.5%; right:8%; bottom:17.5%; display:flex; gap:20px; font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; color:#5F6864; font-size:clamp(8px,.82vw,12px); }
+    .fg-cover-credit b { color:#10231C; font-size:1.12em; }
+    .fg-cover-seal { position:absolute; z-index:1; right:9%; bottom:14.5%; width:clamp(38px,4.5vw,62px); aspect-ratio:1; display:flex; align-items:center; justify-content:center; border:2px solid rgba(165,84,58,.68); color:#A5543A; font-size:clamp(10px,1.15vw,16px); font-weight:800; letter-spacing:.08em; transform:rotate(-7deg); }
+    .fg-adapted-prev .fg-prevbar { z-index:2; }
+    .fg-adapted-detail .fg-slide-thumb:first-child .fg-slide-thumb-art { border-color:#7E8C85; background:linear-gradient(145deg,#F4F0E5,#D9D3C3); color:#10231C; }
     .fg-hero-l h1 { font-size:34px; font-weight:700; color:#10231C; letter-spacing:-0.6px; line-height:1.28; margin:0 0 22px; text-wrap:balance; }
     .fg-summary { margin:0 0 18px; color:#69746F; font-size:14px; line-height:1.7; }
     .fg-meta { font-size:12.5px; color:#7A827E; display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-top:20px; }
@@ -984,7 +1019,8 @@ a:hover { color: #141F1B; }
 #view-res main { height:100dvh !important; }
 
 #view-res button:focus-visible,
-#view-res [role="button"]:focus-visible {
+#view-res [role="button"]:focus-visible,
+#view-res [role="link"]:focus-visible {
   outline:2px solid #10231C;
   outline-offset:3px;
 }
@@ -1010,6 +1046,12 @@ a:hover { color: #141F1B; }
   #view-res .fg-hero-l h1 { margin-bottom:18px; font-size:27px; line-height:1.3; }
   #view-res .fg-summary { font-size:13.5px; }
   #view-res .fg-author { margin-bottom:14px; }
+  #view-res .fg-origin-about { grid-template-columns:minmax(0,1fr) auto; gap:6px 12px; }
+  #view-res .fg-origin-about-label { grid-column:1; }
+  #view-res .fg-origin-about-link { grid-column:2; grid-row:1; }
+  #view-res .fg-origin-about-copy { grid-column:1 / -1; grid-row:2; }
+  #view-res .fg-origin-about-copy > div { align-items:flex-start; }
+  #view-res .fg-origin-about-copy span { white-space:normal; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
   #view-res .fg-action-primary { gap:8px; }
   #view-res .fg-use,
   #view-res .fg-adapt { min-height:46px; }

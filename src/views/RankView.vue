@@ -12,7 +12,7 @@ const activeSubject = ref('全部')
 const mainBoard = BOARDS.find(board => board.key === 'classroom')
 const hotBoard = BOARDS.find(board => board.key === 'latest')
 const remixBoard = BOARDS.find(board => board.key === 'adaptation')
-const creatorBoards = BOARDS.filter(board => board.key === 'recognized' || board.key === 'rising')
+const creatorBoard = BOARDS.find(board => board.key === 'recognized')
 </script>
 
 <template>
@@ -107,17 +107,15 @@ const creatorBoards = BOARDS.filter(board => board.key === 'recognized' || board
             <RankBoardCard :board="remixBoard" variant="remix" :subject="activeSubject" />
           </section>
 
-          <!-- 创作者（次要条带，随全局学科） -->
-          <section class="rank-block" aria-label="创作者榜">
+          <!-- 创作者贡献榜（随全局学科） -->
+          <section class="rank-block rank-creator-block" aria-label="创作者榜">
             <div class="rank-heading">
               <div class="rank-heading-title">
-                <h2>创作者</h2>
-                <span class="rank-heading-note">把课堂方法做成作品、被同行持续使用的人</span>
+                <h2>创作者贡献榜</h2>
+                <span class="rank-heading-note">看见把课堂方法做成作品的人</span>
               </div>
             </div>
-            <div class="rank-creator-grid">
-              <RankBoardCard v-for="board in creatorBoards" :key="board.key" :board="board" :subject="activeSubject" />
-            </div>
+            <RankBoardCard :board="creatorBoard" variant="creator" :period="activePeriod" :subject="activeSubject" />
           </section>
         </div>
 
@@ -141,6 +139,7 @@ button { font:inherit; }
 
 .rank-shell { max-width:1220px; margin:0 auto; padding:24px 34px 64px; }
 .rank-block { margin-bottom:30px; }
+.rank-creator-block > .rank-heading, .rank-creator-block :deep(.rank-creator-board) { max-width:1040px; margin-left:auto; margin-right:auto; }
 .rank-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:14px; }
 .rank-heading-title { min-width:0; }
 .rank-heading-title h2 { margin:0; color:#141F1B; font-size:19px; letter-spacing:-.03em; }
@@ -173,11 +172,7 @@ button { font:inherit; }
 .rank-editorial-metric { flex:0 0 auto; color:#7A7C7C; font-size:10px; white-space:nowrap; }
 .rank-editorial-metric b { color:#141F1B; font-size:14px; }
 
-.rank-creator-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; align-items:start; }
-.rank-creator-grid :deep(.rank-board) { height:100%; box-sizing:border-box; }
-
 @media (max-width:1300px) { .rank-shell, .rank-subbar-in { padding-left:24px; padding-right:24px; } }
-@media (max-width:1100px) { .rank-creator-grid { grid-template-columns:1fr; } }
 @media (max-width:900px) { .rank-heading-filter { flex-direction:column; align-items:flex-start; gap:12px; } }
 @media (max-width:720px) { .rank-shell { padding:22px 16px 46px; } .rank-editorial-grid { grid-template-columns:1fr; } .rank-editorial-card { grid-template-columns:1fr; } .rank-editorial-cover { min-height:160px; aspect-ratio:16 / 9; } .seg { flex-wrap:wrap; } }
 </style>
