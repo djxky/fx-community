@@ -8,6 +8,7 @@ const escapeHtml = (value) => String(value)
 const courseRadioId = (course) => `lp-course-${course.id}`
 const coursePageId = (course) => `LP-course-${course.id}`
 const filterId = (filter) => `course-type-${filter.key}`
+const libraryVisibleLimit = 6
 
 const growthLevels = [
   {
@@ -136,15 +137,37 @@ function renderLibrary(courses, filters, coverUrls) {
     return `<label class="chip" for="${filterId(filter)}" tabindex="0" role="button">${escapeHtml(filter.label)}</label>`
   }).join('\n')
 
+  const filterCourses = (filter) => (
+    filter.key === 'all'
+      ? courses
+      : courses.filter((course) => course.categories.includes(filter.key))
+  )
+  const foldableFilters = filters
+    .map((filter) => ({ filter, count: filterCourses(filter).length }))
+    .filter(({ count }) => count > libraryVisibleLimit)
+  const filterRanks = Object.fromEntries(foldableFilters.map(({ filter }) => [filter.key, 0]))
+  const expandInputs = foldableFilters.map(({ filter }) => (
+    `<input type="checkbox" id="course-expand-${filter.key}" class="course-expand-toggle">`
+  )).join('\n')
+  const expandControls = foldableFilters.map(({ filter, count }) => (
+    `<label class="exp-btn course-expand-control course-expand-control-${filter.key}" for="course-expand-${filter.key}" tabindex="0" role="button"><span class="more-t">展开全部 ${count} 个</span><span class="less-t">收起</span><span class="ch">⌄</span></label>`
+  )).join('\n')
+
   const labels = labelsByKey(filters)
   const cards = courses.map((course) => {
     const coverUrl = coverUrls[course.coverFile]
     const categoryClasses = course.categories.map((key) => `cat-${key}`).join(' ')
+    const foldClasses = foldableFilters.flatMap(({ filter }) => {
+      const matches = filter.key === 'all' || course.categories.includes(filter.key)
+      if (!matches) return []
+      filterRanks[filter.key] += 1
+      return filterRanks[filter.key] > libraryVisibleLimit ? [`fold-${filter.key}`] : []
+    }).join(' ')
     const categoryTags = course.categories
       .slice(0, 2)
       .map((key) => `<span>${escapeHtml(labels[key])}</span>`)
       .join('')
-    return `<label class="lcard course-card ${categoryClasses}" for="${courseRadioId(course)}" tabindex="0" role="button" aria-label="查看课程：${escapeHtml(course.title)}">
+    return `<label class="lcard course-card ${categoryClasses}${foldClasses ? ` ${foldClasses}` : ''}" for="${courseRadioId(course)}" tabindex="0" role="button" aria-label="查看课程：${escapeHtml(course.title)}">
       <div class="lthumb course-cover" style="background-image:url('${escapeHtml(coverUrl)}')">
         <span class="dur">${escapeHtml(course.duration)}</span><span class="p" aria-hidden="true">▶</span>
       </div>
@@ -154,8 +177,10 @@ function renderLibrary(courses, filters, coverUrls) {
 
   return `<div class="course-library">
     ${filterInputs}
+    ${expandInputs}
     <div class="lib-filter">${filterLabels}</div>
     <div class="lgrid">${cards}</div>
+    <div class="course-expand-controls">${expandControls}</div>
   </div>`
 }
 
@@ -209,10 +234,23 @@ function renderVisibilityCss(courses, filters) {
     return `#view-academy #${filterId(filter)}:checked ~ .lgrid ${selector}{display:flex}
 #view-academy #${filterId(filter)}:checked ~ .lib-filter label[for="${filterId(filter)}"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}`
   }).join('\n')
+  const foldRules = filters.flatMap((filter) => {
+    const count = filter.key === 'all'
+      ? courses.length
+      : courses.filter((course) => course.categories.includes(filter.key)).length
+    if (count <= libraryVisibleLimit) return []
+    return [
+      `#view-academy #${filterId(filter)}:checked ~ #course-expand-${filter.key}:not(:checked) ~ .lgrid .fold-${filter.key}{display:none}`,
+      `#view-academy #${filterId(filter)}:checked ~ .course-expand-controls .course-expand-control-${filter.key}{display:inline-flex}`,
+      `#view-academy #course-expand-${filter.key}:checked ~ .course-expand-controls label[for="course-expand-${filter.key}"] .more-t{display:none}`,
+      `#view-academy #course-expand-${filter.key}:checked ~ .course-expand-controls label[for="course-expand-${filter.key}"] .less-t{display:inline}`,
+      `#view-academy #course-expand-${filter.key}:checked ~ .course-expand-controls label[for="course-expand-${filter.key}"] .ch{transform:rotate(180deg)}`,
+    ]
+  }).join('\n')
   const growthRules = growthLevels.map((level) => (
     `#view-academy #growth-level-${level.key}:checked ~ .growth-panels .growth-panel-${level.key}{display:block}\n#view-academy #growth-level-${level.key}:checked ~ .who label[for="growth-level-${level.key}"]{background:#F1F4F2;box-shadow:inset 0 -3px 0 var(--goldsolid);color:var(--ink)}`
   )).join('\n')
-  return `${coursePages}{display:block}\n${filterRules}\n${growthRules}\n#view-academy .academy-submission-modal[hidden]{display:none}`
+  return `${coursePages}{display:block}\n#view-academy .course-expand-toggle{position:absolute;opacity:0;width:0;height:0;pointer-events:none}\n#view-academy .course-expand-control{display:none}\n${filterRules}\n${foldRules}\n${growthRules}\n#view-academy .academy-submission-modal[hidden]{display:none}`
 }
 
 export function renderAcademyCourseUi({ courses, filters, coverUrls }) {

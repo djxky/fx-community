@@ -239,3 +239,21 @@ test('分类、课程卡和详情导航可通过键盘激活对应单选框', as
   assert.equal(clicked, 1)
   assert.equal(prevented, true)
 })
+
+test('使用技巧攻略每个分类默认展示 6 个，超出部分可展开和收起', async () => {
+  const { academyCourses, academyFilters } = await loadCatalog()
+  const { renderAcademyCourseUi } = await loadRenderer()
+  const coverUrls = Object.fromEntries(academyCourses.map((course) => [course.coverFile, `/covers/${course.coverFile}`]))
+  const rendered = renderAcademyCourseUi({ courses: academyCourses, filters: academyFilters, coverUrls })
+  const cardClasses = [...rendered.library.matchAll(/class="lcard course-card ([^"]+)"/g)].map((match) => match[1])
+
+  assert.equal(cardClasses.length, 23)
+  assert.doesNotMatch(cardClasses[5], /fold-all/)
+  assert.match(cardClasses[6], /fold-all/)
+  assert.equal(cardClasses.filter((className) => className.includes('fold-courseware')).length, 9)
+  assert.equal((rendered.library.match(/course-expand-control-(?:all|courseware)/g) || []).length, 2)
+  assert.match(rendered.library, /id="course-expand-all" class="course-expand-toggle"/)
+  assert.match(rendered.library, /for="course-expand-all"[^>]*>[^<]*<span class="more-t">展开全部 23 个<\/span>/)
+  assert.match(rendered.visibilityCss, /#course-type-all:checked ~ #course-expand-all:not\(:checked\) ~ \.lgrid \.fold-all\{display:none\}/)
+  assert.match(rendered.visibilityCss, /#course-type-courseware:checked ~ #course-expand-courseware:not\(:checked\) ~ \.lgrid \.fold-courseware\{display:none\}/)
+})
