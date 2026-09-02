@@ -154,6 +154,14 @@
 #view-academy .lbody .lc-by{font-size:12.5px;color:var(--muted);margin-top:9px}
 #view-academy .lbody .lf{margin-top:auto;padding-top:12px;display:flex;align-items:center;gap:9px;font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums}
 #view-academy .lbody .lf .sep{width:2px;height:2px;border-radius:50%;background:#CFCFCF}
+#view-academy .course-library .course-card{display:none;cursor:pointer;color:inherit;text-decoration:none}
+#view-academy .course-library>.chip-radio{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+#view-academy .course-cover{background-size:cover;background-position:center;background-repeat:no-repeat}
+#view-academy .course-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,31,27,0) 48%,rgba(20,31,27,.18));pointer-events:none}
+#view-academy .course-cover .dur,#view-academy .course-cover .p{z-index:1}
+#view-academy .course-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:11px}
+#view-academy .course-tags span{font-size:10.5px;line-height:1;color:#5D665F;background:#F1F4F2;border-radius:999px;padding:5px 8px}
+#view-academy .course-card:focus-visible{outline:2px solid var(--goldsolid);outline-offset:3px}
 #view-academy .match-band{background:linear-gradient(120deg,#1B211C,#141F1B);border:1px solid #2A302A;border-radius:18px;padding:24px 26px;color:#fff;position:relative;overflow:hidden}
 #view-academy .match-band::after{content:"";position:absolute;right:-40px;bottom:-70px;width:230px;height:230px;border-radius:50%;background:radial-gradient(circle,rgba(217,175,60,.2),transparent 70%)}
 #view-academy .match-band .kk{color:var(--goldsolid);font-size:12px;font-weight:700;letter-spacing:.05em}
@@ -176,7 +184,8 @@
 #view-academy .acard p{font-size:12.5px;color:var(--muted);line-height:1.5}
 #view-academy .acard .qrbox{width:56px;height:56px;border-radius:9px;background:repeating-linear-gradient(45deg,#141F1B,#141F1B 3px,#fff 3px,#fff 6px);flex:0 0 56px}
 #view-academy .foot{color:var(--faint);font-size:12px;text-align:center;padding-top:22px;border-top:1px solid var(--hair);margin-top:8px}
-@media(max-width:1000px){#view-academy .grid4, #view-academy .typecards{grid-template-columns:repeat(2,1fr)}#view-academy .who, #view-academy .steps, #view-academy .match-cards, #view-academy .apply{grid-template-columns:1fr;flex-direction:column}}
+@media(max-width:1000px){#view-academy .grid4, #view-academy .typecards, #view-academy .lgrid{grid-template-columns:repeat(2,1fr)}#view-academy .who, #view-academy .steps, #view-academy .match-cards, #view-academy .apply{grid-template-columns:1fr;flex-direction:column}}
+@media(max-width:680px){#view-academy .lgrid{grid-template-columns:1fr}#view-academy .lesson-page{padding-inline:18px}#view-academy .lp-cols{gap:22px}#view-academy .lp-side{position:static}}
 #view-academy /* —— 交互：可点卡片 / 选择器 / 详情浮层 —— */
 .vcard.vlink{color:inherit;text-decoration:none;display:block;cursor:pointer}
 #view-academy .who .lvl-radio{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
@@ -195,6 +204,7 @@
 #view-academy .lp-radio{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
 #view-academy .lesson-page{display:none;max-width:1120px;margin:0 auto;padding:18px 34px 72px}
 #view-academy #lp-30:checked ~ #LP-30, #view-academy #lp-31:checked ~ #LP-31, #view-academy #lp-32:checked ~ #LP-32, #view-academy #lp-33:checked ~ #LP-33, #view-academy #lp-34:checked ~ #LP-34, #view-academy #lp-24:checked ~ #LP-24, #view-academy #lp-25:checked ~ #LP-25, #view-academy #lp-26:checked ~ #LP-26, #view-academy #lp-27:checked ~ #LP-27, #view-academy #lp-28:checked ~ #LP-28, #view-academy #lp-29:checked ~ #LP-29{display:block}
+<!-- ACADEMY_COURSE_VISIBILITY -->
 #view-academy .lp-back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;margin-bottom:16px}
 #view-academy .lp-back:hover{color:var(--ink)}
 #view-academy .lp-video{border-radius:16px;overflow:hidden;background:#000;margin-bottom:22px}
@@ -250,6 +260,7 @@
       <input type="radio" name="lp" id="lp-27" class="lp-radio">
       <input type="radio" name="lp" id="lp-28" class="lp-radio">
       <input type="radio" name="lp" id="lp-29" class="lp-radio">
+      <!-- ACADEMY_COURSE_RADIOS -->
       <div class="ws-main">
     <div class="shell">
 
@@ -313,28 +324,7 @@
       <!-- 场景 3：按资源类型找教程 -->
       <section class="sec">
         <div class="sec-h"><h2>使用技巧攻略</h2></div>
-        <div class="lib-filter">
-          <input type="radio" name="ctype" id="t1" class="chip-radio" checked>
-          <label class="chip" for="t1">教学动画 <span class="c">28</span></label>
-          <input type="radio" name="ctype" id="t2" class="chip-radio">
-          <label class="chip" for="t2">互动课件 <span class="c">41</span></label>
-          <input type="radio" name="ctype" id="t3" class="chip-radio">
-          <label class="chip" for="t3">数据回收 <span class="c">16</span></label>
-          <input type="radio" name="ctype" id="t4" class="chip-radio">
-          <label class="chip" for="t4">教学应用 <span class="c">23</span></label>
-          <input type="radio" name="ctype" id="t5" class="chip-radio">
-          <label class="chip" for="t5">AI 技能 <span class="c">19</span></label>
-          <input type="radio" name="ctype" id="t6" class="chip-radio">
-          <label class="chip" for="t6">教案 · 题单 <span class="c">34</span></label>
-        </div>
-        <div class="lgrid">
-          <div class="lcard"><div class="lthumb academy-photo academy-img-math"><span class="lv">新手</span><span class="dur">08:12</span><span class="p">▶</span></div><div class="lbody"><h4>从零做一个教学动画：讲解型动画的完整搭建流程</h4><div class="lc-by">北京市海淀区中关村第二小学 · 王雪 老师</div></div></div>
-          <div class="lcard"><div class="lthumb academy-photo academy-img-courseware"><span class="lv">新手</span><span class="dur">05:30</span><span class="p">▶</span></div><div class="lbody"><h4>一张图生成同款：图片转动态讲解片</h4><div class="lc-by">上海市静安区教育学院附属学校 · 李航 老师</div></div></div>
-          <div class="lcard"><div class="lthumb academy-photo academy-img-math"><span class="lv">进阶</span><span class="dur">11:48</span><span class="p">▶</span></div><div class="lbody"><h4>抽象概念可视化：让函数图像与化学反应动起来</h4><div class="lc-by">杭州第二中学 · 陈晓 老师</div></div></div>
-          <div class="lcard"><div class="lthumb academy-photo academy-img-review"><span class="lv">进阶</span><span class="dur">09:20</span><span class="p">▶</span></div><div class="lbody"><h4>分镜到成片：多镜头教学动画的组织方法</h4><div class="lc-by">南京市琅琊路小学 · 刘敏 老师</div></div></div>
-          <div class="lcard"><div class="lthumb academy-photo academy-img-feedback"><span class="lv">新手</span><span class="dur">04:05</span><span class="p">▶</span></div><div class="lbody"><h4>配音与字幕：为动画加旁白和逐字字幕</h4><div class="lc-by">成都市实验小学 · 张伟 老师</div></div></div>
-          <div class="lcard"><div class="lthumb academy-photo academy-img-workshop"><span class="lv">新手</span><span class="dur">03:40</span><span class="p">▶</span></div><div class="lbody"><h4>套用模板出片：动画模板库快速上手</h4><div class="lc-by">广州市天河区华阳小学 · 黄丽 老师</div></div></div>
-        </div>
+        <!-- ACADEMY_COURSE_LIBRARY -->
       </section>
 
       <!-- 场景 4a：赛事专区 -->
@@ -530,4 +520,5 @@
           <aside class="lp-side"><div class="pl-head">更多课程</div><div class="pl-list"><label class="pl-item" for="lp-30"><span class="pl-thumb cov-30"></span><div class="pl-t">数学难点互动课件设计</div></label><label class="pl-item" for="lp-31"><span class="pl-thumb cov-31"></span><div class="pl-t">词汇句型情境表达训练</div></label><label class="pl-item" for="lp-32"><span class="pl-thumb cov-32"></span><div class="pl-t">全学科自学工作台搭建</div></label><label class="pl-item" for="lp-33"><span class="pl-thumb cov-33"></span><div class="pl-t">教学应用搭建与数据迭代</div></label><label class="pl-item" for="lp-34"><span class="pl-thumb cov-34"></span><div class="pl-t">AI辅助思考课堂设计</div></label><label class="pl-item" for="lp-24"><span class="pl-thumb cov-24"><span class="pl-dur">40:08</span></span><div class="pl-t">人机分工做3D交互课件</div></label><label class="pl-item" for="lp-25"><span class="pl-thumb cov-25"><span class="pl-dur">45:36</span></span><div class="pl-t">小学数学游戏化学习</div></label><label class="pl-item" for="lp-26"><span class="pl-thumb cov-26"><span class="pl-dur">46:25</span></span><div class="pl-t">无代码班级管理系统</div></label><label class="pl-item" for="lp-27"><span class="pl-thumb cov-27"><span class="pl-dur">1:00:51</span></span><div class="pl-t">学情画像与教学偏好</div></label><label class="pl-item" for="lp-28"><span class="pl-thumb cov-28"><span class="pl-dur">44:46</span></span><div class="pl-t">学习系统与角色脚手架</div></label></div></aside>
         </div>
       </div>
+      <!-- ACADEMY_COURSE_DETAILS -->
     </main>

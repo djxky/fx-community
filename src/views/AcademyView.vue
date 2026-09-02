@@ -6,6 +6,26 @@ import coursewarePractice from '../assets/academy/courseware-practice.jpg'
 import mathVisualization from '../assets/academy/math-visualization.jpg'
 import peerReview from '../assets/academy/peer-review.jpg'
 import learningFeedback from '../assets/academy/learning-feedback.jpg'
+import { academyCourses, academyFilters } from '../data/academy-courses.mjs'
+import { composeAcademyMarkup, renderAcademyCourseUi } from '../lib/academy-course-renderer.mjs'
+
+const courseCoverModules = import.meta.glob('../assets/academy/course-covers/*.jpg', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+})
+
+const courseCoverUrls = Object.fromEntries(
+  Object.entries(courseCoverModules).map(([path, url]) => [path.split('/').pop(), url]),
+)
+
+const renderedCourseUi = renderAcademyCourseUi({
+  courses: academyCourses,
+  filters: academyFilters,
+  coverUrls: courseCoverUrls,
+})
+
+const renderedRaw = composeAcademyMarkup(raw, renderedCourseUi)
 
 const academyImages = {
   '--academy-img-workshop': `url(${workshopCollaboration})`,
@@ -20,7 +40,7 @@ const academyImages = {
   <div id="view-academy" :style="academyImages">
     <div class="page">
       <Sidebar active="academy" />
-      <div style="display:contents" v-html="raw"></div>
+      <div style="display:contents" v-html="renderedRaw"></div>
     </div>
   </div>
 </template>
