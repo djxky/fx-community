@@ -4,7 +4,8 @@
 #view-academy :where(h1,h2,h3,h4,p,button,figure){margin:0;padding:0}
 #view-academy *,#view-academy *::before,#view-academy *::after{box-sizing:border-box}
 #view-academy .main{flex:1;min-width:0;height:100vh;overflow-y:auto}
-#view-academy .tbar{background:var(--surface);border-bottom:1px solid var(--hair);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:57px;position:sticky;top:0;z-index:5}
+#view-academy .tbar{background:var(--surface);border-bottom:1px solid var(--hair);padding:0;height:57px;position:sticky;top:0;z-index:5}
+#view-academy .tbar-in{width:100%;max-width:1120px;margin:0 auto;padding:0 34px;height:100%;display:flex;align-items:center;justify-content:flex-start}
 #view-academy .tbar .tt{font-size:16px;font-weight:700}
 #view-academy .tbar .tt small{color:var(--faint);font-weight:400;font-size:12px;margin-left:8px}
 #view-academy .search{display:flex;align-items:center;gap:8px;background:var(--ground);border:1px solid var(--hair);border-radius:10px;padding:9px 14px;width:280px;font-size:13px;color:var(--faint)}
@@ -230,7 +231,7 @@
 #view-academy .main{background:var(--ground)}
 </style>
 <main class="main">
-    <div class="tbar"><div class="search">🔍 搜直播、教程、案例…</div></div>
+    <div class="tbar"><div class="tbar-in"><div class="search">🔍 搜直播、教程、案例…</div></div></div>
     <input type="radio" name="lp" id="lp-home" class="lp-radio" checked>
       <input type="radio" name="lp" id="lp-30" class="lp-radio">
       <input type="radio" name="lp" id="lp-31" class="lp-radio">

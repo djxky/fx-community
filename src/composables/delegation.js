@@ -89,6 +89,16 @@ export function installDelegation() {
     }
     if (!e.target.closest('.avatar-menu')) closeMenus()
 
+    // AI 工作坊课程详情:进入/返回时把 academy 滚动容器复位到顶部(纯 CSS radio 切换不会重置滚动)
+    var lpLabel = e.target.closest('label[for^="lp-"]')
+    if (lpLabel) {
+      requestAnimationFrame(function () {
+        document.querySelectorAll('#view-academy .main').forEach(function (x) { x.scrollTop = 0 })
+        window.scrollTo(0, 0)
+      })
+      return
+    }
+
     var slideThumb = e.target.closest('.fg-slide-thumb')
     if (slideThumb) {
       var slideRail = slideThumb.closest('.fg-slide-rail')
