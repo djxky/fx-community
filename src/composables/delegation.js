@@ -6,6 +6,11 @@ import {
   isResourceActivationKey,
 } from '../resource-navigation.mjs'
 import { RESOURCES_BY_ID } from '../data/resources'
+import {
+  closeAcademySubmission,
+  handleAcademySubmissionClick,
+  submitAcademyWork,
+} from '../lib/academy-submission.mjs'
 
 // 全局点击委托:顶层视图切换走 store(响应式),视图内部的小交互(tab/榜单维度/筛选/头像菜单)保留 DOM 操作。
 // 这套逻辑沿用原型里跑通的委托,只把 show() 换成写 store.view。
@@ -78,7 +83,14 @@ export function installDelegation() {
     resourceLink.click()
   })
 
+  document.addEventListener('submit', function (e) {
+    submitAcademyWork(e, document)
+  })
+
   document.addEventListener('click', function (e) {
+    if (closeAcademySubmission(e, document)) return
+    if (handleAcademySubmissionClick(e, document) === 'open') return
+
     // 头像下拉菜单
     var trig = e.target.closest('.avatar-trigger')
     if (trig) {

@@ -4,11 +4,7 @@
 #view-academy :where(h1,h2,h3,h4,p,button,figure){margin:0;padding:0}
 #view-academy *,#view-academy *::before,#view-academy *::after{box-sizing:border-box}
 #view-academy .main{flex:1;min-width:0;height:100vh;overflow-y:auto}
-#view-academy .tbar{background:var(--ground);padding:0;height:auto}
-#view-academy .tbar-in{width:100%;max-width:1120px;margin:0 auto;padding:24px 34px 0;display:flex;align-items:center;justify-content:flex-start}
-#view-academy .tbar .tt{font-size:26px;font-weight:800;letter-spacing:-.03em}
-#view-academy .tbar .tt small{color:var(--faint);font-weight:400;font-size:12px;margin-left:8px}
-#view-academy .search{display:flex;align-items:center;gap:8px;background:var(--ground);border:1px solid var(--hair);border-radius:10px;padding:9px 14px;width:280px;font-size:13px;color:var(--faint)}
+#view-academy .academy-title{font-size:26px;font-weight:800;letter-spacing:-.03em;margin-bottom:16px}
 #view-academy .shell{max-width:1120px;margin:0 auto;padding:20px 34px 70px}
 #view-academy .sec{margin-bottom:32px}
 #view-academy .sec-h{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}
@@ -69,6 +65,41 @@
 #view-academy .submit-strip .st-d{font-size:12px;color:#C4C7C4;margin-top:2px}
 #view-academy .submit-strip .st-btn{margin-left:auto;background:var(--goldsolid);color:var(--ink);border:0;border-radius:10px;padding:11px 20px;font-weight:700;font-size:13.5px;white-space:nowrap}
 #view-academy .mainline{margin-top:16px;background:var(--surface);border:1px solid var(--hair);border-radius:18px;padding:22px 24px}
+#view-academy .growth-path{background:var(--surface);border:1px solid var(--hair);border-radius:18px;overflow:hidden}
+#view-academy .growth-path>.growth-radio{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+#view-academy .growth-path .who{gap:0;border-bottom:1px solid var(--hair)}
+#view-academy .growth-path .who .tab{border:0;border-right:1px solid var(--hair);border-radius:0;min-height:78px;padding:16px 20px;transition:background .16s,box-shadow .16s}
+#view-academy .growth-path .who .tab:last-child{border-right:0}
+#view-academy .growth-path .who .tab:focus-visible,#view-academy .growth-course:focus-visible,#view-academy .growth-path .st-btn:focus-visible{outline:2px solid var(--goldsolid);outline-offset:-3px}
+#view-academy .growth-panels{padding:24px}
+#view-academy .growth-panel{display:none}
+#view-academy .growth-course{display:flex;flex-direction:column;color:inherit;text-decoration:none;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+#view-academy .growth-course:hover{border-color:#D8D8D8;box-shadow:0 6px 20px rgba(20,31,27,.05)}
+#view-academy .growth-cover{display:block;background-size:cover;background-position:center;background-repeat:no-repeat}
+#view-academy .growth-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,31,27,0) 48%,rgba(20,31,27,.16));pointer-events:none}
+#view-academy .growth-cover .idx,#view-academy .growth-cover .dur,#view-academy .growth-cover .p{z-index:1}
+#view-academy .growth-course .vbody{display:flex;flex:1;flex-direction:column}
+#view-academy .growth-title{display:-webkit-box;min-height:40px;overflow:hidden;font-size:14px;font-weight:600;line-height:1.45;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+#view-academy .growth-course .meta{margin-top:auto;padding-top:9px}
+#view-academy .academy-submission-modal{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:20px}
+#view-academy .academy-submission-backdrop{position:absolute;inset:0;background:rgba(20,31,27,.55);backdrop-filter:blur(3px)}
+#view-academy .academy-submission-dialog{position:relative;width:min(560px,100%);max-height:min(720px,calc(100vh - 40px));overflow:auto;background:var(--surface);border:1px solid var(--hair);border-radius:18px;padding:28px;box-shadow:0 24px 80px rgba(20,31,27,.24)}
+#view-academy .academy-submission-close{position:absolute;right:18px;top:15px;width:30px;height:30px;border:0;background:transparent;color:var(--muted);font-size:24px;line-height:1;cursor:pointer}
+#view-academy .academy-submission-kicker{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.08em}
+#view-academy .academy-submission-dialog h3{font-size:22px;line-height:1.35;margin-top:6px}
+#view-academy .academy-submission-intro{font-size:13px;color:var(--muted);line-height:1.6;margin-top:7px}
+#view-academy .academy-submission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}
+#view-academy .academy-submission-grid label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted);font-weight:600}
+#view-academy .academy-submission-grid .academy-submission-wide{grid-column:1/-1}
+#view-academy .academy-submission-grid input,#view-academy .academy-submission-grid select{width:100%;border:1px solid var(--hair);border-radius:9px;background:#fff;padding:10px 11px;color:var(--ink);font:inherit;font-size:13px;font-weight:400}
+#view-academy .academy-submission-grid input:focus,#view-academy .academy-submission-grid select:focus{outline:2px solid rgba(217,175,60,.45);border-color:var(--goldsolid)}
+#view-academy .academy-submission-form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+#view-academy .academy-submission-cancel{border:1px solid var(--hair);background:var(--surface);color:var(--muted);border-radius:9px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer}
+#view-academy .academy-submission-submit{border:0;background:var(--goldsolid);color:var(--ink);border-radius:9px;padding:10px 18px;font:inherit;font-weight:700;cursor:pointer}
+#view-academy .academy-submission-success{text-align:center;padding:30px 12px 12px}
+#view-academy .academy-submission-success-icon{width:46px;height:46px;border-radius:50%;margin:0 auto 12px;background:#E8F3EA;color:#2F7A43;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:800}
+#view-academy .academy-submission-success h4{font-size:19px}
+#view-academy .academy-submission-success p{font-size:13px;color:var(--muted);margin:6px 0 20px}
 #view-academy .mainline .kk{font-size:12px;font-weight:700;color:var(--gold)}
 #view-academy .mainline h1{font-size:22px;font-weight:800;margin:6px 0 4px}
 #view-academy .mainline .lead{font-size:13px;color:var(--muted);margin-bottom:20px}
@@ -184,8 +215,8 @@
 #view-academy .acard p{font-size:12.5px;color:var(--muted);line-height:1.5}
 #view-academy .acard .qrbox{width:56px;height:56px;border-radius:9px;background:repeating-linear-gradient(45deg,#141F1B,#141F1B 3px,#fff 3px,#fff 6px);flex:0 0 56px}
 #view-academy .foot{color:var(--faint);font-size:12px;text-align:center;padding-top:22px;border-top:1px solid var(--hair);margin-top:8px}
-@media(max-width:1000px){#view-academy .grid4, #view-academy .typecards, #view-academy .lgrid{grid-template-columns:repeat(2,1fr)}#view-academy .who, #view-academy .steps, #view-academy .match-cards, #view-academy .apply{grid-template-columns:1fr;flex-direction:column}}
-@media(max-width:680px){#view-academy .lgrid{grid-template-columns:1fr}#view-academy .lesson-page{padding-inline:18px}#view-academy .lp-cols{gap:22px}#view-academy .lp-side{position:static}}
+@media(max-width:1000px){#view-academy .grid4, #view-academy .typecards, #view-academy .lgrid{grid-template-columns:repeat(2,1fr)}#view-academy .who, #view-academy .steps, #view-academy .match-cards, #view-academy .apply{grid-template-columns:1fr;flex-direction:column}#view-academy .growth-path .who .tab{border-right:0;border-bottom:1px solid var(--hair)}#view-academy .growth-path .who .tab:last-child{border-bottom:0}}
+@media(max-width:680px){#view-academy .lgrid{grid-template-columns:1fr}#view-academy .lesson-page{padding-inline:18px}#view-academy .lp-cols{gap:22px}#view-academy .lp-side{position:static}#view-academy .growth-panels{padding:16px}#view-academy .growth-path .submit-strip{align-items:flex-start;flex-direction:column}#view-academy .growth-path .st-btn{margin-left:0;text-align:center;width:100%}#view-academy .academy-submission-dialog{padding:24px 18px}#view-academy .academy-submission-grid{grid-template-columns:1fr}#view-academy .academy-submission-grid .academy-submission-wide{grid-column:auto}}
 #view-academy /* —— 交互：可点卡片 / 选择器 / 详情浮层 —— */
 .vcard.vlink{color:inherit;text-decoration:none;display:block;cursor:pointer}
 #view-academy .who .lvl-radio{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
@@ -249,7 +280,6 @@
 #view-academy .main{background:var(--ground)}
 </style>
 <main class="main">
-    <div class="tbar"><div class="tbar-in"><div class="tt">AI 工作坊</div></div></div>
     <input type="radio" name="lp" id="lp-home" class="lp-radio" checked>
       <input type="radio" name="lp" id="lp-30" class="lp-radio">
       <input type="radio" name="lp" id="lp-31" class="lp-radio">
@@ -265,6 +295,7 @@
       <!-- ACADEMY_COURSE_RADIOS -->
       <div class="ws-main">
     <div class="shell">
+      <h1 class="academy-title">AI 教学工坊</h1>
 
       <!-- 0. 顶部运营位 -->
       <div class="hero">
@@ -280,24 +311,7 @@
       <!-- 场景 1：按水平找教程 -->
       <section class="sec">
         <div class="sec-h"><h2>AI 教学成长路径</h2></div>
-        <div class="who">
-          <input type="radio" name="lvl" id="lv-a" class="lvl-radio" checked>
-          <label class="tab lv1" for="lv-a"><div class="lvl"><i></i><i></i><i></i></div><div><div class="nm">新手入门</div><div class="d">第一次用 AI 上课</div></div></label>
-          <input type="radio" name="lvl" id="lv-b" class="lvl-radio">
-          <label class="tab lv2" for="lv-b"><div class="lvl"><i></i><i></i><i></i></div><div><div class="nm">进阶提升</div><div class="d">已上手，想深入</div></div></label>
-          <input type="radio" name="lvl" id="lv-c" class="lvl-radio">
-          <label class="tab lv3" for="lv-c"><div class="lvl"><i></i><i></i><i></i></div><div><div class="nm">高级</div><div class="d">资深老师，追求更高水平</div></div></label>
-        </div>
-        <div class="mainline">
-          <div class="coll-head"><span class="ct">新手推荐合集</span></div>
-          <div class="grid4">
-            <div class="vcard"><div class="vthumb academy-photo academy-img-courseware"><span class="idx">01</span><span class="dur">06:00</span><span class="p">▶</span></div><div class="vbody"><h4>平台上手：AI 能帮你的课做什么</h4><div class="meta">推荐先看 · 快速了解</div></div></div>
-            <div class="vcard"><div class="vthumb academy-photo academy-img-math"><span class="idx">02</span><span class="dur">08:30</span><span class="p">▶</span></div><div class="vbody"><h4>跟着做第一份：用模板做一份课堂作品</h4><div class="meta">动手实操</div></div></div>
-            <div class="vcard"><div class="vthumb academy-photo academy-img-review"><span class="idx">03</span><span class="dur">07:12</span><span class="p">▶</span></div><div class="vbody"><h4>常用玩法速览：动画 / 课件 / 题单怎么生成</h4><div class="meta">功能速览</div></div></div>
-            <div class="vcard"><div class="vthumb academy-photo academy-img-feedback"><span class="idx">04</span><span class="dur">05:40</span><span class="p">▶</span></div><div class="vbody"><h4>把作品用到课上：布置给学生与回收数据</h4><div class="meta">落地课堂</div></div></div>
-          </div>
-          <div class="submit-strip"><div class="st-ic">↑</div><div><div class="st-t">看完动手做一个，提交你的作品</div><div class="st-d">完成并提交即可参加案例征集：30 积分 · 电子结业证 · 社区展示</div></div><button class="st-btn">提交作品</button></div>
-        </div>
+        <!-- ACADEMY_GROWTH_PATH -->
       </section>
 
       <!-- 场景 2：直播 · 回放 -->

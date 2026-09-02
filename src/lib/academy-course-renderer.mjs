@@ -9,6 +9,40 @@ const courseRadioId = (course) => `lp-course-${course.id}`
 const coursePageId = (course) => `LP-course-${course.id}`
 const filterId = (filter) => `course-type-${filter.key}`
 
+const growthLevels = [
+  {
+    key: 'a',
+    className: 'lv1',
+    name: '新手入门',
+    description: '第一次用 AI 上课',
+    courseIds: [1, 2, 3, 4],
+    actionTitle: '看完动手做一个，提交你的作品',
+    actionDescription: '完成并提交即可参加案例征集：30 积分 · 电子结业证 · 社区展示',
+    actionLabel: '提交作品',
+    actionType: 'submit',
+  },
+  {
+    key: 'b',
+    className: 'lv2',
+    name: '进阶提升',
+    description: '已上手，想深入',
+    courseIds: [5, 6, 7, 13],
+    actionTitle: '选择一个学科难点，做成可操作的互动课堂',
+    actionDescription: '综合运用动画、3D 与互动课件完成课堂改造',
+    actionLabel: '开始进阶',
+  },
+  {
+    key: 'c',
+    className: 'lv3',
+    name: '高级',
+    description: '资深老师，追求更高水平',
+    courseIds: [8, 10, 14, 16],
+    actionTitle: '把成熟课堂方案沉淀成可复用的教学案例',
+    actionDescription: '深入命题、大单元与综合课堂设计，形成专业成果',
+    actionLabel: '挑战高级课程',
+  },
+]
+
 export function activateRadioLabelFromKeyboard(event, ownerDocument = globalThis.document) {
   if (event.key !== 'Enter' && event.key !== ' ') return false
   const label = event.target?.closest?.('label[for]')
@@ -29,6 +63,70 @@ function renderRadios(courses) {
   return courses
     .map((course) => `<input type="radio" name="lp" id="${courseRadioId(course)}" class="lp-radio">`)
     .join('\n')
+}
+
+function renderGrowthPath(courses, filters, coverUrls) {
+  const courseById = new Map(courses.map((course) => [course.id, course]))
+  const labels = labelsByKey(filters)
+  const inputs = growthLevels.map((level, index) => (
+    `<input type="radio" name="growth-level" id="growth-level-${level.key}" class="growth-radio"${index === 0 ? ' checked' : ''}>`
+  )).join('\n')
+  const tabs = growthLevels.map((level) => (
+    `<label class="tab ${level.className}" for="growth-level-${level.key}" tabindex="0" role="button"><span class="lvl" aria-hidden="true"><i></i><i></i><i></i></span><span><span class="nm">${escapeHtml(level.name)}</span><span class="d">${escapeHtml(level.description)}</span></span></label>`
+  )).join('\n')
+  const panels = growthLevels.map((level) => {
+    const levelCourses = level.courseIds.map((courseId) => courseById.get(courseId)).filter(Boolean)
+    const cards = levelCourses.map((course, index) => {
+      const categoryText = course.categories.slice(0, 2).map((key) => labels[key]).join(' · ')
+      return `<label class="vcard vlink growth-course" for="${courseRadioId(course)}" tabindex="0" role="button" aria-label="查看课程：${escapeHtml(course.title)}">
+        <span class="vthumb growth-cover" style="background-image:url('${escapeHtml(coverUrls[course.coverFile])}')"><span class="idx">${String(index + 1).padStart(2, '0')}</span><span class="dur">${escapeHtml(course.duration)}</span><span class="p" aria-hidden="true">▶</span></span>
+        <span class="vbody"><span class="growth-title">${escapeHtml(course.title)}</span><span class="meta">${escapeHtml(categoryText)}</span></span>
+      </label>`
+    }).join('\n')
+    const firstCourse = levelCourses[0]
+    const actionControl = level.actionType === 'submit'
+      ? `<button type="button" class="st-btn">${escapeHtml(level.actionLabel)}</button>`
+      : `<label class="st-btn" for="${courseRadioId(firstCourse)}" tabindex="0" role="button">${escapeHtml(level.actionLabel)}</label>`
+    const submitActionAttribute = level.actionType === 'submit' ? ' data-academy-submit-open' : ''
+    return `<div class="growth-panel growth-panel-${level.key}" id="growth-panel-${level.key}">
+      <div class="grid4">${cards}</div>
+      <div class="submit-strip"${submitActionAttribute}><div class="st-ic" aria-hidden="true">↑</div><div><div class="st-t">${escapeHtml(level.actionTitle)}</div><div class="st-d">${escapeHtml(level.actionDescription)}</div></div>${actionControl}</div>
+    </div>`
+  }).join('\n')
+
+  return `<div class="growth-path">
+    ${inputs}
+    <div class="who">${tabs}</div>
+    <div class="growth-panels">${panels}</div>
+    <div class="academy-submission-modal" hidden role="dialog" aria-modal="true" aria-labelledby="academy-submission-title">
+      <div class="academy-submission-backdrop" data-academy-submit-close></div>
+      <div class="academy-submission-dialog">
+        <button type="button" class="academy-submission-close" data-academy-submit-close aria-label="关闭">×</button>
+        <div class="academy-submission-kicker">新手作品审核</div>
+        <h3 id="academy-submission-title">提交你的第一份 AI 课堂作品</h3>
+        <p class="academy-submission-intro">填写下面的信息，老师审核通过后即可获得积分、电子结业证和社区展示机会。</p>
+        <form class="academy-submission-form">
+          <div class="academy-submission-grid">
+            <label>省份<select name="province" required><option value="">请选择省份</option><option>北京市</option><option>上海市</option><option>广东省</option><option>浙江省</option><option>江苏省</option></select></label>
+            <label>城市<input name="city" type="text" placeholder="请输入城市" required></label>
+            <label class="academy-submission-wide">学校<input name="school" type="text" placeholder="请输入学校名称" required></label>
+            <label>教师姓名<input name="teacherId" type="text" placeholder="请输入姓名"></label>
+            <label>作品链接<input name="workUrl" type="url" placeholder="https://" required></label>
+            <label>联系邮箱<input name="email" type="email" placeholder="用于接收审核结果" required></label>
+            <label class="academy-submission-wide">证书署名<input name="certificateName" type="text" placeholder="电子结业证上的姓名" required></label>
+            <label class="academy-submission-wide">参与活动<input value="飞象老师 AI 工作坊·开学第一课·2026 秋" readonly></label>
+          </div>
+          <div class="academy-submission-form-actions"><button type="button" class="academy-submission-cancel" data-academy-submit-close>暂不提交</button><button type="submit" class="academy-submission-submit">提交审核</button></div>
+        </form>
+        <div class="academy-submission-success" hidden>
+          <div class="academy-submission-success-icon">✓</div>
+          <h4>已提交审核</h4>
+          <p>我们会在 3 个工作日内完成审核，结果将发送到你的联系邮箱。</p>
+          <button type="button" class="academy-submission-submit" data-academy-submit-close>返回课程</button>
+        </div>
+      </div>
+    </div>
+  </div>`
 }
 
 function renderLibrary(courses, filters, coverUrls) {
@@ -112,11 +210,15 @@ function renderVisibilityCss(courses, filters) {
     return `#view-academy #${filterId(filter)}:checked ~ .lgrid ${selector}{display:flex}
 #view-academy #${filterId(filter)}:checked ~ .lib-filter label[for="${filterId(filter)}"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}`
   }).join('\n')
-  return `${coursePages}{display:block}\n${filterRules}`
+  const growthRules = growthLevels.map((level) => (
+    `#view-academy #growth-level-${level.key}:checked ~ .growth-panels .growth-panel-${level.key}{display:block}\n#view-academy #growth-level-${level.key}:checked ~ .who label[for="growth-level-${level.key}"]{background:#F1F4F2;box-shadow:inset 0 -3px 0 var(--goldsolid);color:var(--ink)}`
+  )).join('\n')
+  return `${coursePages}{display:block}\n${filterRules}\n${growthRules}`
 }
 
 export function renderAcademyCourseUi({ courses, filters, coverUrls }) {
   return {
+    growthPath: renderGrowthPath(courses, filters, coverUrls),
     radios: renderRadios(courses),
     library: renderLibrary(courses, filters, coverUrls),
     details: renderDetails(courses, filters, coverUrls),
@@ -128,6 +230,7 @@ export function composeAcademyMarkup(source, rendered) {
   return source
     .replace('<!-- ACADEMY_COURSE_VISIBILITY -->', rendered.visibilityCss)
     .replace('<!-- ACADEMY_COURSE_RADIOS -->', rendered.radios)
+    .replace('<!-- ACADEMY_GROWTH_PATH -->', rendered.growthPath)
     .replace('<!-- ACADEMY_COURSE_LIBRARY -->', rendered.library)
     .replace('<!-- ACADEMY_COURSE_DETAILS -->', rendered.details)
 }

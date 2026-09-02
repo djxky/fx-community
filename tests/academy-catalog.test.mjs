@@ -14,7 +14,18 @@ async function loadRenderer() {
   try {
     return await import('../src/lib/academy-course-renderer.mjs')
   } catch {
-    return { renderAcademyCourseUi: () => ({ radios: '', library: '', details: '', visibilityCss: '' }) }
+    return { renderAcademyCourseUi: () => ({ growthPath: '', radios: '', library: '', details: '', visibilityCss: '' }) }
+  }
+}
+
+async function loadSubmission() {
+  try {
+    return await import('../src/lib/academy-submission.mjs')
+  } catch {
+    return {
+      handleAcademySubmissionClick: () => null,
+      submitAcademyWork: () => false,
+    }
   }
 }
 
@@ -96,16 +107,96 @@ test('课程渲染结果提供全部筛选、可点击卡片和直播回放式�
   assert.match(rendered.details, /src="https:\/\/metis-online\.fbcontent\.cn\/metis-lectio\//)
 })
 
-test('课程内容被注入原型的筛选区、详情区和可见性样式', async () => {
+test('课程内容被注入原型的成长路径、筛选区、详情区和可见性样式', async () => {
   const renderer = await loadRenderer()
-  const source = '<style><!-- ACADEMY_COURSE_VISIBILITY --></style><!-- ACADEMY_COURSE_RADIOS --><!-- ACADEMY_COURSE_LIBRARY --><!-- ACADEMY_COURSE_DETAILS -->'
-  const rendered = { visibilityCss: '.visible{}', radios: '<input>', library: '<section>', details: '<article>' }
+  const source = '<style><!-- ACADEMY_COURSE_VISIBILITY --></style><!-- ACADEMY_COURSE_RADIOS --><!-- ACADEMY_GROWTH_PATH --><!-- ACADEMY_COURSE_LIBRARY --><!-- ACADEMY_COURSE_DETAILS -->'
+  const rendered = { visibilityCss: '.visible{}', radios: '<input>', growthPath: '<nav>', library: '<section>', details: '<article>' }
 
   assert.equal(typeof renderer.composeAcademyMarkup, 'function')
   assert.equal(
     renderer.composeAcademyMarkup(source, rendered),
-    '<style>.visible{}</style><input><section><article>',
+    '<style>.visible{}</style><input><nav><section><article>',
   )
+})
+
+test('成长阶段会切换整组真实课程和对应行动入口', async () => {
+  const { academyCourses, academyFilters } = await loadCatalog()
+  const { renderAcademyCourseUi } = await loadRenderer()
+  const coverUrls = Object.fromEntries(academyCourses.map((course) => [course.coverFile, `/covers/${course.coverFile}`]))
+  const rendered = renderAcademyCourseUi({ courses: academyCourses, filters: academyFilters, coverUrls })
+
+  assert.equal((rendered.growthPath.match(/name="growth-level"/g) || []).length, 3)
+  assert.equal((rendered.growthPath.match(/class="growth-panel growth-panel-/g) || []).length, 3)
+  assert.equal((rendered.growthPath.match(/class="vcard vlink growth-course/g) || []).length, 12)
+  assert.match(rendered.growthPath, /飞象老师核心功能实操：教学动画、AI命题组题与大单元设计/)
+  assert.match(rendered.growthPath, /王红蕾｜小学几何交互动画：拖拽操作理解图形关系/)
+  assert.match(rendered.growthPath, /彭亚红｜AI命题实操：提示词、题型优化与好题改编/)
+  assert.match(rendered.growthPath, /id="growth-level-b"[^>]*>[\s\S]*for="growth-level-b"/)
+  assert.match(rendered.visibilityCss, /#growth-level-b:checked ~ \.growth-panels \.growth-panel-b\{display:block\}/)
+  assert.doesNotMatch(rendered.growthPath, /新手推荐合集/)
+  assert.match(rendered.growthPath, /看完动手做一个，提交你的作品/)
+  assert.match(rendered.growthPath, /完成并提交即可参加案例征集：30 积分 · 电子结业证 · 社区展示/)
+  assert.match(rendered.growthPath, /<button type="button" class="st-btn">提交作品<\/button>/)
+})
+
+test('新手提交作品会提供完整的审核信息弹窗', async () => {
+  const { academyCourses, academyFilters } = await loadCatalog()
+  const { renderAcademyCourseUi } = await loadRenderer()
+  const coverUrls = Object.fromEntries(academyCourses.map((course) => [course.coverFile, `/covers/${course.coverFile}`]))
+  const rendered = renderAcademyCourseUi({ courses: academyCourses, filters: academyFilters, coverUrls })
+
+  assert.match(rendered.growthPath, /data-academy-submit-open/)
+  assert.match(rendered.growthPath, /class="academy-submission-modal"[^>]*hidden/)
+  assert.match(rendered.growthPath, /name="province"[^>]*required/)
+  assert.match(rendered.growthPath, /name="city"[^>]*required/)
+  assert.match(rendered.growthPath, /value="飞象老师 AI 工作坊·开学第一课·2026 秋"[^>]*readonly/)
+  assert.match(rendered.growthPath, /name="school"[^>]*required/)
+  assert.match(rendered.growthPath, /name="teacherId"/)
+  assert.match(rendered.growthPath, /name="workUrl"[^>]*required/)
+  assert.match(rendered.growthPath, /name="email"[^>]*required/)
+  assert.match(rendered.growthPath, /name="certificateName"[^>]*required/)
+  assert.match(rendered.growthPath, />提交审核<\/button>/)
+  assert.match(rendered.growthPath, /class="academy-submission-success" hidden/)
+})
+
+test('提交弹窗可以打开，并在必填信息有效后切换到审核状态', async () => {
+  const submission = await loadSubmission()
+  const form = { hidden: true }
+  const success = { hidden: false }
+  const focusTarget = { focused: false, focus() { this.focused = true } }
+  const modal = {
+    hidden: true,
+    querySelector(selector) {
+      if (selector === '.academy-submission-form') return form
+      if (selector === '.academy-submission-success') return success
+      if (selector === 'select, input, button') return focusTarget
+      return null
+    },
+  }
+  const root = {
+    querySelector(selector) {
+      if (selector === '.academy-submission-modal') return modal
+      if (selector === '.academy-submission-success') return success
+      return null
+    },
+  }
+  const openTarget = { closest: (selector) => selector === '[data-academy-submit-open]' ? {} : null }
+
+  assert.equal(submission.handleAcademySubmissionClick({ target: openTarget }, root), 'open')
+  assert.equal(modal.hidden, false)
+  assert.equal(form.hidden, false)
+  assert.equal(success.hidden, true)
+
+  let prevented = false
+  const validForm = {
+    hidden: false,
+    matches: (selector) => selector === '.academy-submission-form',
+    checkValidity: () => true,
+  }
+  assert.equal(submission.submitAcademyWork({ target: validForm, preventDefault: () => { prevented = true } }, root), true)
+  assert.equal(prevented, true)
+  assert.equal(validForm.hidden, true)
+  assert.equal(success.hidden, false)
 })
 
 test('分类单选框与课程网格保持同级，让跨分类 CSS 能显示卡片', async () => {
