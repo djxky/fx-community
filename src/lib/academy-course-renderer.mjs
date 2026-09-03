@@ -114,13 +114,16 @@ function relatedCoursesFor(course, courses) {
   return [...shared, ...fallback].slice(0, 5)
 }
 
-function renderDetails(courses, typeFilters, coverUrls) {
+function renderDetails(courses, useFilters, typeFilters, coverUrls) {
   const typeKeys = new Set(typeFilters.map((filter) => filter.key))
-  const labels = labelsByKey(typeFilters)
+  const useKeys = new Set(useFilters.map((filter) => filter.key))
+  const labels = { ...labelsByKey(useFilters), ...labelsByKey(typeFilters) }
   return courses.map((course) => {
     const coverUrl = coverUrls[course.coverFile]
-    const teacherInitial = course.teacher === '飞象老师' ? '飞' : course.teacher.slice(0, 1)
-    const categoryText = course.categories.filter((key) => typeKeys.has(key)).map((key) => labels[key]).join(' · ')
+    const [teacherName, teacherSchool] = String(course.teacher).split('｜').map((s) => s.trim())
+    const typeText = course.categories.filter((key) => key !== 'all' && typeKeys.has(key)).map((key) => labels[key]).join(' · ')
+    const useText = course.categories.filter((key) => key !== 'all' && useKeys.has(key)).map((key) => labels[key]).join(' · ')
+    const facts = (useText || typeText) ? `<div class="lp-facts">${useText ? `<span class="lp-fact"><b>适用范围</b>${escapeHtml(useText)}</span>` : ''}${typeText ? `<span class="lp-fact"><b>分类</b>${escapeHtml(typeText)}</span>` : ''}</div>` : ''
     const goals = course.goals.map((goal) => `<li>${escapeHtml(goal)}</li>`).join('')
     const related = relatedCoursesFor(course, courses).map((relatedCourse) => (
       `<label class="pl-item" for="${courseRadioId(relatedCourse)}" tabindex="0" role="button">
@@ -134,11 +137,9 @@ function renderDetails(courses, typeFilters, coverUrls) {
       <div class="lp-video"><video controls preload="metadata" poster="${escapeHtml(coverUrl)}" src="${escapeHtml(course.videoUrl)}"></video></div>
       <div class="lp-cols">
         <div class="lp-main">
-          <div class="lp-eyebrow">使用技巧攻略</div>
           <h1 class="lp-title">${escapeHtml(course.title)}</h1>
-          <div class="lp-by"><span class="lp-av">${escapeHtml(teacherInitial)}</span><div><div class="lp-by-n">${escapeHtml(course.teacher)}</div></div></div>
-          <div class="lp-facts"><span class="lp-fact"><b>课程分类</b>${escapeHtml(categoryText)}</span><span class="lp-fact"><b>适用范围</b>${escapeHtml(course.audience)}</span><span class="lp-fact"><b>课程时长</b>${escapeHtml(course.duration)}</span></div>
-          <p class="lp-lead">${escapeHtml(course.summary)}</p>
+          <div class="lp-by"><div><div class="lp-by-n">${escapeHtml(teacherName)}</div>${teacherSchool ? `<div class="lp-by-s">${escapeHtml(teacherSchool)}</div>` : ''}</div></div>
+          ${facts}
           <div class="lp-goals"><div class="lp-label">课程目标</div><ul>${goals}</ul></div>
         </div>
         <aside class="lp-side"><div class="pl-head">更多课程</div><div class="pl-list">${related}</div></aside>
@@ -168,7 +169,7 @@ export function renderAcademyCourseUi({ courses, useFilters, typeFilters, coverU
     submitCta: renderSubmitCta(),
     radios: renderRadios(courses),
     library: renderLibrary(courses, useFilters, typeFilters, coverUrls),
-    details: renderDetails(courses, typeFilters, coverUrls),
+    details: renderDetails(courses, useFilters, typeFilters, coverUrls),
     visibilityCss: renderVisibilityCss(courses, useFilters, typeFilters),
   }
 }
