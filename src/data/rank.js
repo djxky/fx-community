@@ -1,6 +1,5 @@
 import { COVERS } from './covers'
 import { PORTRAITS } from './portraits'
-import { MASTERS } from './masters'
 
 // 排行榜唯一数据源：排序信号与固定卡司均来自 PRD §8.4。
 // resource = 作品/资源 feature 榜；creator = 按创作者贡献排序的代表作榜。
@@ -123,17 +122,18 @@ export const EDITORIAL_FEATURES = [
     target: 'resource',
   },
   {
-    key: 'new-master', eyebrow: '新入驻名师',
-    title: latestBoard.items[0].author,
-    desc: MASTERS[0].cred + ' · 把课堂方法做成可复用的资源。',
+    key: 'editor-tool', eyebrow: '课堂工具精选',
+    title: latestBoard.items[0].name,
+    desc: '把古诗词阅读变成可标注、可讨论的课堂证据卡。',
     cover: latestBoard.items[0].cover,
     author: latestBoard.items[0].author,
     initial: latestBoard.items[0].initial,
     portrait: latestBoard.items[0].portrait,
     role: latestBoard.items[0].role,
-    metric: MASTERS[0].use,
+    metric: latestBoard.items[0].metric,
     metricLabel: '位老师使用',
-    target: 'studio',
+    resourceId: latestBoard.items[0].resourceId,
+    target: 'resource',
   },
 ]
 

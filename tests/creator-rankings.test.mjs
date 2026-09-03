@@ -98,3 +98,19 @@ test('排行榜不再显示全局学科筛选，周期筛选仍保留', async ()
   assert.match(html, />本月<\/button>/)
   assert.match(html, />年度<\/button>/)
 })
+
+test('编辑推荐只展示作品卡，不再把创作者本人作为推荐对象', async () => {
+  const { EDITORIAL_FEATURES } = await loadModule('/src/data/rank.js')
+
+  assert.equal(EDITORIAL_FEATURES.length, 2)
+  for (const feature of EDITORIAL_FEATURES) {
+    assert.equal(feature.target, 'resource', feature.key)
+    assert.match(feature.resourceId, /^res-/, feature.key)
+    assert.notEqual(feature.title, feature.author, feature.key)
+  }
+
+  assert.equal(EDITORIAL_FEATURES[1].eyebrow, '课堂工具精选')
+  assert.equal(EDITORIAL_FEATURES[1].title, '古诗词证据卡 · 课堂版')
+  assert.equal(EDITORIAL_FEATURES[1].author, '刘彭芝')
+  assert.equal(EDITORIAL_FEATURES[1].metric, '980')
+})
