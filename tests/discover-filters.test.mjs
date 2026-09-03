@@ -20,18 +20,22 @@ after(async () => {
   await vite.close()
 })
 
-test('发现页使用单行来源与学科分类，默认推荐且不再提供本地入口', async () => {
+test('发现页分两行展示来源学科与资源类型，默认推荐加全部', async () => {
   const { default: DiscoverView } = await vite.ssrLoadModule('/src/views/DiscoverView.vue')
   const html = await renderToString(createSSRApp(DiscoverView))
   const filterButtons = [...html.matchAll(/<button[^>]*class="[^"]*\btchip2\b[^"]*"[^>]*>([^<]+)<\/button>/g)]
     .map((match) => match[1].trim())
 
-  assert.deepEqual(filterButtons, ['关注', '推荐', '语文', '数学', '英语', '物理', '化学', '信息科技'])
-  assert.match(html, /aria-label="发现分类"/)
+  assert.deepEqual(filterButtons, [
+    '关注', '推荐', '语文', '数学', '英语', '物理', '化学', '信息科技',
+    '全部', '互动课件', '教学游戏', '应用', '技能', '教案', '题单',
+  ])
+  assert.match(html, /aria-label="来源与学科筛选"/)
+  assert.match(html, /aria-label="资源类型筛选"/)
   const recommendButtonAttrs = html.match(/<button([^>]*)>推荐<\/button>/)?.[1] || ''
+  const allButtonAttrs = html.match(/<button([^>]*)>全部<\/button>/)?.[1] || ''
   assert.match(recommendButtonAttrs, /class="[^"]*\bon\b[^"]*"/)
-  assert.doesNotMatch(html, /aria-label="来源筛选"/)
-  assert.doesNotMatch(html, /aria-label="资源类型筛选"/)
+  assert.match(allButtonAttrs, /class="[^"]*\bon\b[^"]*"/)
   assert.doesNotMatch(html, />本地<\/button>/)
   assert.doesNotMatch(html, /切换城市|北京 · 同城资源/)
 })

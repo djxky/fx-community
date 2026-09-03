@@ -15,7 +15,17 @@ const FILTER_CHIPS = [
   { key: '化学', label: '化学' },
   { key: '信息科技', label: '信息科技' },
 ]
+const TYPE_CHIPS = [
+  { key: 'all', label: '全部' },
+  { key: '互动课件', label: '互动课件' },
+  { key: '教学游戏', label: '教学游戏' },
+  { key: '应用', label: '应用' },
+  { key: '技能', label: '技能' },
+  { key: '教案', label: '教案' },
+  { key: '题单', label: '题单' },
+]
 const activeFilter = ref('recommend')
+const activeType = ref('all')
 
 const FOLLOW_POSTS = FEED.map((item) => {
   const resource = item.resource
@@ -36,9 +46,14 @@ const FOLLOW_POSTS = FEED.map((item) => {
 })
 
 const visiblePosts = computed(() => {
-  if (activeFilter.value === 'follow') return FOLLOW_POSTS
-  if (activeFilter.value === 'recommend') return POSTS
-  return POSTS.filter((post) => `${post.badge} ${post.meta}`.includes(activeFilter.value))
+  let posts = POSTS
+  if (activeFilter.value === 'follow') posts = FOLLOW_POSTS
+  else if (activeFilter.value !== 'recommend') {
+    posts = POSTS.filter((post) => `${post.badge} ${post.meta}`.includes(activeFilter.value))
+  }
+
+  if (activeType.value === 'all') return posts
+  return posts.filter((post) => `${post.badge} ${post.meta}`.includes(activeType.value))
 })
 </script>
 
@@ -65,10 +80,17 @@ const visiblePosts = computed(() => {
 
         <!-- 发现 -->
         <div id="disc-body" class="discover-body">
-          <div class="filter-group discover-filter" aria-label="发现分类">
-            <button v-for="chip in FILTER_CHIPS" :key="chip.key" class="tchip2" :class="{ on: activeFilter === chip.key }" type="button" @click="activeFilter = chip.key">
-              {{ chip.label }}
-            </button>
+          <div class="discover-filters">
+            <div class="filter-group" aria-label="来源与学科筛选">
+              <button v-for="chip in FILTER_CHIPS" :key="chip.key" class="tchip2" :class="{ on: activeFilter === chip.key }" type="button" @click="activeFilter = chip.key">
+                {{ chip.label }}
+              </button>
+            </div>
+            <div class="filter-group" aria-label="资源类型筛选">
+              <button v-for="chip in TYPE_CHIPS" :key="chip.key" class="tchip2" :class="{ on: activeType === chip.key }" type="button" @click="activeType = chip.key">
+                {{ chip.label }}
+              </button>
+            </div>
           </div>
 
           <div class="flow">
@@ -90,7 +112,7 @@ const visiblePosts = computed(() => {
 
 .discover-body { padding:24px 32px 48px; }
 .filter-group { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-.discover-filter { margin-bottom:28px; }
+.discover-filters { display:flex; flex-direction:column; gap:12px; margin-bottom:28px; }
 .tchip2 { border:none; }
 .empty-state { padding:56px 0; color:#9A9A9A; font-size:13px; text-align:center; }
 
