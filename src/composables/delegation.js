@@ -5,6 +5,7 @@ import {
   getResourceRouteFromSearch,
   isResourceActivationKey,
 } from '../resource-navigation.mjs'
+import { buildViewUrl, getViewRouteFromSearch } from '../view-navigation.mjs'
 import { RESOURCES_BY_ID } from '../data/resources'
 import {
   closeAcademySubmission,
@@ -22,8 +23,11 @@ export function installDelegation() {
     var opts = options || {}
     closeMenus()
     show(which)
-    if (opts.syncUrl !== false && which !== 'res' && window.location.search) {
-      window.history.pushState({ view: which }, '', window.location.pathname)
+    if (opts.syncUrl !== false && which !== 'res') {
+      var viewUrl = buildViewUrl(window.location.pathname, which)
+      if (window.location.pathname + window.location.search !== viewUrl) {
+        window.history.pushState({ view: which }, '', viewUrl)
+      }
     }
     window.scrollTo(0, 0)
     // 下一帧把该视图 main 滚到顶
@@ -71,6 +75,11 @@ export function installDelegation() {
     if (resourceRoute) {
       store.resourceId = resourceRoute.resourceId
       go(resourceRoute.view, { syncUrl: false })
+      return
+    }
+    var viewRoute = getViewRouteFromSearch(window.location.search)
+    if (viewRoute) {
+      go(viewRoute.view, { syncUrl: false })
       return
     }
     go('rank', { syncUrl: false })

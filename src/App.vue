@@ -4,6 +4,7 @@ import { store } from './store'
 import { installDelegation } from './composables/delegation'
 import { RESOURCES_BY_ID } from './data/resources'
 import { getResourceRouteFromSearch } from './resource-navigation.mjs'
+import { getViewRouteFromSearch } from './view-navigation.mjs'
 import DiscoverView from './views/DiscoverView.vue'
 import RankView from './views/RankView.vue'
 import AcademyView from './views/AcademyView.vue'
@@ -23,10 +24,13 @@ const initialResourceRoute = getResourceRouteFromSearch(
   window.location.search,
   new Set(Object.keys(RESOURCES_BY_ID)),
 )
+const initialViewRoute = getViewRouteFromSearch(window.location.search)
 
 if (initialResourceRoute) {
   store.view = initialResourceRoute.view
   store.resourceId = initialResourceRoute.resourceId
+} else if (initialViewRoute) {
+  store.view = initialViewRoute.view
 } else {
   store.view = 'rank'
 }
