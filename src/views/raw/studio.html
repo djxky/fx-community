@@ -23,7 +23,6 @@
         </div>
         <div style="display:flex; gap:10px; padding-top:6px;">
           <button style="background:#141F1B; color:#fff; border:none; border-radius:10px; padding:10px 26px; font-size:14px; font-weight:700;">+ 关注</button>
-          <button style="background:#fff; color:#141F1B; border:1px solid #E3E4E3; border-radius:10px; padding:10px 20px; font-size:14px; font-weight:600;">私信</button>
         </div>
       </div>
 
@@ -45,68 +44,16 @@
 
       <!-- tabs(真切换) -->
       <div style="display:flex; gap:28px;">
-        <span class="stab son" data-stab="s-dt">动态</span>
-        <span class="stab" data-stab="s-wk">作品 38</span>
+        <span class="stab son" data-stab="s-wk">作品 38</span>
         <span class="stab" data-stab="s-tp">专题 5</span>
         <span class="stab" data-stab="s-ab">关于</span>
       </div>
     </div>
 
-    <!-- 两栏:左=主流(tab切换) 右=常驻档案 -->
-    <div class="sbody">
+    <!-- 作品 / 专题 / 关于切换 -->
+    <div class="sbody norail">
       <div class="sleft">
-        <div class="spanel" id="s-dt">
-        <div class="mo-livebanner nav-res">
-          <div class="mlv-l">
-            <div class="mlv-tag"><span class="dot"></span>直播预告 · 明晚 20:00</div>
-            <div class="mlv-title">拔尖创新人才,怎么早期发现与培养</div>
-            <div class="mlv-meta">刘彭芝 亲自开讲 · 现场答疑 · 2,140 人已预约</div>
-          </div>
-          <button class="mlv-btn">预约提醒</button>
-        </div>
-        <div class="card" style="padding:10px 30px 8px;">
-          <div class="ax-title" style="margin:18px 0 2px;"><span class="ax-bar"></span>动态</div>
-          <div class="mfeed">
-          <!-- 推荐型动态:总校长跨学科当伯乐,把好内容带进关注者的feed -->
-          <div class="mo">
-            <div class="mo-hd"><b>刘彭芝</b><span class="mo-tag rec">推荐</span><span class="mo-time">2 天前</span></div>
-            <div class="mo-body">好东西不该被埋没。<span class="at">@陈屿</span> 老师这个改编,是我这两年见过最好的整本书阅读设计之一。</div>
-            <div class="mo-quote">它把《祝福》的社会批判焊进了游戏机制——学生在"审讯"里,一步步自己读懂了"谁杀了祥林嫂"。不是老师讲出来的,是他们自己争出来的。跨学科的老师也值得看看:好的问题设计,学科之间是相通的。</div>
-            <div class="mo-embed nav-res">
-              <div class="th" style="background:linear-gradient(135deg,#141F1B,#141F1B);">剧</div>
-              <div style="flex-grow:1;">
-                <div class="ti">谁杀了祥林嫂 · 沉浸式剧本杀</div>
-                <div class="de">陈屿 · 高中语文 · 整本书阅读</div>
-                <div class="mt">✓ 356 位老师使用 · 12 个改编版本</div>
-              </div>
-            </div>
-            <div class="mo-foot"><span>♡ 1,240</span><span>💬 86</span><span>↗ 分享给教研组</span></div>
-          </div>
-
-          <!-- 教学思考型动态:真实的人 + 露出一条真实热评 -->
-          <div class="mo">
-            <div class="mo-hd"><b>刘彭芝</b><span class="mo-tag note">教学思考</span><span class="mo-time">1 周前</span></div>
-            <div class="mo-body">带了这么多届学生,越来越觉得:拔尖不是"教"出来的,是"保护"出来的。有个孩子整节课追着一道题问"为什么",别的老师嫌他打断节奏,我却觉得——这股不肯罢休的劲儿,恰恰最该被珍惜。有时候我们少给一点"标准答案",孩子反而多长一点想象力。</div>
-            <div class="mo-comment">
-              <div class="mc-row"><span class="mc-nm">苏叶</span><span class="mc-tx">受教了,这周就试着少讲两分钟,把问题留给学生。</span></div>
-              <div class="mc-more">查看全部 173 条评论 ›</div>
-            </div>
-            <div class="mo-foot"><span>♡ 2,106</span><span>💬 173</span></div>
-          </div>
-
-          <!-- 交流型动态:总校长回复青年教师 → 上升通道 -->
-          <div class="mo">
-            <div class="mo-hd"><b>刘彭芝</b><span class="mo-tag rep">回复</span><span class="at">@青年教师·苏叶</span><span class="mo-time">1 周前</span></div>
-            <div class="mo-quote">苏叶:刘校长,普通校资源有限,也能做拔尖创新人才培养吗?</div>
-            <div class="mo-body">能,而且更该做。创新人才不是靠资源堆出来的,是靠不被"标准化"磨掉。先从保护好奇心开始——给敢提问、敢质疑的孩子留出空间。你要是做了,把课堂实录发我,我帮你一起看。</div>
-            <div class="mo-foot"><span>♡ 640</span><span>💬 28</span></div>
-          </div>
-
-          </div>
-          <div class="mo-all nav-studio">查看全部 32 条动态 ›</div>
-        </div>
-      </div>
-        <div class="spanel" id="s-wk" style="display:none;">
+        <div class="spanel" id="s-wk">
         <div class="sfeed">
           <div class="stcard nav-skill">
           <div class="stcover" style="background:linear-gradient(135deg,#D8A15E,#B87333); display:flex; align-items:center; justify-content:center;"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v6M12 9c-3 0-5 2-5 5a5 5 0 0010 0c0-3-2-5-5-5z"></path></svg><span class="stbadge" style="color:#141F1B;">技能 · Skill</span></div>

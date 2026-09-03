@@ -10,39 +10,11 @@ const coursePageId = (course) => `LP-course-${course.id}`
 const filterId = (filter) => `course-type-${filter.key}`
 const libraryVisibleLimit = 6
 
-const growthLevels = [
-  {
-    key: 'a',
-    className: 'lv1',
-    name: '新手入门',
-    description: '第一次用 AI 上课',
-    courseIds: [1, 2, 3, 4],
-    actionTitle: '看完动手做一个，提交你的作品',
-    actionDescription: '完成并提交即可参加案例征集：30 积分 · 电子结业证 · 社区展示',
-    actionLabel: '提交作品',
-    actionType: 'submit',
-  },
-  {
-    key: 'b',
-    className: 'lv2',
-    name: '进阶提升',
-    description: '已上手，想深入',
-    courseIds: [5, 6, 7, 13],
-    actionTitle: '选择一个学科难点，做成可操作的互动课堂',
-    actionDescription: '综合运用动画、3D 与互动课件完成课堂改造',
-    actionLabel: '开始进阶',
-  },
-  {
-    key: 'c',
-    className: 'lv3',
-    name: '高级',
-    description: '资深老师，追求更高水平',
-    courseIds: [8, 10, 14, 16],
-    actionTitle: '把成熟课堂方案沉淀成可复用的教学案例',
-    actionDescription: '深入命题、大单元与综合课堂设计，形成专业成果',
-    actionLabel: '挑战高级课程',
-  },
-]
+const submissionCtaCopy = {
+  actionTitle: '看完动手做一个，提交你的作品',
+  actionDescription: '完成并提交即可参加案例征集：30 积分 · 电子结业证 · 社区展示',
+  actionLabel: '提交作品',
+}
 
 export function activateRadioLabelFromKeyboard(event, ownerDocument = globalThis.document) {
   if (event.key !== 'Enter' && event.key !== ' ') return false
@@ -66,39 +38,8 @@ function renderRadios(courses) {
     .join('\n')
 }
 
-function renderGrowthPath(courses, filters, coverUrls) {
-  const courseById = new Map(courses.map((course) => [course.id, course]))
-  const labels = labelsByKey(filters)
-  const inputs = growthLevels.map((level, index) => (
-    `<input type="radio" name="growth-level" id="growth-level-${level.key}" class="growth-radio"${index === 0 ? ' checked' : ''}>`
-  )).join('\n')
-  const tabs = growthLevels.map((level) => (
-    `<label class="tab ${level.className}" for="growth-level-${level.key}" tabindex="0" role="button"><span class="lvl" aria-hidden="true"><i></i><i></i><i></i></span><span><span class="nm">${escapeHtml(level.name)}</span><span class="d">${escapeHtml(level.description)}</span></span></label>`
-  )).join('\n')
-  const panels = growthLevels.map((level) => {
-    const levelCourses = level.courseIds.map((courseId) => courseById.get(courseId)).filter(Boolean)
-    const cards = levelCourses.map((course, index) => {
-      const categoryText = course.categories.slice(0, 2).map((key) => labels[key]).join(' · ')
-      return `<label class="vcard vlink growth-course" for="${courseRadioId(course)}" tabindex="0" role="button" aria-label="查看课程：${escapeHtml(course.title)}">
-        <span class="vthumb growth-cover" style="background-image:url('${escapeHtml(coverUrls[course.coverFile])}')"><span class="idx">${String(index + 1).padStart(2, '0')}</span><span class="dur">${escapeHtml(course.duration)}</span><span class="p" aria-hidden="true">▶</span></span>
-        <span class="vbody"><span class="growth-title">${escapeHtml(course.title)}</span><span class="meta">${escapeHtml(categoryText)}</span></span>
-      </label>`
-    }).join('\n')
-    const firstCourse = levelCourses[0]
-    const actionControl = level.actionType === 'submit'
-      ? `<button type="button" class="st-btn" data-academy-submit-open>${escapeHtml(level.actionLabel)}</button>`
-      : `<label class="st-btn" for="${courseRadioId(firstCourse)}" tabindex="0" role="button">${escapeHtml(level.actionLabel)}</label>`
-    return `<div class="growth-panel growth-panel-${level.key}" id="growth-panel-${level.key}">
-      <div class="grid4">${cards}</div>
-      <div class="submit-strip"><div class="st-ic" aria-hidden="true">↑</div><div><div class="st-t">${escapeHtml(level.actionTitle)}</div><div class="st-d">${escapeHtml(level.actionDescription)}</div></div>${actionControl}</div>
-    </div>`
-  }).join('\n')
-
-  return `<div class="growth-path">
-    ${inputs}
-    <div class="who">${tabs}</div>
-    <div class="growth-panels">${panels}</div>
-    <div class="academy-submission-modal" hidden role="dialog" aria-modal="true" aria-labelledby="academy-submission-title">
+function renderSubmitCta() {
+  return `<div class="academy-submission-modal" hidden role="dialog" aria-modal="true" aria-labelledby="academy-submission-title">
       <div class="academy-submission-backdrop" data-academy-submit-close></div>
       <div class="academy-submission-dialog">
         <button type="button" class="academy-submission-close" data-academy-submit-close aria-label="关闭">×</button>
@@ -129,45 +70,25 @@ function renderGrowthPath(courses, filters, coverUrls) {
   </div>`
 }
 
-function renderLibrary(courses, filters, coverUrls) {
-  const filterInputs = filters.map((filter, index) => (
-    `<input type="radio" name="course-type" id="${filterId(filter)}" class="chip-radio"${index === 0 ? ' checked' : ''}>`
+function renderLibrary(courses, useFilters, typeFilters, coverUrls) {
+  const rowInputs = (filters, group) => filters.map((filter, index) => (
+    `<input type="radio" name="${group}" id="${group}-${filter.key}" class="chip-radio"${index === 0 ? ' checked' : ''}>`
   )).join('\n')
-  const filterLabels = filters.map((filter) => {
-    return `<label class="chip" for="${filterId(filter)}" tabindex="0" role="button">${escapeHtml(filter.label)}</label>`
-  }).join('\n')
-
-  const filterCourses = (filter) => (
-    filter.key === 'all'
-      ? courses
-      : courses.filter((course) => course.categories.includes(filter.key))
-  )
-  const foldableFilters = filters
-    .map((filter) => ({ filter, count: filterCourses(filter).length }))
-    .filter(({ count }) => count > libraryVisibleLimit)
-  const filterRanks = Object.fromEntries(foldableFilters.map(({ filter }) => [filter.key, 0]))
-  const expandInputs = foldableFilters.map(({ filter }) => (
-    `<input type="checkbox" id="course-expand-${filter.key}" class="course-expand-toggle">`
-  )).join('\n')
-  const expandControls = foldableFilters.map(({ filter, count }) => (
-    `<label class="exp-btn course-expand-control course-expand-control-${filter.key}" for="course-expand-${filter.key}" tabindex="0" role="button"><span class="more-t">展开全部 ${count} 个</span><span class="less-t">收起</span><span class="ch">⌄</span></label>`
+  const rowLabels = (filters, group) => filters.map((filter) => (
+    `<label class="chip" for="${group}-${filter.key}" tabindex="0" role="button">${escapeHtml(filter.label)}</label>`
   )).join('\n')
 
-  const labels = labelsByKey(filters)
+  const typeLabels = labelsByKey(typeFilters)
+  const typeKeys = new Set(typeFilters.map((filter) => filter.key))
   const cards = courses.map((course) => {
     const coverUrl = coverUrls[course.coverFile]
     const categoryClasses = course.categories.map((key) => `cat-${key}`).join(' ')
-    const foldClasses = foldableFilters.flatMap(({ filter }) => {
-      const matches = filter.key === 'all' || course.categories.includes(filter.key)
-      if (!matches) return []
-      filterRanks[filter.key] += 1
-      return filterRanks[filter.key] > libraryVisibleLimit ? [`fold-${filter.key}`] : []
-    }).join(' ')
     const categoryTags = course.categories
+      .filter((key) => typeKeys.has(key) && key !== 'all')
       .slice(0, 2)
-      .map((key) => `<span>${escapeHtml(labels[key])}</span>`)
+      .map((key) => `<span>${escapeHtml(typeLabels[key])}</span>`)
       .join('')
-    return `<label class="lcard course-card ${categoryClasses}${foldClasses ? ` ${foldClasses}` : ''}" for="${courseRadioId(course)}" tabindex="0" role="button" aria-label="查看课程：${escapeHtml(course.title)}">
+    return `<label class="lcard course-card ${categoryClasses}" for="${courseRadioId(course)}" tabindex="0" role="button" aria-label="查看课程：${escapeHtml(course.title)}">
       <div class="lthumb course-cover" style="background-image:url('${escapeHtml(coverUrl)}')">
         <span class="dur">${escapeHtml(course.duration)}</span><span class="p" aria-hidden="true">▶</span>
       </div>
@@ -176,11 +97,11 @@ function renderLibrary(courses, filters, coverUrls) {
   }).join('\n')
 
   return `<div class="course-library">
-    ${filterInputs}
-    ${expandInputs}
-    <div class="lib-filter">${filterLabels}</div>
+    ${rowInputs(useFilters, 'course-use')}
+    ${rowInputs(typeFilters, 'course-type')}
+    <div class="lib-filter lib-filter-use"><span class="lf-label">用途</span>${rowLabels(useFilters, 'course-use')}</div>
+    <div class="lib-filter lib-filter-type"><span class="lf-label">类型</span>${rowLabels(typeFilters, 'course-type')}</div>
     <div class="lgrid">${cards}</div>
-    <div class="course-expand-controls">${expandControls}</div>
   </div>`
 }
 
@@ -193,12 +114,13 @@ function relatedCoursesFor(course, courses) {
   return [...shared, ...fallback].slice(0, 5)
 }
 
-function renderDetails(courses, filters, coverUrls) {
-  const labels = labelsByKey(filters)
+function renderDetails(courses, typeFilters, coverUrls) {
+  const typeKeys = new Set(typeFilters.map((filter) => filter.key))
+  const labels = labelsByKey(typeFilters)
   return courses.map((course) => {
     const coverUrl = coverUrls[course.coverFile]
     const teacherInitial = course.teacher === '飞象老师' ? '飞' : course.teacher.slice(0, 1)
-    const categoryText = course.categories.map((key) => labels[key]).join(' · ')
+    const categoryText = course.categories.filter((key) => typeKeys.has(key)).map((key) => labels[key]).join(' · ')
     const goals = course.goals.map((goal) => `<li>${escapeHtml(goal)}</li>`).join('')
     const related = relatedCoursesFor(course, courses).map((relatedCourse) => (
       `<label class="pl-item" for="${courseRadioId(relatedCourse)}" tabindex="0" role="button">
@@ -225,41 +147,29 @@ function renderDetails(courses, filters, coverUrls) {
   }).join('\n')
 }
 
-function renderVisibilityCss(courses, filters) {
+function renderVisibilityCss(courses, useFilters, typeFilters) {
   const coursePages = courses
     .map((course) => `#view-academy #${courseRadioId(course)}:checked ~ #${coursePageId(course)}`)
     .join(',\n')
-  const filterRules = filters.map((filter) => {
-    const selector = filter.key === 'all' ? '.course-card' : `.course-card.cat-${filter.key}`
-    return `#view-academy #${filterId(filter)}:checked ~ .lgrid ${selector}{display:flex}
-#view-academy #${filterId(filter)}:checked ~ .lib-filter label[for="${filterId(filter)}"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}`
+  const activeChip = (group, key) => `#view-academy #${group}-${key}:checked ~ .lib-filter label[for="${group}-${key}"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}`
+  const dimRules = (filters, group) => filters.map((filter) => {
+    if (filter.key === 'all') return activeChip(group, 'all')
+    return `#view-academy #${group}-${filter.key}:checked ~ .lgrid .course-card:not(.cat-${filter.key}){display:none}
+${activeChip(group, filter.key)}`
   }).join('\n')
-  const foldRules = filters.flatMap((filter) => {
-    const count = filter.key === 'all'
-      ? courses.length
-      : courses.filter((course) => course.categories.includes(filter.key)).length
-    if (count <= libraryVisibleLimit) return []
-    return [
-      `#view-academy #${filterId(filter)}:checked ~ #course-expand-${filter.key}:not(:checked) ~ .lgrid .fold-${filter.key}{display:none}`,
-      `#view-academy #${filterId(filter)}:checked ~ .course-expand-controls .course-expand-control-${filter.key}{display:inline-flex}`,
-      `#view-academy #course-expand-${filter.key}:checked ~ .course-expand-controls label[for="course-expand-${filter.key}"] .more-t{display:none}`,
-      `#view-academy #course-expand-${filter.key}:checked ~ .course-expand-controls label[for="course-expand-${filter.key}"] .less-t{display:inline}`,
-      `#view-academy #course-expand-${filter.key}:checked ~ .course-expand-controls label[for="course-expand-${filter.key}"] .ch{transform:rotate(180deg)}`,
-    ]
-  }).join('\n')
-  const growthRules = growthLevels.map((level) => (
-    `#view-academy #growth-level-${level.key}:checked ~ .growth-panels .growth-panel-${level.key}{display:block}\n#view-academy #growth-level-${level.key}:checked ~ .who label[for="growth-level-${level.key}"]{background:#F1F4F2;box-shadow:inset 0 -3px 0 var(--goldsolid);color:var(--ink)}`
-  )).join('\n')
-  return `${coursePages}{display:block}\n#view-academy .course-expand-toggle{position:absolute;opacity:0;width:0;height:0;pointer-events:none}\n#view-academy .course-expand-control{display:none}\n${filterRules}\n${foldRules}\n${growthRules}\n#view-academy .academy-submission-modal[hidden]{display:none}`
+  return `${coursePages}{display:block}
+${dimRules(useFilters, 'course-use')}
+${dimRules(typeFilters, 'course-type')}
+#view-academy .academy-submission-modal[hidden]{display:none}`
 }
 
-export function renderAcademyCourseUi({ courses, filters, coverUrls }) {
+export function renderAcademyCourseUi({ courses, useFilters, typeFilters, coverUrls }) {
   return {
-    growthPath: renderGrowthPath(courses, filters, coverUrls),
+    submitCta: renderSubmitCta(),
     radios: renderRadios(courses),
-    library: renderLibrary(courses, filters, coverUrls),
-    details: renderDetails(courses, filters, coverUrls),
-    visibilityCss: renderVisibilityCss(courses, filters),
+    library: renderLibrary(courses, useFilters, typeFilters, coverUrls),
+    details: renderDetails(courses, typeFilters, coverUrls),
+    visibilityCss: renderVisibilityCss(courses, useFilters, typeFilters),
   }
 }
 
@@ -267,7 +177,7 @@ export function composeAcademyMarkup(source, rendered) {
   return source
     .replace('<!-- ACADEMY_COURSE_VISIBILITY -->', rendered.visibilityCss)
     .replace('<!-- ACADEMY_COURSE_RADIOS -->', rendered.radios)
-    .replace('<!-- ACADEMY_GROWTH_PATH -->', rendered.growthPath)
+    .replace('<!-- ACADEMY_SUBMIT_CTA -->', rendered.submitCta)
     .replace('<!-- ACADEMY_COURSE_LIBRARY -->', rendered.library)
     .replace('<!-- ACADEMY_COURSE_DETAILS -->', rendered.details)
 }

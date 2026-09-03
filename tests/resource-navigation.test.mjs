@@ -9,7 +9,9 @@ import {
   isResourceActivationKey,
   isSlideResourceKind,
 } from '../src/resource-navigation.mjs'
-import { getAdaptedAttribution, getResourceCredits } from '../src/resource-attribution.mjs'
+import * as resourceDetails from '../src/resource-attribution.mjs'
+
+const { getAdaptedAttribution, getResourceCredits } = resourceDetails
 
 test('改编卡片会保留各自的资源 ID，点击后能识别目标版本', () => {
   const html = [
@@ -117,4 +119,26 @@ test('改编资源的信息栏同时展示可追溯的原创作者与改编者',
     { role: '原创作者', name: '林若水', resourceId: 'res-xianglin' },
     { role: '改编者', name: '周涛', resourceId: null },
   ])
+})
+
+test('属于专题的资源会生成独立的专题归属信息', () => {
+  assert.equal(typeof resourceDetails.getResourceTopicMembership, 'function')
+
+  const membership = resourceDetails.getResourceTopicMembership({
+    topicMembership: {
+      id: 'classic-remix',
+      title: '整本书阅读 · 经典重构',
+    },
+  })
+
+  assert.deepEqual(membership, {
+    id: 'classic-remix',
+    label: '所属专题',
+    title: '整本书阅读 · 经典重构',
+  })
+})
+
+test('没有专题归属的资源不会生成占位信息', () => {
+  assert.equal(typeof resourceDetails.getResourceTopicMembership, 'function')
+  assert.equal(resourceDetails.getResourceTopicMembership({ topic: '语文·作文批改' }), null)
 })

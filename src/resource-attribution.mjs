@@ -23,3 +23,14 @@ export function getResourceCredits(resource, parent) {
     ? [{ role: '原创作者', name: resource.author.name, resourceId: null }]
     : []
 }
+
+export function getResourceTopicMembership(resource) {
+  const membership = resource?.topicMembership
+  if (!membership?.id || !membership?.title) return null
+
+  return {
+    id: membership.id,
+    label: '所属专题',
+    title: membership.title,
+  }
+}

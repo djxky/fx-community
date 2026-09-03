@@ -3,7 +3,7 @@ import { PORTRAITS } from './portraits'
 import { MASTERS } from './masters'
 
 // 排行榜唯一数据源：排序信号与固定卡司均来自 PRD §8.4。
-// resource = 作品/资源 feature 榜；creator = 人 compact 榜。
+// resource = 作品/资源 feature 榜；creator = 按创作者贡献排序的代表作榜。
 export const BOARDS = [
   {
     key: 'classroom', group: 'resource', title: '课堂使用榜', tag: '使用', hot: true,
@@ -71,34 +71,34 @@ export const BOARDS = [
   },
   {
     key: 'recognized', group: 'creator', title: '创作达人榜', tag: '使用', hot: false,
-    period: '累计降序', metricLabel: '位老师在用', desc: '同行真正带进课堂、持续使用的创作者。', layout: 'compact',
+    period: '按作品数量排序', metricLabel: '件作品', desc: '同行真正带进课堂、持续使用的创作者。', layout: 'editorial-work',
     items: [
-      { name: '沈知微', sub: '数学 · 生活建模课件', metric: '18', unit: '件作品', portrait: PORTRAITS[2], target: 'studio' },
-      { name: '林若水', sub: '语文 · 沉浸式剧本课', metric: '16', unit: '件作品', initial: '林', target: 'studio' },
-      { name: '张伟', sub: '全学科 · 分层作业 Skill', metric: '14', unit: '件作品', initial: '张', target: 'studio' },
-      { name: '沈砚', sub: '语文 · 作文批改方法', metric: '12', unit: '件作品', initial: '沈', target: 'studio' },
-      { name: '刘彭芝', sub: '跨学科 · 课堂方法论', metric: '10', unit: '件作品', initial: '刘', portrait: PORTRAITS[0], target: 'studio' },
-      { name: '陈红', sub: '英语 · 点餐口语游戏', metric: '9', unit: '件作品', initial: '陈', target: 'studio' },
-      { name: '周涛', sub: '语文 · 祥林嫂县中简化版', metric: '7', unit: '件作品', initial: '周', target: 'studio' },
-      { name: '李明', sub: '数学 · 圆柱体积天坛拆柱', metric: '6', unit: '件作品', initial: '李', target: 'studio' },
-      { name: '李敏', sub: '语文 · 双师课堂版本', metric: '4', unit: '件作品', initial: '李', target: 'studio' },
-      { name: '王芳', sub: '语文 · 二级课堂改编', metric: '3', unit: '件作品', initial: '王', target: 'studio' },
+      { name: '沈知微', workTitle: '立体几何·生活建模', sub: '数学 · 互动课件', metric: '18', unit: '件作品', portrait: PORTRAITS[2], cover: COVERS[6], resourceId: 'res-solid', target: 'resource' },
+      { name: '林若水', workTitle: '祥林嫂剧本杀', sub: '语文 · 沉浸式剧本课', metric: '16', unit: '件作品', initial: '林', cover: COVERS[0], resourceId: 'res-xianglin', target: 'resource' },
+      { name: '张伟', workTitle: '分层作业 Skill', sub: '全学科 · AI Skill', metric: '14', unit: '件作品', initial: '张', cover: COVERS[5], resourceId: 'res-skill-fenceng', target: 'resource' },
+      { name: '沈砚', workTitle: '作文批改 Skill', sub: '语文 · 技能调用', metric: '12', unit: '件作品', initial: '沈', cover: COVERS[2], resourceId: 'res-skill-zuowen', target: 'resource' },
+      { name: '刘彭芝', workTitle: '古诗词证据卡 · 课堂版', sub: '语文 · 课堂工具', metric: '10', unit: '件作品', initial: '刘', portrait: PORTRAITS[0], cover: COVERS[10], resourceId: 'res-xianglin', target: 'resource' },
+      { name: '陈红', workTitle: '点餐口语游戏', sub: '英语 · 教学游戏', metric: '9', unit: '件作品', initial: '陈', cover: COVERS[4], resourceId: 'res-order-game', target: 'resource' },
+      { name: '周涛', workTitle: '祥林嫂 · 县中简化版', sub: '语文 · 课堂改编', metric: '7', unit: '件作品', initial: '周', cover: COVERS[8], resourceId: 'res-xl-zhoutao', target: 'resource' },
+      { name: '李明', workTitle: '圆柱体积 · 天坛拆柱', sub: '数学 · 互动课件', metric: '6', unit: '件作品', initial: '李', cover: COVERS[3], resourceId: 'res-cylinder', target: 'resource' },
+      { name: '李敏', workTitle: '双师课堂版', sub: '语文 · 课堂改编', metric: '4', unit: '件作品', initial: '李', cover: COVERS[1], resourceId: 'res-xl-limin', target: 'resource' },
+      { name: '王芳', workTitle: '二级 fork', sub: '语文 · 课堂改编', metric: '3', unit: '件作品', initial: '王', cover: COVERS[7], resourceId: 'res-xl-l2', target: 'resource' },
     ],
   },
   {
-    key: 'rising', group: 'creator', title: '新锐创作者', tag: '本周新增', hot: false,
-    period: '按本周新增排序', metricLabel: '本周新增', desc: '刚把第一批课堂版本交出来,正在长出自己的方向。', layout: 'compact',
+    key: 'rising', group: 'creator', title: '新锐创作者榜', tag: '本周新增', hot: false,
+    period: '按本周新增排序', metricLabel: '本周新增', desc: '刚把第一批课堂版本交出来,正在长出自己的方向。', layout: 'work-rail',
     items: [
-      { name: '周涛', sub: '语文 · 祥林嫂县中简化版', metric: '+620', unit: '本周新增', initial: '周', target: 'studio' },
-      { name: '李明', sub: '数学 · 圆柱体积天坛拆柱', metric: '+410', unit: '本周新增', initial: '李', target: 'studio' },
-      { name: '陈红', sub: '英语 · 点餐口语游戏', metric: '+300', unit: '本周新增', initial: '陈', target: 'studio' },
-      { name: '沈砚', sub: '语文 · 作文批改方法', metric: '+260', unit: '本周新增', initial: '沈', target: 'studio' },
-      { name: '王芳', sub: '语文 · 二级课堂改编', metric: '+210', unit: '本周新增', initial: '王', target: 'studio' },
-      { name: '李敏', sub: '语文 · 双师课堂版本', metric: '+180', unit: '本周新增', initial: '李', target: 'studio' },
-      { name: '张伟', sub: '全学科 · 分层作业设计', metric: '+160', unit: '本周新增', initial: '张', target: 'studio' },
-      { name: '刘彭芝', sub: '跨学科 · 课堂方法论', metric: '+140', unit: '本周新增', initial: '刘', portrait: PORTRAITS[0], target: 'studio' },
-      { name: '苏窈', sub: '语文 · 古文沉浸式漫游', metric: '+120', unit: '本周新增', initial: '苏', portrait: PORTRAITS[1], target: 'studio' },
-      { name: '林若水', sub: '语文 · 沉浸式剧本课', metric: '+90', unit: '本周新增', initial: '林', target: 'studio' },
+      { name: '周涛', workTitle: '祥林嫂 · 县中简化版', sub: '语文 · 课堂改编', metric: '+620', unit: '本周新增', initial: '周', cover: COVERS[8], resourceId: 'res-xl-zhoutao', target: 'resource' },
+      { name: '李明', workTitle: '圆柱体积 · 天坛拆柱', sub: '数学 · 互动课件', metric: '+410', unit: '本周新增', initial: '李', cover: COVERS[3], resourceId: 'res-cylinder', target: 'resource' },
+      { name: '陈红', workTitle: '点餐口语游戏', sub: '英语 · 教学游戏', metric: '+300', unit: '本周新增', initial: '陈', cover: COVERS[4], resourceId: 'res-order-game', target: 'resource' },
+      { name: '沈砚', workTitle: '作文批改 Skill', sub: '语文 · 技能调用', metric: '+260', unit: '本周新增', initial: '沈', cover: COVERS[2], resourceId: 'res-skill-zuowen', target: 'resource' },
+      { name: '王芳', workTitle: '二级 fork', sub: '语文 · 课堂改编', metric: '+210', unit: '本周新增', initial: '王', cover: COVERS[7], resourceId: 'res-xl-l2', target: 'resource' },
+      { name: '李敏', workTitle: '双师课堂版', sub: '语文 · 课堂改编', metric: '+180', unit: '本周新增', initial: '李', cover: COVERS[1], resourceId: 'res-xl-limin', target: 'resource' },
+      { name: '张伟', workTitle: '分层作业 Skill', sub: '全学科 · AI Skill', metric: '+160', unit: '本周新增', initial: '张', cover: COVERS[5], resourceId: 'res-skill-fenceng', target: 'resource' },
+      { name: '刘彭芝', workTitle: '古诗词证据卡 · 课堂版', sub: '语文 · 课堂工具', metric: '+140', unit: '本周新增', initial: '刘', portrait: PORTRAITS[0], cover: COVERS[10], resourceId: 'res-xianglin', target: 'resource' },
+      { name: '苏窈', workTitle: '古文沉浸式漫游', sub: '语文 · 互动课件', metric: '+120', unit: '本周新增', initial: '苏', portrait: PORTRAITS[1], cover: COVERS[9], resourceId: 'res-xianglin', target: 'resource' },
+      { name: '林若水', workTitle: '祥林嫂剧本杀', sub: '语文 · 沉浸式剧本课', metric: '+90', unit: '本周新增', initial: '林', cover: COVERS[0], resourceId: 'res-xianglin', target: 'resource' },
     ],
   },
 ]

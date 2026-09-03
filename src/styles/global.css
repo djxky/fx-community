@@ -607,7 +607,7 @@ a:hover { color: #141F1B; }
     .fg-hero { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,370px); gap:44px; padding:28px 0 42px; align-items:start; }
     .fg-hero-l { grid-column:2; grid-row:1; display:flex; flex-direction:column; padding-top:8px; min-width:0; }
     .fg-hero-r { grid-column:1; grid-row:1; min-width:0; }
-    .rd-topic-strip { display:inline-flex; align-items:center; gap:6px; width:fit-content; margin:0 0 22px; color:#69746F; font-size:12.5px; cursor:pointer; }
+    .rd-topic-strip { display:inline-flex; align-items:center; gap:6px; width:fit-content; margin:0 0 22px; color:#69746F; font-size:12.5px; }
     .rd-topic-strip strong { color:#28332E; font-weight:600; }
     .rd-topic-strip svg { margin-left:1px; }
     .rd-topic-dot { color:#C9CECB; }

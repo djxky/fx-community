@@ -6,7 +6,7 @@ import coursewarePractice from '../assets/academy/courseware-practice.jpg'
 import mathVisualization from '../assets/academy/math-visualization.jpg'
 import peerReview from '../assets/academy/peer-review.jpg'
 import learningFeedback from '../assets/academy/learning-feedback.jpg'
-import { academyCourses, academyFilters } from '../data/academy-courses.mjs'
+import { academyCourses, academyUseFilters, academyTypeFilters } from '../data/academy-courses.mjs'
 import {
   activateRadioLabelFromKeyboard,
   composeAcademyMarkup,
@@ -25,7 +25,8 @@ const courseCoverUrls = Object.fromEntries(
 
 const renderedCourseUi = renderAcademyCourseUi({
   courses: academyCourses,
-  filters: academyFilters,
+  useFilters: academyUseFilters,
+  typeFilters: academyTypeFilters,
   coverUrls: courseCoverUrls,
 })
 

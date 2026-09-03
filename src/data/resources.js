@@ -26,6 +26,7 @@ export const RESOURCES = [
     forkedFrom: null,
     forks: ['res-xl-zhoutao', 'res-xl-limin'],
     contributors: [{ name: '周涛', contribution: '两轮庭审', mergedInto: 'V11' }],
+    topicMembership: { id: 'classic-remix', title: '整本书阅读 · 经典重构' },
     topic: '整本书阅读·经典重构',
   },
   {
@@ -46,6 +47,7 @@ export const RESOURCES = [
     forkedFromVersion: 'V10',
     forks: ['res-xl-l2'],
     contributors: [],
+    topicMembership: { id: 'classic-remix', title: '整本书阅读 · 经典重构' },
     topic: '整本书阅读·经典重构',
   },
   {
@@ -65,6 +67,7 @@ export const RESOURCES = [
     forkedFromVersion: 'V11',
     forks: [],
     contributors: [],
+    topicMembership: { id: 'classic-remix', title: '整本书阅读 · 经典重构' },
     topic: '整本书阅读·经典重构',
   },
   {
@@ -81,6 +84,7 @@ export const RESOURCES = [
     forkedFromVersion: 'V3',
     forks: [],
     contributors: [],
+    topicMembership: { id: 'classic-remix', title: '整本书阅读 · 经典重构' },
     topic: '整本书阅读·经典重构',
   },
   {

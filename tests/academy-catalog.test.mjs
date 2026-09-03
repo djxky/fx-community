@@ -6,7 +6,7 @@ async function loadCatalog() {
   try {
     return await import('../src/data/academy-courses.mjs')
   } catch {
-    return { academyCourses: [], academyFilters: [], filterAcademyCourses: () => [] }
+    return { academyCourses: [], academyUseFilters: [], academyTypeFilters: [], academyFilters: [], filterAcademyCourses: () => [] }
   }
 }
 
@@ -14,7 +14,7 @@ async function loadRenderer() {
   try {
     return await import('../src/lib/academy-course-renderer.mjs')
   } catch {
-    return { renderAcademyCourseUi: () => ({ growthPath: '', radios: '', library: '', details: '', visibilityCss: '' }) }
+    return { renderAcademyCourseUi: () => ({ submitCta: '', radios: '', library: '', details: '', visibilityCss: '' }) }
   }
 }
 
@@ -29,6 +29,13 @@ async function loadSubmission() {
   }
 }
 
+async function renderUi() {
+  const { academyCourses, academyUseFilters, academyTypeFilters } = await loadCatalog()
+  const { renderAcademyCourseUi } = await loadRenderer()
+  const coverUrls = Object.fromEntries(academyCourses.map((course) => [course.coverFile, `/covers/${course.coverFile}`]))
+  return renderAcademyCourseUi({ courses: academyCourses, useFilters: academyUseFilters, typeFilters: academyTypeFilters, coverUrls })
+}
+
 test('全部筛选返回 23 门不重复的真实课程', async () => {
   const { academyCourses, filterAcademyCourses } = await loadCatalog()
   const allCourses = filterAcademyCourses(academyCourses, 'all')
@@ -37,9 +44,12 @@ test('全部筛选返回 23 门不重复的真实课程', async () => {
   assert.equal(new Set(allCourses.map((course) => course.id)).size, 23)
 })
 
-test('各分类筛选返回基于课程目标核定的课程数量', async () => {
+test('两层分类各自返回正确的课程数量（使用指南 + 资源类型）', async () => {
   const { academyCourses, filterAcademyCourses } = await loadCatalog()
   const expectedCounts = {
+    guide: 3,
+    tips: 5,
+    case: 16,
     animation: 6,
     application: 4,
     game: 6,
@@ -54,13 +64,14 @@ test('各分类筛选返回基于课程目标核定的课程数量', async () =>
   }
 })
 
-test('跨分类课程在全部中只出现一次', async () => {
+test('一条视频可同时属于使用指南和资源类型两层，在全部中只出现一次', async () => {
   const { academyCourses, filterAcademyCourses } = await loadCatalog()
   const geometry = academyCourses.find((course) => course.id === 6)
 
-  assert.deepEqual(geometry.categories, ['animation', 'courseware'])
+  assert.deepEqual(geometry.categories, ['animation', 'courseware', 'case'])
   assert.equal(filterAcademyCourses(academyCourses, 'animation').some((course) => course.id === 6), true)
   assert.equal(filterAcademyCourses(academyCourses, 'courseware').some((course) => course.id === 6), true)
+  assert.equal(filterAcademyCourses(academyCourses, 'case').some((course) => course.id === 6), true)
   assert.equal(filterAcademyCourses(academyCourses, 'all').filter((course) => course.id === 6).length, 1)
 })
 
@@ -91,14 +102,12 @@ test('每门课程都包含真实封面、视频、简介和三条课程目标',
   }
 })
 
-test('课程渲染结果提供全部筛选、可点击卡片和直播回放式详情', async () => {
-  const { academyCourses, academyFilters } = await loadCatalog()
-  const { renderAcademyCourseUi } = await loadRenderer()
-  const coverUrls = Object.fromEntries(academyCourses.map((course) => [course.coverFile, `/covers/${course.coverFile}`]))
-  const rendered = renderAcademyCourseUi({ courses: academyCourses, filters: academyFilters, coverUrls })
+test('课程渲染结果提供两层筛选、可点击卡片和直播回放式详情', async () => {
+  const rendered = await renderUi()
 
+  assert.match(rendered.library, /用途/)
+  assert.match(rendered.library, /类型/)
   assert.match(rendered.library, />全部<\/label>/)
-  assert.doesNotMatch(rendered.library, /<span class="c">/)
   assert.equal((rendered.library.match(/class="lcard course-card/g) || []).length, 23)
   assert.equal((rendered.details.match(/class="lesson-page course-lesson-page"/g) || []).length, 23)
   assert.match(rendered.details, /课程目标/)
@@ -107,56 +116,40 @@ test('课程渲染结果提供全部筛选、可点击卡片和直播回放式�
   assert.match(rendered.details, /src="https:\/\/metis-online\.fbcontent\.cn\/metis-lectio\//)
 })
 
-test('课程内容被注入原型的成长路径、筛选区、详情区和可见性样式', async () => {
+test('课程内容被注入原型的筛选区、详情区和可见性样式', async () => {
   const renderer = await loadRenderer()
-  const source = '<style><!-- ACADEMY_COURSE_VISIBILITY --></style><!-- ACADEMY_COURSE_RADIOS --><!-- ACADEMY_GROWTH_PATH --><!-- ACADEMY_COURSE_LIBRARY --><!-- ACADEMY_COURSE_DETAILS -->'
-  const rendered = { visibilityCss: '.visible{}', radios: '<input>', growthPath: '<nav>', library: '<section>', details: '<article>' }
+  const source = '<style><!-- ACADEMY_COURSE_VISIBILITY --></style><!-- ACADEMY_COURSE_RADIOS --><!-- ACADEMY_COURSE_LIBRARY --><!-- ACADEMY_SUBMIT_CTA --><!-- ACADEMY_COURSE_DETAILS -->'
+  const rendered = { visibilityCss: '.visible{}', radios: '<input>', submitCta: '<aside>', library: '<section>', details: '<article>' }
 
   assert.equal(typeof renderer.composeAcademyMarkup, 'function')
   assert.equal(
     renderer.composeAcademyMarkup(source, rendered),
-    '<style>.visible{}</style><input><nav><section><article>',
+    '<style>.visible{}</style><input><section><aside><article>',
   )
 })
 
-test('成长阶段会切换整组真实课程和对应行动入口', async () => {
-  const { academyCourses, academyFilters } = await loadCatalog()
-  const { renderAcademyCourseUi } = await loadRenderer()
-  const coverUrls = Object.fromEntries(academyCourses.map((course) => [course.coverFile, `/covers/${course.coverFile}`]))
-  const rendered = renderAcademyCourseUi({ courses: academyCourses, filters: academyFilters, coverUrls })
+test('合并后不再有等级分层，且保留提交作品入口与文案', async () => {
+  const rendered = await renderUi()
 
-  assert.equal((rendered.growthPath.match(/name="growth-level"/g) || []).length, 3)
-  assert.equal((rendered.growthPath.match(/class="growth-panel growth-panel-/g) || []).length, 3)
-  assert.equal((rendered.growthPath.match(/class="vcard vlink growth-course/g) || []).length, 12)
-  assert.match(rendered.growthPath, /飞象老师核心功能实操：教学动画、AI命题组题与大单元设计/)
-  assert.match(rendered.growthPath, /王红蕾｜小学几何交互动画：拖拽操作理解图形关系/)
-  assert.match(rendered.growthPath, /彭亚红｜AI命题实操：提示词、题型优化与好题改编/)
-  assert.match(rendered.growthPath, /id="growth-level-b"[^>]*>[\s\S]*for="growth-level-b"/)
-  assert.match(rendered.visibilityCss, /#growth-level-b:checked ~ \.growth-panels \.growth-panel-b\{display:block\}/)
-  assert.doesNotMatch(rendered.growthPath, /新手推荐合集/)
-  assert.match(rendered.growthPath, /看完动手做一个，提交你的作品/)
-  assert.match(rendered.growthPath, /完成并提交即可参加案例征集：30 积分 · 电子结业证 · 社区展示/)
-  assert.match(rendered.growthPath, /<button type="button" class="st-btn" data-academy-submit-open>提交作品<\/button>/)
+  assert.equal((rendered.submitCta.match(/name="growth-level"/g) || []).length, 0)
+  assert.equal((rendered.submitCta.match(/class="growth-panel/g) || []).length, 0)
+  assert.doesNotMatch(rendered.visibilityCss, /growth-level/)
 })
 
 test('新手提交作品会提供完整的审核信息弹窗', async () => {
-  const { academyCourses, academyFilters } = await loadCatalog()
-  const { renderAcademyCourseUi } = await loadRenderer()
-  const coverUrls = Object.fromEntries(academyCourses.map((course) => [course.coverFile, `/covers/${course.coverFile}`]))
-  const rendered = renderAcademyCourseUi({ courses: academyCourses, filters: academyFilters, coverUrls })
+  const rendered = await renderUi()
 
-  assert.match(rendered.growthPath, /data-academy-submit-open/)
-  assert.match(rendered.growthPath, /class="academy-submission-modal"[^>]*hidden/)
-  assert.match(rendered.growthPath, /name="province"[^>]*required/)
-  assert.match(rendered.growthPath, /name="city"[^>]*required/)
-  assert.match(rendered.growthPath, /value="飞象老师 AI 工作坊·开学第一课·2026 秋"[^>]*readonly/)
-  assert.match(rendered.growthPath, /name="school"[^>]*required/)
-  assert.match(rendered.growthPath, /name="teacherId"/)
-  assert.match(rendered.growthPath, /name="workUrl"[^>]*required/)
-  assert.match(rendered.growthPath, /name="email"[^>]*required/)
-  assert.match(rendered.growthPath, /name="certificateName"[^>]*required/)
-  assert.match(rendered.growthPath, />提交审核<\/button>/)
-  assert.match(rendered.growthPath, /class="academy-submission-success" hidden/)
+  assert.match(rendered.submitCta, /class="academy-submission-modal"[^>]*hidden/)
+  assert.match(rendered.submitCta, /name="province"[^>]*required/)
+  assert.match(rendered.submitCta, /name="city"[^>]*required/)
+  assert.match(rendered.submitCta, /value="飞象老师 AI 工作坊·开学第一课·2026 秋"[^>]*readonly/)
+  assert.match(rendered.submitCta, /name="school"[^>]*required/)
+  assert.match(rendered.submitCta, /name="teacherId"/)
+  assert.match(rendered.submitCta, /name="workUrl"[^>]*required/)
+  assert.match(rendered.submitCta, /name="email"[^>]*required/)
+  assert.match(rendered.submitCta, /name="certificateName"[^>]*required/)
+  assert.match(rendered.submitCta, />提交审核<\/button>/)
+  assert.match(rendered.submitCta, /class="academy-submission-success" hidden/)
   assert.match(rendered.visibilityCss, /\.academy-submission-modal\[hidden\]\{display:none\}/)
 })
 
@@ -200,25 +193,30 @@ test('提交弹窗可以打开，并在必填信息有效后切换到审核状�
   assert.equal(success.hidden, false)
 })
 
-test('分类单选框与课程网格保持同级，让跨分类 CSS 能显示卡片', async () => {
-  const { academyCourses, academyFilters } = await loadCatalog()
-  const { renderAcademyCourseUi } = await loadRenderer()
-  const coverUrls = Object.fromEntries(academyCourses.map((course) => [course.coverFile, `/covers/${course.coverFile}`]))
-  const rendered = renderAcademyCourseUi({ courses: academyCourses, filters: academyFilters, coverUrls })
+test('两层筛选单选框与网格同级，AND 组合过滤且默认全部可见', async () => {
+  const rendered = await renderUi()
 
-  const allRadioPosition = rendered.library.indexOf('id="course-type-all"')
-  const filterBarPosition = rendered.library.indexOf('<div class="lib-filter">')
-  assert.ok(allRadioPosition > -1 && allRadioPosition < filterBarPosition)
-  assert.match(rendered.visibilityCss, /#course-type-all:checked ~ \.lgrid \.course-card\{display:flex\}/)
+  const useAll = rendered.library.indexOf('id="course-use-all"')
+  const typeAll = rendered.library.indexOf('id="course-type-all"')
+  const grid = rendered.library.indexOf('<div class="lgrid">')
+  assert.ok(useAll > -1 && typeAll > -1 && useAll < grid && typeAll < grid)
+
+  // 每层选中后，隐藏不匹配的卡片（两层独立 => AND 组合）
+  assert.match(rendered.visibilityCss, /#course-use-guide:checked ~ \.lgrid \.course-card:not\(\.cat-guide\)\{display:none\}/)
+  assert.match(rendered.visibilityCss, /#course-type-animation:checked ~ \.lgrid \.course-card:not\(\.cat-animation\)\{display:none\}/)
+  // 选中项高亮
+  assert.match(rendered.visibilityCss, /#course-use-guide:checked ~ \.lib-filter label\[for="course-use-guide"\]/)
   assert.match(rendered.visibilityCss, /#course-type-animation:checked ~ \.lib-filter label\[for="course-type-animation"\]/)
+  // 没有旧的等级/折叠机制
+  assert.doesNotMatch(rendered.visibilityCss, /fold-/)
+  assert.doesNotMatch(rendered.library, /course-expand/)
 })
 
-test('分类、课程卡和详情导航可通过键盘激活对应单选框', async () => {
-  const { academyCourses, academyFilters } = await loadCatalog()
+test('两层分类的分片、课程卡和详情导航可通过键盘激活对应单选框', async () => {
   const renderer = await loadRenderer()
-  const coverUrls = Object.fromEntries(academyCourses.map((course) => [course.coverFile, `/covers/${course.coverFile}`]))
-  const rendered = renderer.renderAcademyCourseUi({ courses: academyCourses, filters: academyFilters, coverUrls })
+  const rendered = await renderUi()
 
+  assert.match(rendered.library, /class="chip" for="course-use-guide" tabindex="0" role="button"/)
   assert.match(rendered.library, /class="chip" for="course-type-animation" tabindex="0" role="button"/)
   assert.match(rendered.library, /class="lcard course-card[^>]+tabindex="0" role="button"/)
   assert.match(rendered.details, /class="pl-item"[^>]+tabindex="0" role="button"/)
@@ -238,22 +236,4 @@ test('分类、课程卡和详情导航可通过键盘激活对应单选框', as
   assert.equal(activated, true)
   assert.equal(clicked, 1)
   assert.equal(prevented, true)
-})
-
-test('使用技巧攻略每个分类默认展示 6 个，超出部分可展开和收起', async () => {
-  const { academyCourses, academyFilters } = await loadCatalog()
-  const { renderAcademyCourseUi } = await loadRenderer()
-  const coverUrls = Object.fromEntries(academyCourses.map((course) => [course.coverFile, `/covers/${course.coverFile}`]))
-  const rendered = renderAcademyCourseUi({ courses: academyCourses, filters: academyFilters, coverUrls })
-  const cardClasses = [...rendered.library.matchAll(/class="lcard course-card ([^"]+)"/g)].map((match) => match[1])
-
-  assert.equal(cardClasses.length, 23)
-  assert.doesNotMatch(cardClasses[5], /fold-all/)
-  assert.match(cardClasses[6], /fold-all/)
-  assert.equal(cardClasses.filter((className) => className.includes('fold-courseware')).length, 9)
-  assert.equal((rendered.library.match(/course-expand-control-(?:all|courseware)/g) || []).length, 2)
-  assert.match(rendered.library, /id="course-expand-all" class="course-expand-toggle"/)
-  assert.match(rendered.library, /for="course-expand-all"[^>]*>[^<]*<span class="more-t">展开全部 23 个<\/span>/)
-  assert.match(rendered.visibilityCss, /#course-type-all:checked ~ #course-expand-all:not\(:checked\) ~ \.lgrid \.fold-all\{display:none\}/)
-  assert.match(rendered.visibilityCss, /#course-type-courseware:checked ~ #course-expand-courseware:not\(:checked\) ~ \.lgrid \.fold-courseware\{display:none\}/)
 })

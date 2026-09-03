@@ -5,7 +5,7 @@ import Sidebar from '../components/Sidebar.vue'
 import { RESOURCES_BY_ID } from '../data/resources'
 import { store } from '../store'
 import { bindForkCardResourceIds, isSlideResourceKind } from '../resource-navigation.mjs'
-import { getAdaptedAttribution, getResourceCredits } from '../resource-attribution.mjs'
+import { getAdaptedAttribution, getResourceCredits, getResourceTopicMembership } from '../resource-attribution.mjs'
 
 const DEFAULT_RESOURCE_ID = 'res-xianglin'
 
@@ -84,6 +84,17 @@ function renderResourceCredits(resource) {
   }).join('')
 }
 
+function renderTopicMembership(resource) {
+  const membership = getResourceTopicMembership(resource)
+  if (!membership) return ''
+
+  return `<div class="rd-topic-strip" aria-label="${escapeHtml(membership.label)}">
+    <span>${escapeHtml(membership.label)}</span>
+    <span class="rd-topic-dot" aria-hidden="true">·</span>
+    <strong>${escapeHtml(membership.title)}</strong>
+  </div>`
+}
+
 function replaceMotherForkSection(html, resource) {
   return html.replace(
     /<div style="font-size:13px;color:#9A9A9A;font-weight:600;margin:20px 0 12px;">社区改编 · [\s\S]*?<\/div><\/div>(?=\n\s*<\/div>\n\s*<div>\n\s*<div class="fg-sec-h">🤝 共创贡献)/,
@@ -113,6 +124,7 @@ function renderMotherResourceHtml(template, resource) {
     __RES_CREDIT_ROWS__: renderResourceCredits(resource),
     __RES_CONTRIBUTOR_COUNT__: resource.contributors.length,
     __RES_CONTRIBUTORS__: renderContributors(resource.contributors),
+    __RES_TOPIC_MEMBERSHIP__: renderTopicMembership(resource),
     __RES_TOPIC_LABEL__: topicLabel,
     __RES_TOPIC__: resource.topic.replaceAll('·', ' · '),
     __RES_PREVIEW_CLASS__: slideResource ? 'is-slides' : 'is-app',
@@ -120,7 +132,7 @@ function renderMotherResourceHtml(template, resource) {
     __RES_PREVIEW_LABEL__: slideResource ? '课件 · 1 / 6' : `${kindLabel} · 运行预览`,
   }
 
-  let html = renderSlots(template, slots, ['__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__'])
+  let html = renderSlots(template, slots, ['__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__'])
 
   html = html.replace('data-count="1334">1,334', `data-count="${resource.stats.star}">${formatNumber(resource.stats.star)}`)
   html = html.replace('社区改编 · 12 个版本', `社区改编 · ${formatNumber(resource.stats.adapt)} 个版本`)

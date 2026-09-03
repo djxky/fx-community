@@ -5,14 +5,13 @@ import RankBoardCard from '../components/RankBoardCard.vue'
 import { BOARDS, EDITORIAL_FEATURES } from '../data/rank'
 
 const periods = ['本周', '本月', '年度']
-const subjects = ['全部', '语文', '数学', '英语']
 const activePeriod = ref('本周')
-const activeSubject = ref('全部')
 
 const mainBoard = BOARDS.find(board => board.key === 'classroom')
 const hotBoard = BOARDS.find(board => board.key === 'latest')
 const remixBoard = BOARDS.find(board => board.key === 'adaptation')
-const creatorBoard = BOARDS.find(board => board.key === 'recognized')
+const recognizedBoard = BOARDS.find(board => board.key === 'recognized')
+const risingBoard = BOARDS.find(board => board.key === 'rising')
 </script>
 
 <template>
@@ -27,16 +26,6 @@ const creatorBoard = BOARDS.find(board => board.key === 'recognized')
               <span class="tbtab nav-discover">发现</span>
             </div>
             <div class="tbar-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3-3"></path></svg>搜名师、技能、课件、教案…</div>
-          </div>
-        </div>
-
-        <!-- 全局学科切换（管全站内容） -->
-        <div class="rank-subbar">
-          <div class="rank-subbar-in">
-            <span class="rank-subbar-label">学科</span>
-            <div class="seg" role="tablist" aria-label="学科">
-              <button v-for="subject in subjects" :key="subject" type="button" class="seg-btn" :class="{ on: activeSubject === subject }" @click="activeSubject = subject">{{ subject }}</button>
-            </div>
           </div>
         </div>
 
@@ -71,7 +60,7 @@ const creatorBoard = BOARDS.find(board => board.key === 'recognized')
             </div>
           </section>
 
-          <!-- 2. 课堂使用榜（主榜，周期筛选归属这里；学科随全局） -->
+          <!-- 2. 课堂使用榜（主榜，周期筛选归属这里） -->
           <section class="rank-block" aria-label="课堂使用榜">
             <div class="rank-heading rank-heading-filter">
               <div class="rank-heading-title">
@@ -82,10 +71,10 @@ const creatorBoard = BOARDS.find(board => board.key === 'recognized')
                 <button v-for="period in periods" :key="period" type="button" class="seg-btn" :class="{ on: activePeriod === period }" @click="activePeriod = period">{{ period }}</button>
               </div>
             </div>
-            <RankBoardCard :board="mainBoard" variant="main" :period="activePeriod" :subject="activeSubject" />
+            <RankBoardCard :board="mainBoard" variant="main" :period="activePeriod" />
           </section>
 
-          <!-- 3. 每周热门（跟随全局学科，无周期切换——它本就是"每周"） -->
+          <!-- 3. 每周热门（无周期切换——它本就是"每周"） -->
           <section class="rank-block" aria-label="每周热门">
             <div class="rank-heading">
               <div class="rank-heading-title">
@@ -93,10 +82,10 @@ const creatorBoard = BOARDS.find(board => board.key === 'recognized')
                 <span class="rank-heading-note">本周老师用得最多的资源</span>
               </div>
             </div>
-            <RankBoardCard :board="hotBoard" variant="grid" :subject="activeSubject" />
+            <RankBoardCard :board="hotBoard" variant="grid" />
           </section>
 
-          <!-- 4. 优质改编（随全局学科） -->
+          <!-- 4. 优质改编 -->
           <section class="rank-block" aria-label="优质改编">
             <div class="rank-heading">
               <div class="rank-heading-title">
@@ -104,18 +93,29 @@ const creatorBoard = BOARDS.find(board => board.key === 'recognized')
                 <span class="rank-heading-note">沿着真实课堂继续长出的新版本</span>
               </div>
             </div>
-            <RankBoardCard :board="remixBoard" variant="remix" :subject="activeSubject" />
+            <RankBoardCard :board="remixBoard" variant="remix" />
           </section>
 
-          <!-- 创作者贡献榜（随全局学科） -->
-          <section class="rank-block rank-creator-block" aria-label="创作者榜">
+          <!-- 5. 创作达人榜：复用课堂主榜结构，按代表作呈现创作者 -->
+          <section class="rank-block" aria-label="创作达人榜">
             <div class="rank-heading">
               <div class="rank-heading-title">
-                <h2>创作者贡献榜</h2>
-                <span class="rank-heading-note">看见把课堂方法做成作品的人</span>
+                <h2>创作达人榜</h2>
+                <span class="rank-heading-note">{{ recognizedBoard.desc }}</span>
               </div>
             </div>
-            <RankBoardCard :board="creatorBoard" variant="creator" :period="activePeriod" :subject="activeSubject" />
+            <RankBoardCard :board="recognizedBoard" variant="main" :period="activePeriod" />
+          </section>
+
+          <!-- 6. 新锐创作者榜：复用每周热门作品网格 -->
+          <section class="rank-block" aria-label="新锐创作者榜">
+            <div class="rank-heading">
+              <div class="rank-heading-title">
+                <h2>新锐创作者榜</h2>
+                <span class="rank-heading-note">{{ risingBoard.desc }}</span>
+              </div>
+            </div>
+            <RankBoardCard :board="risingBoard" variant="grid" />
           </section>
         </div>
 
@@ -132,14 +132,8 @@ button { font:inherit; }
 .tbar-tabs { display:flex; align-items:stretch; gap:26px; }
 .tbar-search { display:flex; align-items:center; gap:8px; background:#F7F7F7; border:1px solid #ECECEC; border-radius:10px; padding:9px 14px; width:300px; align-self:center; font-size:13px; color:#9A9A9A; }
 
-/* 全局学科条 */
-.rank-subbar { position:sticky; top:0; z-index:5; background:rgba(247,247,247,.92); backdrop-filter:saturate(1.4) blur(6px); border-bottom:1px solid #ECECEC; }
-.rank-subbar-in { display:flex; align-items:center; gap:10px; max-width:1220px; margin:0 auto; padding:11px 34px; }
-.rank-subbar-label { color:#9A9A9A; font-size:12px; }
-
 .rank-shell { max-width:1220px; margin:0 auto; padding:24px 34px 64px; }
 .rank-block { margin-bottom:30px; }
-.rank-creator-block > .rank-heading, .rank-creator-block :deep(.rank-creator-board) { max-width:1040px; margin-left:auto; margin-right:auto; }
 .rank-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:14px; }
 .rank-heading-title { min-width:0; }
 .rank-heading-title h2 { margin:0; color:#141F1B; font-size:19px; letter-spacing:-.03em; }
@@ -172,7 +166,7 @@ button { font:inherit; }
 .rank-editorial-metric { flex:0 0 auto; color:#7A7C7C; font-size:10px; white-space:nowrap; }
 .rank-editorial-metric b { color:#141F1B; font-size:14px; }
 
-@media (max-width:1300px) { .rank-shell, .rank-subbar-in { padding-left:24px; padding-right:24px; } }
+@media (max-width:1300px) { .rank-shell { padding-left:24px; padding-right:24px; } }
 @media (max-width:900px) { .rank-heading-filter { flex-direction:column; align-items:flex-start; gap:12px; } }
 @media (max-width:720px) { .rank-shell { padding:22px 16px 46px; } .rank-editorial-grid { grid-template-columns:1fr; } .rank-editorial-card { grid-template-columns:1fr; } .rank-editorial-cover { min-height:160px; aspect-ratio:16 / 9; } .seg { flex-wrap:wrap; } }
 </style>
