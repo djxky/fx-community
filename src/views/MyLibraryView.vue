@@ -1,7 +1,8 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 import Sidebar from '../components/Sidebar.vue'
 import PublishFlow from '../components/PublishFlow.vue'
+import ImportFlow from '../components/ImportFlow.vue'
 import { COVERS } from '../data/covers'
 import { RESOURCES_BY_ID } from '../data/resources'
 import { store } from '../store'
@@ -17,6 +18,8 @@ const activeFilter = ref('全部')
 const openMenuId = ref('')
 const toast = ref('')
 const publishItemId = ref('')
+const importOpen = ref(false)
+const showAddMenu = ref(false)
 
 const coverById = {
   'res-xianglin': COVERS[0],
@@ -31,7 +34,7 @@ const coverById = {
 }
 
 // 页面只组织“我的”归属，资源身份、作者与统计统一取 §8.4 数据字典。
-const libraryItems = [
+const libraryItems = reactive([
   { id: 'generated-skill', resourceId: 'res-skill-zuowen', bucket: 'generated', operation: 'AI 生成', category: '技能', status: 'draft' },
   { id: 'generated-copy', resourceId: 'res-order-game', bucket: 'generated', operation: '保存副本', category: '应用', status: 'draft' },
   { id: 'generated-zhou', resourceId: 'res-xl-zhoutao', bucket: 'generated', operation: '我的改编', category: '课件', status: 'published', originId: 'res-xianglin' },
@@ -39,7 +42,7 @@ const libraryItems = [
   { id: 'favorite-mother', resourceId: 'res-xianglin', bucket: 'favorites', operation: '已收藏', category: '课件', status: 'published' },
   { id: 'favorite-solid', resourceId: 'res-solid', bucket: 'favorites', operation: '已收藏', category: '课件', status: 'published' },
   { id: 'favorite-skill', resourceId: 'res-skill-fenceng', bucket: 'favorites', operation: '已收藏', category: '技能', status: 'published' },
-]
+])
 
 const visibleItems = computed(() => {
   if (activeTab.value === 'drive') return []
@@ -49,9 +52,16 @@ const visibleItems = computed(() => {
 })
 
 const selectedPublishItem = computed(() => libraryItems.find((item) => item.id === publishItemId.value) || null)
+const genCount = computed(() => libraryItems.filter((item) => item.bucket === 'generated').length)
+const favCount = computed(() => libraryItems.filter((item) => item.bucket === 'favorites').length)
+const adaptCount = computed(() => libraryItems.filter((item) => item.originId).length)
 
 function resourceFor(item) {
-  return RESOURCES_BY_ID[item.resourceId]
+  return item.resource || RESOURCES_BY_ID[item.resourceId]
+}
+
+function coverFor(item) {
+  return item.cover || coverById[item.resourceId]
 }
 
 function parentFor(item) {
@@ -100,7 +110,7 @@ function handlePublished(payload) {
       resourceId: item.resourceId,
       title: payload.title,
       meta: `${payload.fit.subject} · ${payload.fit.grade} · ${payload.fit.textbook} · ${payload.fit.lessonType}`,
-      cover: coverById[item.resourceId],
+      cover: coverFor(item),
       use: '0',
       save: '0',
     },
@@ -109,6 +119,50 @@ function handlePublished(payload) {
   closePublish()
   toast.value = '已发布到社区，作品已回到我的生成'
   window.setTimeout(() => { toast.value = '' }, 2200)
+}
+
+function newGenerate() {
+  showAddMenu.value = false
+  placeholderAction('新建生成')
+}
+
+function openImport() {
+  showAddMenu.value = false
+  importOpen.value = true
+}
+
+function closeImport() {
+  importOpen.value = false
+}
+
+function handleImported(payload) {
+  const id = `imported-${Date.now()}`
+  libraryItems.unshift({
+    id,
+    resourceId: id,
+    bucket: 'generated',
+    operation: '从外部导入',
+    category: payload.category,
+    status: 'draft',
+    imported: true,
+    cover: payload.cover,
+    resource: {
+      id,
+      title: payload.title,
+      author: { name: '樱桃小魔丸子', type: '人', cert: '', avatar: null },
+      kind: payload.category,
+      fit: { ...payload.fit, verified: false },
+      goal: payload.goal,
+      cover: payload.cover,
+      stats: { use: 0, adapt: 0, star: 0 },
+      versions: [], forkedFrom: null, forks: [], contributors: [],
+    },
+  })
+  importOpen.value = false
+  activeTab.value = 'generated'
+  activeFilter.value = '全部'
+  toast.value = '已导入并转成飞象资源，草稿已存入「我的生成」'
+  window.setTimeout(() => { toast.value = '' }, 2400)
 }
 
 function placeholderAction(label) {
@@ -131,9 +185,9 @@ function placeholderAction(label) {
               <p>把生成、收藏和改编过的好课，放在一个地方继续生长。</p>
             </div>
             <div class="ml-summary">
-              <div><b>4</b><span>我的生成</span></div>
-              <div><b>3</b><span>我的收藏</span></div>
-              <div><b>2</b><span>社区改编</span></div>
+              <div><b>{{ genCount }}</b><span>我的生成</span></div>
+              <div><b>{{ favCount }}</b><span>我的收藏</span></div>
+              <div><b>{{ adaptCount }}</b><span>社区改编</span></div>
             </div>
           </div>
 
@@ -146,7 +200,7 @@ function placeholderAction(label) {
               type="button"
               role="tab"
               :aria-selected="activeTab === tab.id"
-              @click="activeTab = tab.id; openMenuId = ''"
+              @click="activeTab = tab.id; openMenuId = ''; showAddMenu = false"
             >
               <span>{{ tab.label }}</span><span v-if="tab.locked" aria-hidden="true">🔒</span>
             </button>
@@ -155,22 +209,31 @@ function placeholderAction(label) {
           <template v-if="activeTab !== 'drive'">
             <div class="ml-toolbar">
               <div class="ml-toolbar-title">{{ activeTab === 'generated' ? '我做过的作品' : '我收藏的作品' }}</div>
-              <div class="ml-filters" role="group" aria-label="资源类型筛选">
-                <button
-                  v-for="filter in filters"
-                  :key="filter"
-                  class="ml-filter"
-                  :class="{ on: activeFilter === filter }"
-                  type="button"
-                  @click="activeFilter = filter"
-                >{{ filter }}</button>
+              <div class="ml-toolbar-right">
+                <div class="ml-filters" role="group" aria-label="资源类型筛选">
+                  <button
+                    v-for="filter in filters"
+                    :key="filter"
+                    class="ml-filter"
+                    :class="{ on: activeFilter === filter }"
+                    type="button"
+                    @click="activeFilter = filter"
+                  >{{ filter }}</button>
+                </div>
+                <div v-if="activeTab === 'generated'" class="ml-add-wrap">
+                  <button class="ml-add" type="button" @click.stop="showAddMenu = !showAddMenu">＋ 添加作品</button>
+                  <div v-if="showAddMenu" class="ml-add-menu" role="menu">
+                    <button type="button" role="menuitem" @click.stop="newGenerate()">新建生成<small>去工作台生成</small></button>
+                    <button type="button" role="menuitem" @click.stop="openImport()">从外部导入<small>HTML / GitHub / skill</small></button>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div v-if="visibleItems.length" class="ml-grid">
               <article v-for="item in visibleItems" :key="item.id" class="ml-card">
                 <div class="ml-cover" :data-resource-id="item.status === 'published' ? item.resourceId : null">
-                  <img :src="coverById[item.resourceId]" :alt="`${resourceFor(item).title}封面`" loading="lazy" />
+                  <img :src="coverFor(item)" :alt="`${resourceFor(item).title}封面`" loading="lazy" />
                   <span class="ml-type">{{ item.category }}</span>
                   <span class="ml-status" :class="item.status">{{ item.status === 'published' ? '已发布' : '未发布' }}</span>
                 </div>
@@ -224,6 +287,7 @@ function placeholderAction(label) {
       @close="closePublish"
       @published="handlePublished"
     />
+    <ImportFlow v-if="importOpen" @close="closeImport" @imported="handleImported" />
     <div v-if="toast" class="ml-toast" role="status">{{ toast }}</div>
   </div>
 </template>
@@ -249,6 +313,14 @@ function placeholderAction(label) {
 .ml-filters { display:flex; gap:8px; }
 .ml-filter { border:1px solid #E3E4E3; border-radius:999px; padding:6px 14px; background:#fff; color:#7A7C7C; font-size:12.5px; cursor:pointer; }
 .ml-filter.on { border-color:#141F1B; background:#141F1B; color:#fff; font-weight:600; }
+.ml-toolbar-right { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.ml-add-wrap { position:relative; flex-shrink:0; }
+.ml-add { border:1px solid #141F1B; border-radius:999px; padding:6px 15px; background:#141F1B; color:#fff; font-size:12.5px; font-weight:600; cursor:pointer; }
+.ml-add:hover { background:#2C3632; }
+.ml-add-menu { position:absolute; z-index:6; top:36px; right:0; width:196px; padding:6px; border:1px solid #E3E4E3; border-radius:12px; background:#fff; box-shadow:0 12px 28px rgba(20,31,27,.14); }
+.ml-add-menu button { display:flex; flex-direction:column; gap:2px; width:100%; border:0; border-radius:8px; padding:9px 11px; background:#fff; color:#141F1B; text-align:left; font-size:13px; font-weight:700; cursor:pointer; }
+.ml-add-menu button:hover { background:#F6F6F6; }
+.ml-add-menu small { color:#9A9A9A; font-size:11px; font-weight:400; }
 .ml-grid { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:18px; align-items:stretch; }
 .ml-card { display:flex; flex-direction:column; min-width:0; overflow:hidden; border:1px solid #ECECEC; border-radius:16px; background:#fff; box-shadow:0 1px 2px rgba(20,16,10,.03); transition:transform .15s ease, box-shadow .15s ease; }
 .ml-card:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(20,16,10,.08); }
