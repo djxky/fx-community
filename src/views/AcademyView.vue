@@ -1,6 +1,7 @@
 <script setup>
 import raw from './raw/academy.html?raw'
 import Sidebar from '../components/Sidebar.vue'
+import newSemesterCampaign from '../assets/academy/new-semester-ai-campaign.png'
 import workshopCollaboration from '../assets/academy/workshop-collaboration.jpg'
 import coursewarePractice from '../assets/academy/courseware-practice.jpg'
 import mathVisualization from '../assets/academy/math-visualization.jpg'
@@ -37,6 +38,7 @@ function handleCourseNavigationKeydown(event) {
 }
 
 const academyImages = {
+  '--academy-img-campaign': `url(${newSemesterCampaign})`,
   '--academy-img-workshop': `url(${workshopCollaboration})`,
   '--academy-img-courseware': `url(${coursewarePractice})`,
   '--academy-img-math': `url(${mathVisualization})`,

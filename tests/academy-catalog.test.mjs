@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import test from 'node:test'
 
 async function loadCatalog() {
@@ -236,4 +236,15 @@ test('两层分类的分片、课程卡和详情导航可通过键盘激活对�
   assert.equal(activated, true)
   assert.equal(clicked, 1)
   assert.equal(prevented, true)
+})
+
+test('首张活动 Banner 可进入案例征集落地页并复用作品提交入口', () => {
+  const raw = readFileSync(new URL('../src/views/raw/academy.html', import.meta.url), 'utf8')
+
+  assert.match(raw, /id="lp-campaign" class="lp-radio"/)
+  assert.match(raw, /class="hslide s1"[\s\S]*?for="lp-campaign"/)
+  assert.match(raw, /#lp-campaign:checked ~ #LP-campaign\{display:block\}/)
+  assert.match(raw, /class="lesson-page campaign-page" id="LP-campaign"/)
+  assert.match(raw, /class="lp-back" for="lp-home"[^>]*>← 返回 AI 教学工坊<\/label>/)
+  assert.match(raw, /id="LP-campaign"[\s\S]*?data-academy-submit-open/)
 })
