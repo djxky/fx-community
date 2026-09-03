@@ -34,7 +34,7 @@ const history = [
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg>首页
       </div>
       <div class="nav nav-discover" :class="{ on: sqOn }" style="cursor:pointer;">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" :stroke="sqOn ? '#141F1B' : '#7A7C7C'" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19a5.5 5.5 0 0111 0"></path><circle cx="17" cy="8" r="2.6"></circle><path d="M15.5 13.6A5 5 0 0121 18.5"></path></svg>社区
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" :stroke="sqOn ? '#141F1B' : '#7A7C7C'" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19a5.5 5.5 0 0111 0"></path><circle cx="17" cy="8" r="2.6"></circle><path d="M15.5 13.6A5 5 0 0121 18.5"></path></svg>灵感
       </div>
       <div class="nav nav-academy" :class="{ on: acOn }" style="cursor:pointer;">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" :stroke="acOn ? '#141F1B' : '#7A7C7C'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"></path><path d="M6 12v4.5c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5V12"></path></svg>AI 教学工坊
@@ -95,7 +95,7 @@ const history = [
       <div class="sm-ic" title="首页">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg>
       </div>
-      <div class="sm-ic nav-discover" :class="{ on: sqOn }" title="社区">
+      <div class="sm-ic nav-discover" :class="{ on: sqOn }" title="灵感">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" :stroke="sqOn ? '#141F1B' : '#7A7C7C'" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19a5.5 5.5 0 0111 0"></path><circle cx="17" cy="8" r="2.6"></circle><path d="M15.5 13.6A5 5 0 0121 18.5"></path></svg>
       </div>
       <div class="sm-ic nav-academy" :class="{ on: acOn }" title="AI 教学工坊">
