@@ -1,4 +1,5 @@
 <script setup>
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import raw from './raw/academy.html?raw'
 import Sidebar from '../components/Sidebar.vue'
 import newSemesterCampaign from '../assets/academy/new-semester-ai-campaign.png'
@@ -13,6 +14,7 @@ import {
   composeAcademyMarkup,
   renderAcademyCourseUi,
 } from '../lib/academy-course-renderer.mjs'
+import { setupAcademyCarousel } from '../lib/academy-carousel.mjs'
 
 const courseCoverModules = import.meta.glob('../assets/academy/course-covers/*.jpg', {
   eager: true,
@@ -32,6 +34,16 @@ const renderedCourseUi = renderAcademyCourseUi({
 })
 
 const renderedRaw = composeAcademyMarkup(raw, renderedCourseUi)
+const academyRoot = ref(null)
+let cleanupAcademyCarousel = () => {}
+
+onMounted(() => {
+  cleanupAcademyCarousel = setupAcademyCarousel(academyRoot.value, { intervalMs: 5000 })
+})
+
+onBeforeUnmount(() => {
+  cleanupAcademyCarousel()
+})
 
 function handleCourseNavigationKeydown(event) {
   activateRadioLabelFromKeyboard(event, event.currentTarget?.ownerDocument)
@@ -48,7 +60,7 @@ const academyImages = {
 </script>
 
 <template>
-  <div id="view-academy" :style="academyImages">
+  <div id="view-academy" ref="academyRoot" :style="academyImages">
     <div class="page">
       <Sidebar active="academy" />
       <div style="display:contents" @keydown="handleCourseNavigationKeydown" v-html="renderedRaw"></div>

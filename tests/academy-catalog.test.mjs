@@ -29,6 +29,14 @@ async function loadSubmission() {
   }
 }
 
+async function loadCarousel() {
+  try {
+    return await import('../src/lib/academy-carousel.mjs')
+  } catch {
+    return { setupAcademyCarousel: () => () => {} }
+  }
+}
+
 async function renderUi() {
   const { academyCourses, academyUseFilters, academyTypeFilters } = await loadCatalog()
   const { renderAcademyCourseUi } = await loadRenderer()
@@ -285,4 +293,78 @@ test('直播回放区域只展示回放卡片', () => {
   assert.doesNotMatch(replay, /直播预告/)
   assert.doesNotMatch(replay, /class="vthumb preview"/)
   assert.match(replay, /class="rep">回放/)
+})
+
+test('顶部 Banner 支持五秒自动轮播、手动切换重计时与悬停暂停', () => {
+  const view = readFileSync(new URL('../src/views/AcademyView.vue', import.meta.url), 'utf8')
+  const raw = readFileSync(new URL('../src/views/raw/academy.html', import.meta.url), 'utf8')
+
+  assert.match(view, /setupAcademyCarousel/)
+  assert.match(view, /intervalMs:\s*5000/)
+  assert.match(view, /onMounted\([\s\S]*?setupAcademyCarousel/)
+  assert.match(view, /onBeforeUnmount\([\s\S]*?cleanupAcademyCarousel/)
+  assert.match(raw, /id="hs1"[\s\S]*?id="hs2"[\s\S]*?id="hs3"/)
+  assert.match(raw, /label for="hs1"[\s\S]*?label for="hs2"[\s\S]*?label for="hs3"/)
+})
+
+test('鼠标点击圆点产生的非键盘焦点不会阻止重新计时', async () => {
+  const createEventTarget = () => {
+    const listeners = new Map()
+    return {
+      addEventListener(type, listener) {
+        const group = listeners.get(type) ?? new Set()
+        group.add(listener)
+        listeners.set(type, group)
+      },
+      removeEventListener(type, listener) {
+        listeners.get(type)?.delete(listener)
+      },
+      emit(type, event = {}) {
+        listeners.get(type)?.forEach((listener) => listener({ target: this, ...event }))
+      },
+    }
+  }
+
+  const radios = [{ checked: true }, { checked: false }, { checked: false }]
+  const dots = [createEventTarget(), createEventTarget(), createEventTarget()]
+  const hero = {
+    ...createEventTarget(),
+    querySelectorAll(selector) {
+      return selector === 'input[name="hs"]' ? radios : dots
+    },
+    contains() {
+      return false
+    },
+  }
+  const root = {
+    querySelector() {
+      return hero
+    },
+    getClientRects() {
+      return [{}]
+    },
+  }
+  const documentObject = { ...createEventTarget(), visibilityState: 'visible' }
+  let activeInterval = null
+  let activeIntervalId = 0
+  const windowObject = {
+    setInterval(callback) {
+      activeInterval = callback
+      activeIntervalId += 1
+      return activeIntervalId
+    },
+    clearInterval() {
+      activeInterval = null
+    },
+  }
+  const { setupAcademyCarousel } = await loadCarousel()
+  const cleanup = setupAcademyCarousel(root, { intervalMs: 5000, windowObject, documentObject })
+
+  dots[2].emit('click')
+  hero.emit('focusin', { target: { matches: () => false } })
+
+  assert.equal(typeof activeInterval, 'function')
+  activeInterval()
+  assert.equal(radios[1].checked, true)
+  cleanup()
 })
