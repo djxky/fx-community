@@ -15,32 +15,6 @@ defineProps({ post: { type: Object, required: true } })
     <!-- 标题 -->
     <div class="pc-title">{{ post.title }}</div>
 
-    <!-- 社会证明降级链:每卡最多一条,普通资源不显示 -->
-    <div class="pc-proof">
-      <template v-if="post.proof">
-      <!-- 专家推荐(最强,金色荣誉例外) -->
-      <span v-if="post.proof.type === 'expert'" class="pf-expert">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#B5860B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.9 6 6.6.6-5 4.3 1.5 6.5L12 17.8 6 20.9l1.5-6.5-5-4.3 6.6-.6z"></path></svg>
-        {{ post.proof.by }} 推荐
-      </span>
-      <!-- 热评 -->
-      <span v-else-if="post.proof.type === 'comment'" class="pf-line">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H8l-4 4V5a2 2 0 012-2h13a2 2 0 012 2z"></path></svg>
-        <span class="pf-quote">“{{ post.proof.text }}”</span>
-      </span>
-      <!-- 热度 / 飙升 -->
-      <span v-else-if="post.proof.type === 'hot'" class="pf-line hot">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17l6-6 4 4 6-6"></path><path d="M20 9v4h-4"></path></svg>
-        {{ post.proof.text }}
-      </span>
-      <!-- 最新 -->
-      <span v-else-if="post.proof.type === 'new'" class="pf-line">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
-        {{ post.proof.text }}
-      </span>
-      </template>
-    </div>
-
     <!-- 基础信息(压成一行淡灰文字,不再用一排标签块) -->
     <div class="pc-meta">
       {{ post.meta }}<span v-if="post.verified" class="pc-ok"> · <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg> 课堂验证</span>
