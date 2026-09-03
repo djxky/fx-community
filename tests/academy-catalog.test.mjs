@@ -248,3 +248,41 @@ test('首张活动 Banner 可进入案例征集落地页并复用作品提交入
   assert.match(raw, /class="lp-back" for="lp-home"[^>]*>← 返回 AI 教学工坊<\/label>/)
   assert.match(raw, /id="LP-campaign"[\s\S]*?data-academy-submit-open/)
 })
+
+test('AI 教学工坊顶部只保留提交作品与联系我们', () => {
+  const raw = readFileSync(new URL('../src/views/raw/academy.html', import.meta.url), 'utf8')
+
+  assert.match(raw, /<div class="ws-actions">\s*<button[^>]*>提交作品<\/button>\s*<label[^>]*for="ov-contact"[^>]*>联系我们<\/label>\s*<\/div>/)
+  assert.doesNotMatch(raw, /<div class="ws-actions">[\s\S]*?>赛事专区<\/label>/)
+})
+
+test('三张 Banner 分别展示活动、不可点击的直播预告和赛事落地页入口', () => {
+  const raw = readFileSync(new URL('../src/views/raw/academy.html', import.meta.url), 'utf8')
+  const liveBanner = raw.match(/<div class="hslide s2">([\s\S]*?)<\/div>\s*<div class="hslide s3">/)?.[1] ?? ''
+
+  assert.match(raw, /class="hslide s1"[\s\S]*?for="lp-campaign"/)
+  assert.match(liveBanner, /直播预告 · 9\.11 20:00/)
+  assert.match(liveBanner, /数学难点互动课件设计（进阶场）/)
+  assert.doesNotMatch(liveBanner, /\bfor=/)
+  assert.doesNotMatch(liveBanner, /role="button"/)
+  assert.match(raw, /class="hslide s3"[\s\S]*?for="lp-match"/)
+})
+
+test('赛事专区由弹窗改为独立落地页', () => {
+  const raw = readFileSync(new URL('../src/views/raw/academy.html', import.meta.url), 'utf8')
+
+  assert.match(raw, /id="lp-match" class="lp-radio"/)
+  assert.match(raw, /#lp-match:checked ~ #LP-match\{display:block\}/)
+  assert.match(raw, /class="lesson-page match-page" id="LP-match"/)
+  assert.match(raw, /id="LP-match"[\s\S]*?获奖案例回放[\s\S]*?赛事培训 · 参赛要点[\s\S]*?提交参赛资格 · 申请辅导/)
+  assert.doesNotMatch(raw, /id="ov-match"/)
+})
+
+test('直播回放区域只展示回放卡片', () => {
+  const raw = readFileSync(new URL('../src/views/raw/academy.html', import.meta.url), 'utf8')
+  const replay = raw.match(/<!-- 场景 2：直播 · 回放 -->([\s\S]*?)<!-- 场景 3：按资源类型找教程 -->/)?.[1] ?? ''
+
+  assert.doesNotMatch(replay, /直播预告/)
+  assert.doesNotMatch(replay, /class="vthumb preview"/)
+  assert.match(replay, /class="rep">回放/)
+})
