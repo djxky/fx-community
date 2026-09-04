@@ -22,7 +22,7 @@
 #view-academy .hero .hs-radio{position:absolute;width:0;height:0;opacity:0;pointer-events:none}
 #view-academy .hero .hslide{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;pointer-events:none;background-size:cover;background-position:center}
 #view-academy .hero #hs1:checked~.s1, #view-academy .hero #hs2:checked~.s2, #view-academy .hero #hs3:checked~.s3{opacity:1;pointer-events:auto}
-#view-academy .hero .s1{background-image:var(--academy-img-campaign);background-position:center}
+#view-academy .hero .s1{background-image:var(--academy-img-creation);background-position:center}
 #view-academy .hero .s2{background-image:var(--academy-img-courseware);background-position:center 52%}
 #view-academy .hero .s3{background:radial-gradient(circle at 86% 120%,rgba(217,175,60,.22),transparent 58%),linear-gradient(120deg,#1B211C,#141F1B)}
 #view-academy .hero .hslide::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,31,27,0) 58%,rgba(20,31,27,.22) 100%)}
@@ -404,7 +404,7 @@
         <input type="radio" name="hs" id="hs1" class="hs-radio" checked>
         <input type="radio" name="hs" id="hs2" class="hs-radio">
         <input type="radio" name="hs" id="hs3" class="hs-radio">
-        <div class="hslide s1"><label class="hero-comp hero-campaign" for="lp-campaign" tabindex="0" role="button"><span class="hc-kk">新学期 AI 教学案例征集</span><span class="hc-t">这个新学期，做出一堂属于你的 AI 课</span><span class="hc-d">8.29–9.15 · 学科不限 · 作品形式不限</span><span class="hc-cta">查看活动 ›</span></label></div>
+        <div class="hslide s1"><label class="hero-comp hero-campaign" for="lp-campaign" tabindex="0" role="button"><span class="hc-kk">2026 教师 AI 教育创作征集</span><span class="hc-t">让你的教育智慧，真正运行起来</span><span class="hc-d">9.10–11.30 · 四大创作方向开放投稿</span><span class="hc-cta">查看活动 ›</span></label></div>
         <div class="hslide s2"><div class="hero-comp hero-live" aria-label="直播预告"><span class="hc-kk">直播预告 · 9.11 20:00</span><span class="hc-t">数学难点互动课件设计（进阶场）</span><span class="hc-d">飞象星球 App 观看 · 直播答疑</span></div></div>
         <div class="hslide s3"><label class="hero-comp" for="lp-match" tabindex="0" role="button"><span class="hc-kk">🏆 赛事专区</span><span class="hc-t">把好作品，打磨成能获奖的作品</span><span class="hc-d">获奖案例拆解 · 一对一打磨 · 往届作品沉淀</span><span class="hc-cta">查看赛事专区 ›</span></label></div>
         <div class="dots"><label for="hs1"></label><label for="hs2"></label><label for="hs3"></label></div>
@@ -446,45 +446,7 @@
     </div>
 
       <div class="lesson-page campaign-page" id="LP-campaign">
-        <label class="lp-back" for="lp-home" tabindex="0" role="button">← 返回 AI 教学工坊</label>
-        <section class="campaign-landing-hero">
-          <div class="campaign-landing-copy">
-            <div class="campaign-landing-eyebrow">新学期 AI 教学案例征集</div>
-            <h1 class="campaign-landing-title">这个新学期，做出一堂属于你的 AI 课</h1>
-            <p class="campaign-landing-lead">听懂 AI 只是开始。把一个真实教学想法做成可使用的课件、互动或练习，让它走进课堂，也让更多老师看见。</p>
-            <div class="campaign-landing-meta"><span>8.29–9.15</span><span>学科不限</span><span>作品形式不限</span></div>
-            <div class="campaign-landing-actions"><button type="button" class="campaign-primary-btn" data-academy-submit-open>提交作品</button><span class="campaign-deadline">审核通过后统一发放奖励</span></div>
-          </div>
-          <div class="campaign-landing-art" aria-hidden="true"></div>
-        </section>
-
-        <section class="campaign-section">
-          <div class="campaign-section-head"><h2>三步参与</h2><p>已有作品也可以直接提交</p></div>
-          <div class="campaign-flow">
-            <article class="campaign-flow-card"><span class="campaign-flow-no">01</span><h3>完成一个真实作品</h3><p>从自己的课堂问题出发，完成一份能用的 AI 教学作品。</p></article>
-            <article class="campaign-flow-card"><span class="campaign-flow-no">02</span><h3>发布并提交活动</h3><p>发布作品后填写活动信息，补充适用学科和使用场景。</p></article>
-            <article class="campaign-flow-card"><span class="campaign-flow-no">03</span><h3>审核与优秀展示</h3><p>通过基础审核即可获得参与奖励，优秀案例将进入灵感展示。</p></article>
-          </div>
-        </section>
-
-        <section class="campaign-section">
-          <div class="campaign-section-head"><h2>你可以提交什么</h2><p>能在课堂真实使用即可</p></div>
-          <div class="campaign-examples"><span>AI 课件</span><span>课堂互动</span><span>教学动画</span><span>练习游戏</span><span>教学应用</span><span>学情反馈工具</span></div>
-        </section>
-
-        <section class="campaign-section">
-          <div class="campaign-section-head"><h2>参与并审核通过可获得</h2><p>活动结束后统一发放</p></div>
-          <div class="campaign-rewards">
-            <div class="campaign-reward"><span class="campaign-reward-icon">30</span><div><b>30 积分奖励</b><span>用于平台权益兑换</span></div></div>
-            <div class="campaign-reward"><span class="campaign-reward-icon">证</span><div><b>电子结业证书</b><span>记录本次实践成果</span></div></div>
-            <div class="campaign-reward"><span class="campaign-reward-icon">荐</span><div><b>优秀作品展示</b><span>进入“灵感”推荐内容</span></div></div>
-          </div>
-        </section>
-
-        <section class="campaign-final">
-          <div><h2>把这个学期的第一个教学想法做出来</h2><p>提交后可继续完善作品，不影响活动参与。</p></div>
-          <button type="button" class="campaign-primary-btn" data-academy-submit-open>提交作品</button>
-        </section>
+        <!-- ACADEMY_CREATION_CAMPAIGN -->
       </div>
 
       <div class="lesson-page match-page" id="LP-match">

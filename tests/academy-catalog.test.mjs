@@ -144,62 +144,6 @@ test('合并后不再有等级分层，且保留提交作品入口与文案', as
   assert.doesNotMatch(rendered.visibilityCss, /growth-level/)
 })
 
-test('新手提交作品会提供完整的审核信息弹窗', async () => {
-  const rendered = await renderUi()
-
-  assert.match(rendered.submitCta, /class="academy-submission-modal"[^>]*hidden/)
-  assert.match(rendered.submitCta, /name="province"[^>]*required/)
-  assert.match(rendered.submitCta, /name="city"[^>]*required/)
-  assert.match(rendered.submitCta, /value="飞象老师 AI 工作坊·开学第一课·2026 秋"[^>]*readonly/)
-  assert.match(rendered.submitCta, /name="school"[^>]*required/)
-  assert.match(rendered.submitCta, /name="teacherId"/)
-  assert.match(rendered.submitCta, /name="workUrl"[^>]*required/)
-  assert.match(rendered.submitCta, /name="email"[^>]*required/)
-  assert.match(rendered.submitCta, /name="certificateName"[^>]*required/)
-  assert.match(rendered.submitCta, />提交审核<\/button>/)
-  assert.match(rendered.submitCta, /class="academy-submission-success" hidden/)
-  assert.match(rendered.visibilityCss, /\.academy-submission-modal\[hidden\]\{display:none\}/)
-})
-
-test('提交弹窗可以打开，并在必填信息有效后切换到审核状态', async () => {
-  const submission = await loadSubmission()
-  const form = { hidden: true }
-  const success = { hidden: false }
-  const focusTarget = { focused: false, focus() { this.focused = true } }
-  const modal = {
-    hidden: true,
-    querySelector(selector) {
-      if (selector === '.academy-submission-form') return form
-      if (selector === '.academy-submission-success') return success
-      if (selector === 'select, input, button') return focusTarget
-      return null
-    },
-  }
-  const root = {
-    querySelector(selector) {
-      if (selector === '.academy-submission-modal') return modal
-      if (selector === '.academy-submission-success') return success
-      return null
-    },
-  }
-  const openTarget = { closest: (selector) => selector === '[data-academy-submit-open]' ? {} : null }
-
-  assert.equal(submission.handleAcademySubmissionClick({ target: openTarget }, root), 'open')
-  assert.equal(modal.hidden, false)
-  assert.equal(form.hidden, false)
-  assert.equal(success.hidden, true)
-
-  let prevented = false
-  const validForm = {
-    hidden: false,
-    matches: (selector) => selector === '.academy-submission-form',
-    checkValidity: () => true,
-  }
-  assert.equal(submission.submitAcademyWork({ target: validForm, preventDefault: () => { prevented = true } }, root), true)
-  assert.equal(prevented, true)
-  assert.equal(validForm.hidden, true)
-  assert.equal(success.hidden, false)
-})
 
 test('两层筛选单选框与网格同级，AND 组合过滤且默认全部可见', async () => {
   const rendered = await renderUi()
@@ -246,15 +190,20 @@ test('两层分类的分片、课程卡和详情导航可通过键盘激活对�
   assert.equal(prevented, true)
 })
 
-test('首张活动 Banner 可进入案例征集落地页并复用作品提交入口', () => {
+test('首张活动 Banner 可进入教师 AI 创作征集并复用作品提交流程', () => {
   const raw = readFileSync(new URL('../src/views/raw/academy.html', import.meta.url), 'utf8')
+  const campaign = readFileSync(new URL('../src/views/raw/creation-campaign.html', import.meta.url), 'utf8')
 
   assert.match(raw, /id="lp-campaign" class="lp-radio"/)
   assert.match(raw, /class="hslide s1"[\s\S]*?for="lp-campaign"/)
   assert.match(raw, /#lp-campaign:checked ~ #LP-campaign\{display:block\}/)
   assert.match(raw, /class="lesson-page campaign-page" id="LP-campaign"/)
-  assert.match(raw, /class="lp-back" for="lp-home"[^>]*>← 返回 AI 教学工坊<\/label>/)
-  assert.match(raw, /id="LP-campaign"[\s\S]*?data-academy-submit-open/)
+  assert.match(raw, /<!-- ACADEMY_CREATION_CAMPAIGN -->/)
+  assert.match(campaign, /class="creation-campaign"/)
+  assert.match(campaign, /id="cc-landingView"/)
+  assert.match(campaign, /class="primary-btn chooseDirection">立即提交作品<\/button>/)
+  assert.match(campaign, /id="cc-submissionForm"/)
+  assert.match(campaign, /class="demo-note">原型演示：投稿仅保存在本次页面会话中/)
 })
 
 test('AI 教学工坊顶部只保留提交作品与联系我们', () => {

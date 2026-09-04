@@ -15,6 +15,10 @@ import {
   renderAcademyCourseUi,
 } from '../lib/academy-course-renderer.mjs'
 import { setupAcademyCarousel } from '../lib/academy-carousel.mjs'
+import creationCampaign from './raw/creation-campaign.html?raw'
+import creationArt from '../assets/academy/teacher-ai-creation.png'
+import { setupCreationCampaign } from '../lib/creation-campaign.mjs'
+import '../styles/creation-campaign.css'
 
 const courseCoverModules = import.meta.glob('../assets/academy/course-covers/*.jpg', {
   eager: true,
@@ -34,15 +38,19 @@ const renderedCourseUi = renderAcademyCourseUi({
 })
 
 const renderedRaw = composeAcademyMarkup(raw, renderedCourseUi)
+  .replace('<!-- ACADEMY_CREATION_CAMPAIGN -->', creationCampaign)
 const academyRoot = ref(null)
 let cleanupAcademyCarousel = () => {}
+let cleanupCreationCampaign = () => {}
 
 onMounted(() => {
   cleanupAcademyCarousel = setupAcademyCarousel(academyRoot.value, { intervalMs: 5000 })
+  cleanupCreationCampaign = setupCreationCampaign(academyRoot.value)
 })
 
 onBeforeUnmount(() => {
   cleanupAcademyCarousel()
+  cleanupCreationCampaign()
 })
 
 function handleCourseNavigationKeydown(event) {
@@ -50,6 +58,7 @@ function handleCourseNavigationKeydown(event) {
 }
 
 const academyImages = {
+  '--academy-img-creation': `url(${creationArt})`,
   '--academy-img-campaign': `url(${newSemesterCampaign})`,
   '--academy-img-workshop': `url(${workshopCollaboration})`,
   '--academy-img-courseware': `url(${coursewarePractice})`,

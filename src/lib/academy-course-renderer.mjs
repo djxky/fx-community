@@ -38,37 +38,6 @@ function renderRadios(courses) {
     .join('\n')
 }
 
-function renderSubmitCta() {
-  return `<div class="academy-submission-modal" hidden role="dialog" aria-modal="true" aria-labelledby="academy-submission-title">
-      <div class="academy-submission-backdrop" data-academy-submit-close></div>
-      <div class="academy-submission-dialog">
-        <button type="button" class="academy-submission-close" data-academy-submit-close aria-label="关闭">×</button>
-        <div class="academy-submission-kicker">WORK SUBMISSION</div>
-        <h3 id="academy-submission-title">提交你的课堂作品</h3>
-        <p class="academy-submission-intro">完成对应课程并提交作品后，我们会进行作品反馈与记录。</p>
-        <form class="academy-submission-form">
-          <div class="academy-submission-grid">
-            <label><span class="academy-field-label">您所在地区 <b>*</b></span><select name="province" required><option value="">请选择省份</option><option>北京市</option><option>上海市</option><option>广东省</option><option>浙江省</option><option>江苏省</option><option>山东省</option><option>四川省</option><option>湖北省</option><option>湖南省</option><option>其他</option></select></label>
-            <label><span class="academy-field-label">城市 / 行政区 <b>*</b></span><input name="city" type="text" placeholder="请输入城市或行政区" required></label>
-            <label class="academy-submission-wide"><span class="academy-field-label">关联工作坊 <b>*</b></span><input name="workshop" value="飞象老师 AI 工作坊·开学第一课·2026 秋" readonly></label>
-            <label class="academy-submission-wide"><span class="academy-field-label">学校 <b>*</b></span><input name="school" type="text" placeholder="请输入学校全称" required></label>
-            <label class="academy-submission-wide"><span class="academy-field-label">教师 ID（个人防伪码） <em>选填</em></span><input name="teacherId" type="text" placeholder="请输入教师 ID（个人防伪码）"></label>
-            <label class="academy-submission-wide"><span class="academy-field-label">已发布在飞象老师的作品链接 <b>*</b></span><input name="workUrl" type="url" placeholder="https://www.feixianglaoshi.com/#/chat?..." required><small>仅支持当前登录账号发布的飞象老师作品，提交时将自动校验归属。</small></label>
-            <label class="academy-submission-wide"><span class="academy-field-label">证书发放邮箱 <b>*</b></span><input name="email" type="email" placeholder="仅用于证书发放" required></label>
-            <label class="academy-submission-wide"><span class="academy-field-label">证书姓名 <b>*</b></span><input name="certificateName" type="text" placeholder="证书上的姓名" required></label>
-          </div>
-          <div class="academy-submission-form-actions"><button type="button" class="academy-submission-cancel" data-academy-submit-close>暂不提交</button><button type="submit" class="academy-submission-submit">提交审核</button></div>
-        </form>
-        <div class="academy-submission-success" hidden>
-          <div class="academy-submission-success-icon">✓</div>
-          <h4>作品已提交审核</h4>
-          <p>我们会核验作品信息，并将反馈与证书发放结果发送到你的邮箱。</p>
-          <button type="button" class="academy-submission-submit" data-academy-submit-close>返回课程</button>
-        </div>
-      </div>
-    </div>
-  </div>`
-}
 
 function renderLibrary(courses, useFilters, typeFilters, coverUrls) {
   const rowInputs = (filters, group) => filters.map((filter, index) => (
@@ -166,7 +135,7 @@ ${dimRules(typeFilters, 'course-type')}
 
 export function renderAcademyCourseUi({ courses, useFilters, typeFilters, coverUrls }) {
   return {
-    submitCta: renderSubmitCta(),
+    submitCta: '',
     radios: renderRadios(courses),
     library: renderLibrary(courses, useFilters, typeFilters, coverUrls),
     details: renderDetails(courses, useFilters, typeFilters, coverUrls),
