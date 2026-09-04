@@ -80,19 +80,12 @@ export function setupCreationCampaign(academyRoot) {
   }
   function onClick(event) {
     const target = event.target
-    if (target.closest('[data-academy-submit-open]')) {
-      event.preventDefault()
-      event.stopPropagation()
-      academyRoot.querySelector('#lp-campaign').checked = true
-      startNew()
-      return
-    }
     if (target.closest('label[for="lp-campaign"]')) showView('landingView')
     if (!root.contains(target)) return
     if (target.closest('#cc-returnAcademy')) {
       academyRoot.querySelector('#lp-home').checked = true
       academyRoot.querySelector('.main').scrollTop = 0
-      academyRoot.querySelector('[data-academy-submit-open]')?.focus({ preventScroll: true })
+      academyRoot.querySelector('label[for="lp-campaign"]')?.focus({ preventScroll: true })
     } else if (target.closest('.chooseDirection')) startNew()
     else if (target.closest('.goLanding')) showView('landingView')
     else if (target.closest('.goDirections')) { readForm(); showView('directionView') }

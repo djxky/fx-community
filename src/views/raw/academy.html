@@ -95,29 +95,41 @@
 #view-academy .growth-course .vbody{display:flex;flex:1;flex-direction:column}
 #view-academy .growth-title{display:-webkit-box;min-height:40px;overflow:hidden;font-size:14px;font-weight:600;line-height:1.45;-webkit-box-orient:vertical;-webkit-line-clamp:2}
 #view-academy .growth-course .meta{margin-top:auto;padding-top:9px}
-#view-academy .academy-submission-modal{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;padding:20px}
+#view-academy .academy-submission-modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:28px}
 #view-academy .academy-submission-backdrop{position:absolute;inset:0;background:rgba(20,31,27,.55);backdrop-filter:blur(3px)}
-#view-academy .academy-submission-dialog{position:relative;width:min(560px,100%);max-height:min(720px,calc(100vh - 40px));overflow:auto;background:var(--surface);border:1px solid var(--hair);border-radius:18px;padding:28px;box-shadow:0 24px 80px rgba(20,31,27,.24)}
-#view-academy .academy-submission-close{position:absolute;right:18px;top:15px;width:30px;height:30px;border:0;background:transparent;color:var(--muted);font-size:24px;line-height:1;cursor:pointer}
-#view-academy .academy-submission-kicker{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.08em}
-#view-academy .academy-submission-dialog h3{font-size:22px;line-height:1.35;margin-top:6px}
-#view-academy .academy-submission-intro{font-size:13px;color:var(--muted);line-height:1.6;margin-top:7px}
-#view-academy .academy-submission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}
-#view-academy .academy-submission-grid label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted);font-weight:600}
+#view-academy .academy-submission-dialog{position:relative;width:min(1040px,96vw);height:min(680px,92vh);display:flex;overflow:hidden;background:var(--surface);border-radius:20px;box-shadow:0 30px 90px rgba(20,31,27,.30)}
+#view-academy .academy-submission-close{position:absolute;right:16px;top:14px;z-index:2;width:32px;height:32px;border:0;background:transparent;color:var(--muted);font-size:24px;line-height:1;cursor:pointer;border-radius:8px}
+#view-academy .academy-submission-close:hover{background:rgba(20,31,27,.06);color:var(--ink)}
+#view-academy .academy-submission-aside{flex:0 0 340px;background:#141F1B;color:#fff;padding:38px 34px;display:flex;flex-direction:column}
+#view-academy .academy-submission-kicker{font-size:11px;color:var(--goldsolid);font-weight:600;letter-spacing:.12em}
+#view-academy .academy-submission-aside h3{font-size:26px;line-height:1.3;margin:10px 0 0;color:#fff;font-weight:600}
+#view-academy .academy-submission-intro{font-size:13px;color:rgba(255,255,255,.72);line-height:1.7;margin-top:12px}
+#view-academy .academy-submission-points{list-style:none;margin:auto 0 0;padding:22px 0 0;display:flex;flex-direction:column;gap:14px}
+#view-academy .academy-submission-points li{display:flex;gap:10px;font-size:12.5px;line-height:1.6;color:rgba(255,255,255,.78)}
+#view-academy .academy-submission-points li b{color:#fff;font-weight:500}
+#view-academy .academy-submission-points .asp-i{flex:none;color:var(--goldsolid);font-weight:600}
+#view-academy .academy-submission-main{flex:1;min-width:0;display:flex;flex-direction:column}
+#view-academy .academy-submission-form{flex:1;min-height:0;overflow:auto;padding:34px 38px 0;display:flex;flex-direction:column}
+#view-academy .academy-submission-section{margin-bottom:24px}
+#view-academy .academy-submission-section-t{font-size:13px;font-weight:600;color:var(--ink);padding-bottom:9px;margin-bottom:14px;border-bottom:1px solid var(--hair)}
+#view-academy .academy-submission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+#view-academy .academy-submission-grid label{display:flex;flex-direction:column;gap:7px;font-size:12px;color:var(--muted);font-weight:600}
 #view-academy .academy-field-label{display:flex;align-items:center;gap:4px;color:var(--ink);font-size:12.5px}
 #view-academy .academy-field-label b{color:#E05B4A;font-weight:700}
 #view-academy .academy-field-label em{margin-left:auto;color:var(--faint);font-size:11px;font-style:normal;font-weight:400}
 #view-academy .academy-submission-grid small{color:var(--faint);font-size:10.5px;font-weight:400;line-height:1.5}
 #view-academy .academy-submission-grid .academy-submission-wide{grid-column:1/-1}
-#view-academy .academy-submission-grid input,#view-academy .academy-submission-grid select{width:100%;border:1px solid var(--hair);border-radius:9px;background:#fff;padding:10px 11px;color:var(--ink);font:inherit;font-size:13px;font-weight:400}
+#view-academy .academy-submission-grid input,#view-academy .academy-submission-grid select{width:100%;border:1px solid var(--hair);border-radius:9px;background:#fff;padding:11px 12px;color:var(--ink);font:inherit;font-size:13px;font-weight:400}
+#view-academy .academy-submission-grid input[readonly]{background:#F5F5F3;color:var(--muted)}
 #view-academy .academy-submission-grid input:focus,#view-academy .academy-submission-grid select:focus{outline:2px solid rgba(217,175,60,.45);border-color:var(--goldsolid)}
-#view-academy .academy-submission-form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
-#view-academy .academy-submission-cancel{border:1px solid var(--hair);background:var(--surface);color:var(--muted);border-radius:9px;padding:10px 16px;font:inherit;font-weight:600;cursor:pointer}
-#view-academy .academy-submission-submit{border:0;background:var(--ink);color:#fff;border-radius:10px;padding:10px 18px;font:inherit;font-weight:500;cursor:pointer}
-#view-academy .academy-submission-success{text-align:center;padding:30px 12px 12px}
-#view-academy .academy-submission-success-icon{width:46px;height:46px;border-radius:50%;margin:0 auto 12px;background:#E8F3EA;color:#2F7A43;display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:800}
-#view-academy .academy-submission-success h4{font-size:19px}
-#view-academy .academy-submission-success p{font-size:13px;color:var(--muted);margin:6px 0 20px}
+#view-academy .academy-submission-form-actions{position:sticky;bottom:0;margin-top:auto;display:flex;justify-content:flex-end;gap:10px;padding:16px 0 22px;background:var(--surface);border-top:1px solid var(--hair)}
+#view-academy .academy-submission-cancel{border:1px solid var(--hair);background:var(--surface);color:var(--muted);border-radius:10px;padding:10px 18px;font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+#view-academy .academy-submission-cancel:hover{color:var(--ink)}
+#view-academy .academy-submission-submit{border:0;background:#141F1B;color:#fff;border-radius:10px;padding:10px 20px;font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+#view-academy .academy-submission-success{margin:auto;text-align:center;padding:40px;max-width:420px}
+#view-academy .academy-submission-success-icon{width:52px;height:52px;border-radius:50%;margin:0 auto 14px;background:#E8F3EA;color:#2F7A43;display:flex;align-items:center;justify-content:center;font-size:27px;font-weight:800}
+#view-academy .academy-submission-success h4{font-size:20px;font-weight:600}
+#view-academy .academy-submission-success p{font-size:13px;color:var(--muted);line-height:1.7;margin:8px 0 22px}
 #view-academy .mainline .kk{font-size:12px;font-weight:700;color:var(--gold)}
 #view-academy .mainline h1{font-size:22px;font-weight:800;margin:6px 0 4px}
 #view-academy .mainline .lead{font-size:13px;color:var(--muted);margin-bottom:20px}
@@ -150,9 +162,9 @@
 #view-academy .exp-toggle{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
 #view-academy .exp-grid > .vcard:nth-child(n+5){display:none}
 #view-academy .exp-toggle:checked ~ .exp-grid > .vcard:nth-child(n+5){display:block}
-#view-academy .exp-btn{display:flex;width:fit-content;align-items:center;gap:7px;margin:14px auto 0;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border:1px solid var(--hair);background:var(--surface);border-radius:999px;padding:8px 18px;user-select:none;transition:background .15s,color .15s}
+#view-academy .exp-btn{display:flex;width:fit-content;align-items:center;gap:7px;margin:14px auto 0;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;border:1px solid var(--hair);background:var(--surface);border-radius:999px;padding:8px 18px;user-select:none;transition:background .15s,color .15s}
 #view-academy .exp-btn:hover{background:#EFEFEF;color:var(--ink)}
-#view-academy .exp-btn .ch{font-size:13px;transition:transform .2s}
+#view-academy .exp-btn .ch{display:inline-flex;align-items:center;color:var(--faint);transition:transform .2s}
 #view-academy .exp-toggle:checked ~ .exp-btn .ch{transform:rotate(180deg)}
 #view-academy .exp-btn .less-t{display:none}
 #view-academy .exp-toggle:checked ~ .exp-btn .more-t{display:none}
@@ -238,7 +250,7 @@
 #view-academy .acard .qrbox{width:56px;height:56px;border-radius:9px;background:repeating-linear-gradient(45deg,#141F1B,#141F1B 3px,#fff 3px,#fff 6px);flex:0 0 56px}
 #view-academy .foot{color:var(--faint);font-size:12px;text-align:center;padding-top:22px;border-top:1px solid var(--hair);margin-top:8px}
 @media(max-width:1000px){#view-academy .grid4, #view-academy .typecards, #view-academy .lgrid{grid-template-columns:repeat(2,1fr)}#view-academy .who, #view-academy .steps, #view-academy .match-cards, #view-academy .apply{grid-template-columns:1fr;flex-direction:column}#view-academy .growth-path .who .tab{border-right:0;border-bottom:1px solid var(--hair)}#view-academy .growth-path .who .tab:last-child{border-bottom:0}}
-@media(max-width:680px){#view-academy .lgrid{grid-template-columns:1fr}#view-academy .lesson-page{padding-inline:18px}#view-academy .lp-cols{gap:22px}#view-academy .lp-side{position:static}#view-academy .growth-panels{padding:16px}#view-academy .growth-path .submit-strip{align-items:flex-start;flex-direction:column}#view-academy .growth-path .st-btn{margin-left:0;text-align:center;width:100%}#view-academy .academy-submission-dialog{padding:24px 18px}#view-academy .academy-submission-grid{grid-template-columns:1fr}#view-academy .academy-submission-grid .academy-submission-wide{grid-column:auto}}
+@media(max-width:680px){#view-academy .lgrid{grid-template-columns:1fr}#view-academy .lesson-page{padding-inline:18px}#view-academy .lp-cols{gap:22px}#view-academy .lp-side{position:static}#view-academy .growth-panels{padding:16px}#view-academy .growth-path .submit-strip{align-items:flex-start;flex-direction:column}#view-academy .growth-path .st-btn{margin-left:0;text-align:center;width:100%}#view-academy .academy-submission-modal{padding:0}#view-academy .academy-submission-dialog{width:100%;height:100%;border-radius:0;flex-direction:column}#view-academy .academy-submission-aside{display:none}#view-academy .academy-submission-form{padding:26px 20px 0}#view-academy .academy-submission-grid{grid-template-columns:1fr}#view-academy .academy-submission-grid .academy-submission-wide{grid-column:auto}}
 #view-academy /* —— 交互：可点卡片 / 选择器 / 详情浮层 —— */
 .vcard.vlink{color:inherit;text-decoration:none;display:block;cursor:pointer}
 #view-academy .who .lvl-radio{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
@@ -428,7 +440,7 @@
           <label class="vcard vlink" for="lp-28"><div class="vthumb cv cov-28"><span class="dur">44:46</span><span class="p">▶</span></div><div class="vbody"><h4>学习系统与角色脚手架</h4><div class="meta">2026.7.23</div></div></label>
           <label class="vcard vlink" for="lp-29"><div class="vthumb cv cov-29"><span class="dur">1:01:38</span><span class="p">▶</span></div><div class="vbody"><h4>AI 融合公开课课件打磨</h4><div class="meta">2026.7.23</div></div></label>
         </div>
-        <label class="exp-btn" for="repAll"><span class="more-t">展开更多</span><span class="less-t">收起</span><span class="ch">⌄</span></label>
+        <label class="exp-btn" for="repAll"><span class="more-t">展开更多</span><span class="less-t">收起</span><span class="ch"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></label>
         </div>
       </section>
 
