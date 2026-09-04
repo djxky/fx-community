@@ -121,7 +121,7 @@ function renderVisibilityCss(courses, useFilters, typeFilters) {
   const coursePages = courses
     .map((course) => `#view-academy #${courseRadioId(course)}:checked ~ #${coursePageId(course)}`)
     .join(',\n')
-  const activeChip = (group, key) => `#view-academy #${group}-${key}:checked ~ .lib-filter label[for="${group}-${key}"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}`
+  const activeChip = (group, key) => `#view-academy #${group}-${key}:checked ~ .lib-filter label[for="${group}-${key}"]{color:var(--ink);font-weight:500}`
   const dimRules = (filters, group) => filters.map((filter) => {
     if (filter.key === 'all') return activeChip(group, 'all')
     return `#view-academy #${group}-${filter.key}:checked ~ .lgrid .course-card:not(.cat-${filter.key}){display:none}
