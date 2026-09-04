@@ -1,0 +1,128 @@
+/* UI specification supplied on 2026-09-04. Scoped to AI 教学工坊 only.
+   #app increases specificity above legacy v-html styles without affecting peers. */
+#app #view-academy {
+  --academy-gutter: 70px;
+  --academy-control-radius: 10px;
+  --academy-modal-radius: 20px;
+  --academy-modal-padding: 32px;
+  --academy-overlay: rgba(20, 31, 27, .55);
+  --academy-modal-shadow: 0 30px 90px rgba(20, 31, 27, .30);
+  --ink: #141F1B;
+  --muted: #7A7C7C;
+}
+
+/* One page gutter: neutralize the legacy direct-main-child frame on ws-main. */
+#app #view-academy .ws-main {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0 !important;
+}
+#app #view-academy :is(.shell, .lesson-page) {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: var(--academy-gutter) !important;
+}
+#app #view-academy .creation-campaign :is(.modal-header, .content-width, .subview-shell) { width: 100%; }
+#app #view-academy .creation-campaign .event-hero .content-width { padding-inline: 24px; }
+
+#app #view-academy :is(.ws-title, .lp-title, .subview-title) {
+  color: var(--ink);
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* Navigation uses the 16px breadcrumb scale; actions have their own scale. */
+#app #view-academy :is(.lp-back, .cc-back, .back-link) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 28px;
+}
+#app #view-academy :is(.lp-back, .cc-back) svg { display: block; flex-shrink: 0; }
+
+/* Existing category controls are secondary tabs, with radio-driven selection. */
+#app #view-academy .lib-filter .chip {
+  font-size: 14px;
+}
+/* Color and 400/500 weights come from the catalog's checked-radio rules. */
+
+#app #view-academy :is(.ws-act, .primary-btn, .secondary-btn, .text-btn, .hc-cta, .st-btn, .hbtn, .exp-btn, .academy-submission-submit, .academy-submission-cancel) {
+  border-radius: var(--academy-control-radius);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+#app #view-academy :is(.ws-act-primary, .primary-btn, .hc-cta, .st-btn, .academy-submission-submit) {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+#app #view-academy .creation-campaign .cc-back { font-size: 16px; line-height: 28px; }
+
+/* Consistent modal shell, with content-specific widths and a shared close target. */
+#app #view-academy :is(.ov-bd, .academy-submission-backdrop) {
+  background: var(--academy-overlay);
+  backdrop-filter: blur(3px);
+}
+#app #view-academy :is(.ov, .academy-submission-modal) { padding: 24px; }
+#app #view-academy :is(.ov-card, .academy-submission-dialog, .withdraw-dialog) {
+  border-radius: var(--academy-modal-radius);
+  box-shadow: var(--academy-modal-shadow);
+  max-height: calc(100dvh - 48px);
+}
+#app #view-academy :is(.ov-card, .withdraw-dialog) { padding: var(--academy-modal-padding); }
+#app #view-academy .ov-h {
+  margin: 0 44px 24px 0;
+  color: var(--ink);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+#app #view-academy :is(.ov-x, .academy-submission-close) {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--academy-control-radius);
+  background: transparent;
+  color: var(--muted);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+}
+#app #view-academy :is(.ov-x, .academy-submission-close):hover { background: #F1F1F1; color: var(--ink); }
+#app #view-academy .academy-submission-dialog { width: min(1040px, 100%); }
+#app #view-academy .academy-submission-main { min-height: 0; }
+#app #view-academy .academy-submission-form { padding: 56px var(--academy-modal-padding) 0; }
+#app #view-academy .academy-submission-aside { padding: var(--academy-modal-padding); }
+#app #view-academy .academy-submission-grid :is(input, select) { border-radius: var(--academy-control-radius); font-size: 14px; }
+#app #view-academy .ov-contact .apply { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#app #view-academy .ov-contact .acard { flex-direction: column; align-items: stretch; }
+#app #view-academy .ov-contact .qrbox { align-self: center; width: 180px; height: 180px; flex-basis: 180px; }
+#app #view-academy .withdraw-dialog::backdrop { background: var(--academy-overlay); backdrop-filter: blur(3px); }
+
+@media (max-width: 1199px) {
+  #app #view-academy { --academy-gutter: 24px; }
+}
+@media (max-width: 767px) {
+  #app #view-academy { --academy-gutter: 20px; --academy-modal-padding: 20px; }
+  #app #view-academy :is(.ov, .academy-submission-modal) { padding: 12px; }
+  #app #view-academy :is(.ov-card, .academy-submission-dialog, .withdraw-dialog) { max-height: calc(100dvh - 24px); }
+  #app #view-academy .academy-submission-dialog { height: calc(100dvh - 24px); flex-direction: column; }
+  #app #view-academy .academy-submission-aside { display: none; }
+  #app #view-academy .ov-contact .apply { grid-template-columns: 1fr; }
+  #app #view-academy .creation-campaign .event-hero .content-width { padding-inline: 20px; }
+}

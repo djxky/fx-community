@@ -247,7 +247,8 @@
 #view-academy .acard .num{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.08em}
 #view-academy .acard h3{font-size:15.5px;margin:6px 0 5px}
 #view-academy .acard p{font-size:12.5px;color:var(--muted);line-height:1.5}
-#view-academy .acard .qrbox{width:56px;height:56px;border-radius:9px;background:repeating-linear-gradient(45deg,#141F1B,#141F1B 3px,#fff 3px,#fff 6px);flex:0 0 56px}
+#view-academy .acard .qrbox{display:block;width:144px;height:144px;object-fit:contain;background:#fff;flex:0 0 144px}
+@media(max-width:600px){#view-academy .ov-contact .acard{flex-direction:column;align-items:stretch}#view-academy .ov-contact .qrbox{align-self:center}}
 #view-academy .foot{color:var(--faint);font-size:12px;text-align:center;padding-top:22px;border-top:1px solid var(--hair);margin-top:8px}
 @media(max-width:1000px){#view-academy .grid4, #view-academy .typecards, #view-academy .lgrid{grid-template-columns:repeat(2,1fr)}#view-academy .who, #view-academy .steps, #view-academy .match-cards, #view-academy .apply{grid-template-columns:1fr;flex-direction:column}#view-academy .growth-path .who .tab{border-right:0;border-bottom:1px solid var(--hair)}#view-academy .growth-path .who .tab:last-child{border-bottom:0}}
 @media(max-width:680px){#view-academy .lgrid{grid-template-columns:1fr}#view-academy .lesson-page{padding-inline:18px}#view-academy .lp-cols{gap:22px}#view-academy .lp-side{position:static}#view-academy .growth-panels{padding:16px}#view-academy .growth-path .submit-strip{align-items:flex-start;flex-direction:column}#view-academy .growth-path .st-btn{margin-left:0;text-align:center;width:100%}#view-academy .academy-submission-modal{padding:0}#view-academy .academy-submission-dialog{width:100%;height:100%;border-radius:0;flex-direction:column}#view-academy .academy-submission-aside{display:none}#view-academy .academy-submission-form{padding:26px 20px 0}#view-academy .academy-submission-grid{grid-template-columns:1fr}#view-academy .academy-submission-grid .academy-submission-wide{grid-column:auto}}
@@ -402,8 +403,8 @@
       <div class="ws-main">
       <input type="checkbox" id="ov-contact" class="ov-toggle">
       <div class="ov ov-contact"><label class="ov-bd" for="ov-contact" aria-label="关闭"></label><div class="ov-card"><label class="ov-x" for="ov-contact" tabindex="0" role="button" aria-label="关闭">×</label><h2 class="ov-h">联系我们</h2><div class="apply">
-          <div class="acard"><div class="txt"><div class="num">入口一</div><h3>区域 / 学校 · 申请专项培训</h3><p>面向有系统提升需求的学校与区域，申请定点培训支持。</p></div><div class="qrbox"></div></div>
-          <div class="acard"><div class="txt"><div class="num">入口二</div><h3>一线老师 · 申请官方讲师</h3><p>面向已有课堂实践的老师，加入官方讲师团，把经验带给更多同行。</p></div><div class="qrbox"></div></div>
+          <div class="acard"><div class="txt"><div class="num">入口一</div><h3>区域 / 学校 · 申请专项培训</h3><p>面向有系统提升需求的学校与区域，申请定点培训支持。</p></div><img class="qrbox" src="__ACADEMY_TRAINING_DEMAND_QR__" alt="飞象老师 AI 教学培训需求二维码" width="144" height="144"></div>
+          <div class="acard"><div class="txt"><div class="num">入口二</div><h3>一线老师 · 申请官方讲师</h3><p>面向已有课堂实践的老师，加入官方讲师团，把经验带给更多同行。</p></div><img class="qrbox" src="__ACADEMY_TEACHING_PARTNER_QR__" alt="加入飞象老师 AI 工作坊教学伙伴二维码" width="144" height="144"></div>
         </div></div></div>
     <div class="shell">
       <div class="ws-topbar">
