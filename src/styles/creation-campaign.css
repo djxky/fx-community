@@ -9,6 +9,9 @@
     #view-academy .creation-campaign .header-actions { margin-left: auto; display: flex; align-items: center; gap: 9px; }
     #view-academy .creation-campaign .text-btn { border: 0; background: transparent; color: var(--ink); padding: 9px 12px; border-radius: 9px; font-size: 14px; font-weight: 500; }
     #view-academy .creation-campaign .text-btn:hover { background: #f1f1f1; }
+    #view-academy .creation-campaign .cc-back { gap: 10px; padding: 0; font-size: 20px; font-weight: 500; color: var(--ink); }
+    #view-academy .creation-campaign .cc-back:hover { background: transparent; color: var(--ink); }
+    #view-academy .creation-campaign .cc-back svg { flex: none; }
     #view-academy .creation-campaign .close-btn { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--hair); background: #fff; border-radius: 10px; font-size: 22px; line-height: 1; }
     #view-academy .creation-campaign .view { display: none; }
     #view-academy .creation-campaign .view.active { display: block; }

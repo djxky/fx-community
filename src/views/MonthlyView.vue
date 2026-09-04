@@ -11,7 +11,7 @@ const KW = ['大单元教学', '沉浸式课堂', '整本书阅读', '分层作�
       <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#F7F7F7;">
       <div class="mz-wrap">
         <div class="mz-back nav-creator">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>返回创作者中心
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m16 7-7 7 7 7"></path></svg>返回创作者中心
         </div>
 
         <div class="mz-head">
@@ -64,7 +64,7 @@ const KW = ['大单元教学', '沉浸式课堂', '整本书阅读', '分层作�
 
 <style scoped>
 .mz-wrap { max-width:680px; margin:0 auto; padding:28px 24px 70px; }
-.mz-back { display:inline-flex; align-items:center; gap:6px; font-size:13.5px; color:#7A7C7C; cursor:pointer; margin-bottom:14px; }
+.mz-back { display:inline-flex; align-items:center; gap:10px; font-size:20px; font-weight:500; color:#141F1B; cursor:pointer; margin-bottom:14px; }
 
 .mz-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:22px; }
 .mz-kicker { font-size:13px; color:#8A6D00; font-weight:600; letter-spacing:.5px; }

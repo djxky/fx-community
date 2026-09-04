@@ -74,7 +74,7 @@ function edgePath(node) {
       <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#F7F7F7;">
         <div class="lg-wrap">
           <div class="lg-back nav-res">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A7C7C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>返回资源
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m16 7-7 7 7 7"></path></svg>返回资源
           </div>
 
           <div class="lg-head">
@@ -128,7 +128,7 @@ function edgePath(node) {
 
 <style scoped>
 .lg-wrap { max-width:1180px; margin:0 auto; padding:24px 32px 60px; }
-.lg-back { display:inline-flex; align-items:center; gap:6px; font-size:13.5px; color:#7A7C7C; cursor:pointer; margin-bottom:16px; }
+.lg-back { display:inline-flex; align-items:center; gap:10px; font-size:20px; font-weight:500; color:#141F1B; cursor:pointer; margin-bottom:16px; }
 .lg-title { font-size:22px; font-weight:700; color:#141F1B; }
 .lg-sub { font-size:13.5px; color:#7A7C7C; margin-top:8px; line-height:1.6; }
 .lg-sub b { color:#141F1B; }

@@ -272,9 +272,10 @@
 #view-academy #lp-match:checked ~ #LP-match{display:block}
 #view-academy #lp-30:checked ~ #LP-30, #view-academy #lp-31:checked ~ #LP-31, #view-academy #lp-32:checked ~ #LP-32, #view-academy #lp-33:checked ~ #LP-33, #view-academy #lp-34:checked ~ #LP-34, #view-academy #lp-24:checked ~ #LP-24, #view-academy #lp-25:checked ~ #LP-25, #view-academy #lp-26:checked ~ #LP-26, #view-academy #lp-27:checked ~ #LP-27, #view-academy #lp-28:checked ~ #LP-28, #view-academy #lp-29:checked ~ #LP-29{display:block}
 <!-- ACADEMY_COURSE_VISIBILITY -->
-#view-academy .lp-back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer;margin-bottom:16px}
+#view-academy .lp-back{display:inline-flex;align-items:center;gap:12px;font-size:20px;font-weight:500;color:var(--ink);cursor:pointer;margin-bottom:16px}
+#view-academy .lp-back-icon{flex:none}
 #view-academy .lp-back:hover{color:var(--ink)}
-#view-academy .lp-back.lp-video-back{gap:10px;min-height:32px;margin-bottom:20px;color:var(--ink);font-size:16px;font-weight:500;line-height:32px;border-radius:8px}
+#view-academy .lp-back.lp-video-back{min-height:36px;margin-bottom:20px;line-height:36px;border-radius:8px}
 #view-academy .lp-video-back .lp-back-icon{flex:none;border-radius:50%;transition:background .15s}
 #view-academy .lp-video-back:hover .lp-back-icon{background:#EAEAEA}
 #view-academy .campaign-page{padding-top:22px}
@@ -464,7 +465,7 @@
       </div>
 
       <div class="lesson-page match-page" id="LP-match">
-        <label class="lp-back" for="lp-home" tabindex="0" role="button">← 返回 AI 教学工坊</label>
+        <label class="lp-back" for="lp-home" tabindex="0" role="button" aria-label="返回 AI 教学工坊"><svg class="lp-back-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="m16 7-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>返回 AI 教学工坊</span></label>
         <section class="match-band">
           <div class="kk">🏆 赛事专区</div>
           <h2>把好作品，打磨成能获奖的作品</h2>
