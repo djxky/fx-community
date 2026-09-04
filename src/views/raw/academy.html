@@ -150,8 +150,8 @@
 #view-academy .exp-toggle{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
 #view-academy .exp-grid > .vcard:nth-child(n+5){display:none}
 #view-academy .exp-toggle:checked ~ .exp-grid > .vcard:nth-child(n+5){display:block}
-#view-academy .exp-btn{display:flex;width:fit-content;align-items:center;gap:7px;margin:14px auto 0;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border:1px solid var(--hair);background:var(--surface);border-radius:9px;padding:8px 15px;user-select:none}
-#view-academy .exp-btn:hover{border-color:#D8D8D8;color:var(--ink)}
+#view-academy .exp-btn{display:flex;width:fit-content;align-items:center;gap:7px;margin:14px auto 0;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border:1px solid var(--hair);background:var(--surface);border-radius:999px;padding:8px 18px;user-select:none;transition:background .15s,color .15s}
+#view-academy .exp-btn:hover{background:#EFEFEF;color:var(--ink)}
 #view-academy .exp-btn .ch{font-size:13px;transition:transform .2s}
 #view-academy .exp-toggle:checked ~ .exp-btn .ch{transform:rotate(180deg)}
 #view-academy .exp-btn .less-t{display:none}
@@ -181,9 +181,10 @@
 #view-academy .lib-filter{align-items:center;gap:6px}
 #view-academy .lib-filter-use{margin-bottom:8px}
 #view-academy .lf-label{font-size:12px;color:var(--faint);font-weight:500;flex:0 0 auto;min-width:28px;margin-right:2px}
-#view-academy .chip{border:1px solid var(--hair);background:var(--surface);border-radius:8px;padding:6px 12px;font-size:12.5px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:border-color .15s,background .15s}
+#view-academy .chip{border:1px solid transparent;background:#EFEFEF;border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px;transition:color .15s,background .15s}
 #view-academy .chip .c{font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
-#view-academy .chip:hover{border-color:#D8D8D8}
+#view-academy .chip:hover{background:#E5E5E5;color:var(--ink)}
+#view-academy .chip:focus-visible,#view-academy .exp-btn:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 #view-academy .chip.on{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
 #view-academy .chip.on .c{color:rgba(255,255,255,.55)}
 #view-academy .lib-head{display:flex;align-items:baseline;gap:9px;margin-bottom:14px}
@@ -350,7 +351,8 @@
 @media(max-width:900px){#view-academy .lp-cols{grid-template-columns:1fr}}
 #view-academy .main{background:var(--ground)}
 
-#view-academy .ws-topbar{position:sticky;top:0;z-index:20;display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:14px 0 12px;margin-bottom:6px;background:var(--ground)}
+#view-academy .ws-topbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding:14px 0 12px;margin-bottom:6px;background:var(--ground)}
+#view-academy .ws-title{margin:0;color:var(--ink);font-size:26px;font-weight:600;line-height:36px}
 #view-academy .ws-actions{display:flex;gap:10px}
 #view-academy .ws-act{border:1px solid var(--hair);background:var(--surface);border-radius:10px;padding:8px 16px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;white-space:nowrap;line-height:1.4}
 #view-academy .ws-act:hover{border-color:var(--ink)}
@@ -387,6 +389,7 @@
         </div></div></div>
     <div class="shell">
       <div class="ws-topbar">
+        <h1 class="ws-title">AI 教学工坊</h1>
         <div class="ws-actions">
           <button type="button" class="ws-act ws-act-primary" data-academy-submit-open>提交作品</button>
           <label class="ws-act" for="ov-contact" tabindex="0" role="button">联系我们</label>
@@ -410,17 +413,17 @@
         <div class="replay-group">
         <input type="checkbox" class="exp-toggle" id="repAll">
         <div class="grid4 exp-grid">
-          <label class="vcard vlink" for="lp-30"><div class="vthumb cv cov-30"><span class="rep">回放</span><span class="p">▶</span></div><div class="vbody"><h4>数学难点互动课件设计</h4><div class="meta">2026.8.29 · 直播回放</div></div></label>
-          <label class="vcard vlink" for="lp-31"><div class="vthumb cv cov-31"><span class="rep">回放</span><span class="p">▶</span></div><div class="vbody"><h4>词汇句型情境表达训练</h4><div class="meta">2026.8.29 · 直播回放</div></div></label>
-          <label class="vcard vlink" for="lp-32"><div class="vthumb cv cov-32"><span class="rep">回放</span><span class="p">▶</span></div><div class="vbody"><h4>全学科自学工作台搭建</h4><div class="meta">2026.8.29 · 直播回放</div></div></label>
-          <label class="vcard vlink" for="lp-33"><div class="vthumb cv cov-33"><span class="rep">回放</span><span class="p">▶</span></div><div class="vbody"><h4>教学应用搭建与数据迭代</h4><div class="meta">2026.8.29 · 直播回放</div></div></label>
-          <label class="vcard vlink" for="lp-34"><div class="vthumb cv cov-34"><span class="rep">回放</span><span class="p">▶</span></div><div class="vbody"><h4>AI 辅助思考课堂设计</h4><div class="meta">2026.8.29 · 直播回放</div></div></label>
-          <label class="vcard vlink" for="lp-24"><div class="vthumb cv cov-24"><span class="rep">回放</span><span class="dur">40:08</span><span class="p">▶</span></div><div class="vbody"><h4>人机分工做 3D 交互课件</h4><div class="meta">2026.7.23 · 直播回放</div></div></label>
-          <label class="vcard vlink" for="lp-25"><div class="vthumb cv cov-25"><span class="rep">回放</span><span class="dur">45:36</span><span class="p">▶</span></div><div class="vbody"><h4>小学数学游戏化学习</h4><div class="meta">2026.7.23 · 直播回放</div></div></label>
-          <label class="vcard vlink" for="lp-26"><div class="vthumb cv cov-26"><span class="rep">回放</span><span class="dur">46:25</span><span class="p">▶</span></div><div class="vbody"><h4>无代码班级管理系统</h4><div class="meta">2026.7.23 · 直播回放</div></div></label>
-          <label class="vcard vlink" for="lp-27"><div class="vthumb cv cov-27"><span class="rep">回放</span><span class="dur">1:00:51</span><span class="p">▶</span></div><div class="vbody"><h4>学情画像与教学偏好</h4><div class="meta">2026.7.23 · 直播回放</div></div></label>
-          <label class="vcard vlink" for="lp-28"><div class="vthumb cv cov-28"><span class="rep">回放</span><span class="dur">44:46</span><span class="p">▶</span></div><div class="vbody"><h4>学习系统与角色脚手架</h4><div class="meta">2026.7.23 · 直播回放</div></div></label>
-          <label class="vcard vlink" for="lp-29"><div class="vthumb cv cov-29"><span class="rep">回放</span><span class="dur">1:01:38</span><span class="p">▶</span></div><div class="vbody"><h4>AI 融合公开课课件打磨</h4><div class="meta">2026.7.23 · 直播回放</div></div></label>
+          <label class="vcard vlink" for="lp-30"><div class="vthumb cv cov-30"><span class="p">▶</span></div><div class="vbody"><h4>数学难点互动课件设计</h4><div class="meta">2026.8.29</div></div></label>
+          <label class="vcard vlink" for="lp-31"><div class="vthumb cv cov-31"><span class="p">▶</span></div><div class="vbody"><h4>词汇句型情境表达训练</h4><div class="meta">2026.8.29</div></div></label>
+          <label class="vcard vlink" for="lp-32"><div class="vthumb cv cov-32"><span class="p">▶</span></div><div class="vbody"><h4>全学科自学工作台搭建</h4><div class="meta">2026.8.29</div></div></label>
+          <label class="vcard vlink" for="lp-33"><div class="vthumb cv cov-33"><span class="p">▶</span></div><div class="vbody"><h4>教学应用搭建与数据迭代</h4><div class="meta">2026.8.29</div></div></label>
+          <label class="vcard vlink" for="lp-34"><div class="vthumb cv cov-34"><span class="p">▶</span></div><div class="vbody"><h4>AI 辅助思考课堂设计</h4><div class="meta">2026.8.29</div></div></label>
+          <label class="vcard vlink" for="lp-24"><div class="vthumb cv cov-24"><span class="dur">40:08</span><span class="p">▶</span></div><div class="vbody"><h4>人机分工做 3D 交互课件</h4><div class="meta">2026.7.23</div></div></label>
+          <label class="vcard vlink" for="lp-25"><div class="vthumb cv cov-25"><span class="dur">45:36</span><span class="p">▶</span></div><div class="vbody"><h4>小学数学游戏化学习</h4><div class="meta">2026.7.23</div></div></label>
+          <label class="vcard vlink" for="lp-26"><div class="vthumb cv cov-26"><span class="dur">46:25</span><span class="p">▶</span></div><div class="vbody"><h4>无代码班级管理系统</h4><div class="meta">2026.7.23</div></div></label>
+          <label class="vcard vlink" for="lp-27"><div class="vthumb cv cov-27"><span class="dur">1:00:51</span><span class="p">▶</span></div><div class="vbody"><h4>学情画像与教学偏好</h4><div class="meta">2026.7.23</div></div></label>
+          <label class="vcard vlink" for="lp-28"><div class="vthumb cv cov-28"><span class="dur">44:46</span><span class="p">▶</span></div><div class="vbody"><h4>学习系统与角色脚手架</h4><div class="meta">2026.7.23</div></div></label>
+          <label class="vcard vlink" for="lp-29"><div class="vthumb cv cov-29"><span class="dur">1:01:38</span><span class="p">▶</span></div><div class="vbody"><h4>AI 融合公开课课件打磨</h4><div class="meta">2026.7.23</div></div></label>
         </div>
         <label class="exp-btn" for="repAll"><span class="more-t">展开更多</span><span class="less-t">收起</span><span class="ch">⌄</span></label>
         </div>

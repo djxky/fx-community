@@ -292,7 +292,8 @@ test('直播回放区域只展示回放卡片', () => {
 
   assert.doesNotMatch(replay, /直播预告/)
   assert.doesNotMatch(replay, /class="vthumb preview"/)
-  assert.match(replay, /class="rep">回放/)
+  assert.match(replay, /<h2>直播回放<\/h2>/)
+  assert.doesNotMatch(replay, /class="rep"| · 直播回放/)
 })
 
 test('顶部 Banner 支持五秒自动轮播、手动切换重计时与悬停暂停', () => {
