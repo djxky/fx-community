@@ -9,7 +9,7 @@
     #view-academy .creation-campaign .header-actions { margin-left: auto; display: flex; align-items: center; gap: 9px; }
     #view-academy .creation-campaign .text-btn { border: 0; background: transparent; color: var(--ink); padding: 9px 12px; border-radius: 9px; font-size: 14px; font-weight: 500; }
     #view-academy .creation-campaign .text-btn:hover { background: #f1f1f1; }
-    #view-academy .creation-campaign .cc-back { gap: 10px; padding: 0; font-size: 20px; font-weight: 500; color: var(--ink); }
+    #view-academy .creation-campaign .cc-back { display: inline-flex; align-items: center; gap: 10px; padding: 0; font-size: 20px; font-weight: 500; line-height: 28px; color: var(--ink); }
     #view-academy .creation-campaign .cc-back:hover { background: transparent; color: var(--ink); }
     #view-academy .creation-campaign .cc-back svg { flex: none; }
     #view-academy .creation-campaign .close-btn { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--hair); background: #fff; border-radius: 10px; font-size: 22px; line-height: 1; }
@@ -186,7 +186,7 @@
     @media (prefers-reduced-motion: reduce) {
       #view-academy .creation-campaign *, #view-academy .creation-campaign *::before, #view-academy .creation-campaign *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
-#view-academy .creation-campaign .modal-header{background:transparent;backdrop-filter:none;padding:0 0 16px;gap:16px;flex-wrap:wrap}
+#view-academy .creation-campaign .modal-header{background:transparent;backdrop-filter:none;padding:0 0 16px;gap:16px;flex-wrap:wrap;width:min(1060px,calc(100% - 48px));margin:0 auto}
 #view-academy .creation-campaign .event-hero{border-radius:18px}
 #view-academy .creation-campaign .header-actions{margin-left:auto}
 #view-academy .creation-campaign .direction-card{padding-bottom:76px}
