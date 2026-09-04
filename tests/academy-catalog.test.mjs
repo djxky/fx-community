@@ -228,7 +228,7 @@ test('两层分类的分片、课程卡和详情导航可通过键盘激活对�
   assert.match(rendered.library, /class="chip" for="course-type-animation" tabindex="0" role="button"/)
   assert.match(rendered.library, /class="lcard course-card[^>]+tabindex="0" role="button"/)
   assert.match(rendered.details, /class="pl-item"[^>]+tabindex="0" role="button"/)
-  assert.match(rendered.details, /class="lp-back" for="lp-home" tabindex="0" role="button"/)
+  assert.match(rendered.details, /class="lp-back(?: [^"]+)?" for="lp-home" tabindex="0" role="button"/)
 
   let clicked = 0
   const radio = { type: 'radio', click: () => { clicked += 1 } }

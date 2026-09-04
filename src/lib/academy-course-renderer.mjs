@@ -133,7 +133,7 @@ function renderDetails(courses, useFilters, typeFilters, coverUrls) {
     )).join('')
 
     return `<div class="lesson-page course-lesson-page" id="${coursePageId(course)}">
-      <label class="lp-back" for="lp-home" tabindex="0" role="button">← 返回 AI 教学工坊</label>
+      <label class="lp-back lp-video-back" for="lp-home" tabindex="0" role="button" aria-label="返回 AI 教学工坊"><svg class="lp-back-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="m16 7-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>返回</span></label>
       <div class="lp-video"><video controls preload="metadata" poster="${escapeHtml(coverUrl)}" src="${escapeHtml(course.videoUrl)}"></video></div>
       <div class="lp-cols">
         <div class="lp-main">
