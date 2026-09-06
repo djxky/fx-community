@@ -71,6 +71,11 @@ function renderLibrary(courses, useFilters, typeFilters, coverUrls) {
     <div class="lib-filter lib-filter-use"><span class="lf-label">用途</span>${rowLabels(useFilters, 'course-use')}</div>
     <div class="lib-filter lib-filter-type"><span class="lf-label">类型</span>${rowLabels(typeFilters, 'course-type')}</div>
     <div class="lgrid">${cards}</div>
+    <div class="course-empty" hidden role="status">
+      <span class="course-empty-icon" aria-hidden="true"><svg width="36" height="36" viewBox="0 0 36 36" fill="none"><rect x="3.75" y="6.75" width="28.5" height="22.5" rx="7.25" stroke="currentColor" stroke-width="1.5"/><path d="m15 13 8 5-8 5V13Z" fill="currentColor"/></svg></span>
+      <strong>内容即将上线</strong>
+      <span>敬请期待更多课程</span>
+    </div>
   </div>`
 }
 

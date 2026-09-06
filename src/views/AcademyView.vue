@@ -17,6 +17,8 @@ import {
   renderAcademyCourseUi,
 } from '../lib/academy-course-renderer.mjs'
 import { setupAcademyCarousel } from '../lib/academy-carousel.mjs'
+import { setupAcademyCourseEmptyState } from '../lib/academy-course-empty-state.mjs'
+import { setupAcademyVideoPause } from '../lib/academy-video-playback.mjs'
 import creationCampaign from './raw/creation-campaign.html?raw'
 import creationArt from '../assets/academy/teacher-ai-creation.png'
 import { setupCreationCampaign } from '../lib/creation-campaign.mjs'
@@ -46,6 +48,8 @@ const renderedRaw = composeAcademyMarkup(raw, renderedCourseUi)
   .replace('__ACADEMY_TEACHING_PARTNER_QR__', teachingPartnerQr)
 const academyRoot = ref(null)
 let cleanupAcademyCarousel = () => {}
+let cleanupAcademyCourseEmptyState = () => {}
+let cleanupAcademyVideoPause = () => {}
 let cleanupCreationCampaign = () => {}
 let cleanupCardTitleTooltips = () => {}
 
@@ -84,12 +88,16 @@ function setupCardTitleTooltips(root) {
 
 onMounted(() => {
   cleanupAcademyCarousel = setupAcademyCarousel(academyRoot.value, { intervalMs: 5000 })
+  cleanupAcademyCourseEmptyState = setupAcademyCourseEmptyState(academyRoot.value)
+  cleanupAcademyVideoPause = setupAcademyVideoPause(academyRoot.value)
   cleanupCreationCampaign = setupCreationCampaign(academyRoot.value)
   cleanupCardTitleTooltips = setupCardTitleTooltips(academyRoot.value)
 })
 
 onBeforeUnmount(() => {
   cleanupAcademyCarousel()
+  cleanupAcademyCourseEmptyState()
+  cleanupAcademyVideoPause()
   cleanupCreationCampaign()
   cleanupCardTitleTooltips()
 })

@@ -164,6 +164,14 @@ test('两层筛选单选框与网格同级，AND 组合过滤且默认全部可�
   assert.doesNotMatch(rendered.library, /course-expand/)
 })
 
+test('课程筛选没有结果时提供即将上线提示', async () => {
+  const rendered = await renderUi()
+
+  assert.match(rendered.library, /class="course-empty" hidden role="status"/)
+  assert.match(rendered.library, /内容即将上线/)
+  assert.match(rendered.library, /敬请期待更多课程/)
+})
+
 test('两层分类的分片、课程卡和详情导航可通过键盘激活对应单选框', async () => {
   const renderer = await loadRenderer()
   const rendered = await renderUi()
