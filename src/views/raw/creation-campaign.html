@@ -1,5 +1,5 @@
 <div class="creation-campaign">
-      <header class="modal-header"><button class="text-btn cc-back" id="cc-returnAcademy" aria-label="返回 AI 教学工坊"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="m16 7-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>返回</span></button>
+      <header class="modal-header"><button class="text-btn cc-back" id="cc-returnAcademy" aria-label="返回 AI 教学工坊"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="m16 7-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="cc-backLabel">返回</span></button>
         <div class="header-actions">
           <button class="text-btn" id="cc-mySubmissionsBtn">我的投稿（<span id="cc-submissionCount">2</span>）</button>
         </div>
@@ -113,7 +113,6 @@
 
         <section class="view" id="cc-directionView">
           <div class="subview-shell">
-            <button class="back-link goLanding">← 返回活动详情</button>
             <h2 class="subview-title">选择你要参加的创作方向</h2>
             <p class="subview-desc">同一位创作者可以参加多个方向。每件作品需单独完成一次投稿。</p>
             <div class="select-direction" id="cc-miniDirections"></div>
@@ -122,7 +121,6 @@
 
         <section class="view" id="cc-formView">
           <div class="subview-shell">
-            <button class="back-link goDirections">← 重新选择方向</button>
             <h2 class="subview-title">提交你的作品</h2>
             <p class="subview-desc">预计 3—5 分钟完成。带 * 的项目为必填。</p>
             <form id="cc-submissionForm" novalidate>
@@ -160,7 +158,7 @@
               </section>
 
               <label class="agreement"><input type="checkbox" id="cc-agreeRules" required /><span>我已阅读并同意《2026 教师 AI 教育创作征集活动规则》，并确认提交作品及相关素材为本人原创或已获得合法授权。</span></label>
-              <div class="submit-row"><button type="button" class="secondary-btn goLanding">暂不提交</button><button class="primary-btn" type="submit" id="cc-confirmSubmit" disabled>确认提交作品</button></div>
+              <div class="submit-row form-submit-actions"><button type="button" class="secondary-btn goLanding">暂不提交</button><button class="primary-btn" type="submit" id="cc-confirmSubmit" disabled>确认提交作品</button></div>
             </form>
           </div>
         </section>
@@ -179,7 +177,6 @@
 
         <section class="view" id="cc-submissionsView">
           <div class="subview-shell">
-            <button class="back-link goLanding">← 返回活动详情</button>
             <h2 class="subview-title">我的投稿</h2>
             <p class="subview-desc">征集截止前，你可以修改投稿信息或撤回作品。</p>
             <div class="submission-list" id="cc-submissionList"></div>
@@ -187,7 +184,6 @@
           </div>
         </section>
 </div>
-<div class="demo-note">原型演示：投稿仅保存在本次页面会话中，不会发送到真实服务。</div>
 <div class="toast" id="cc-toast" role="status"></div>
 <dialog id="cc-withdrawDialog" class="withdraw-dialog" aria-labelledby="cc-withdrawTitle"><h2 id="cc-withdrawTitle">撤回这件作品？</h2><p>确认后将从本次活动的投稿记录中移除。</p><div class="submit-row"><button type="button" class="secondary-btn" id="cc-cancelWithdraw">暂不撤回</button><button type="button" class="primary-btn" id="cc-confirmWithdraw">确认撤回</button></div></dialog>
 </div>

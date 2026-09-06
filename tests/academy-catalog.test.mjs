@@ -203,7 +203,19 @@ test('首张活动 Banner 可进入教师 AI 创作征集并复用作品提交�
   assert.match(campaign, /id="cc-landingView"/)
   assert.match(campaign, /class="primary-btn chooseDirection">立即提交作品<\/button>/)
   assert.match(campaign, /id="cc-submissionForm"/)
-  assert.match(campaign, /class="demo-note">原型演示：投稿仅保存在本次页面会话中/)
+  assert.doesNotMatch(campaign, /原型演示|示例/)
+})
+
+test('活动各子页复用左上角的单一返回入口', () => {
+  const campaign = readFileSync(new URL('../src/views/raw/creation-campaign.html', import.meta.url), 'utf8')
+  const controller = readFileSync(new URL('../src/lib/creation-campaign.mjs', import.meta.url), 'utf8')
+
+  assert.equal((campaign.match(/id="cc-returnAcademy"/g) ?? []).length, 1)
+  assert.match(campaign, /id="cc-backLabel">返回<\/span>/)
+  assert.doesNotMatch(campaign, /class="back-link/)
+  assert.match(controller, /directionView:\s*\{\s*label:\s*'返回活动详情'/)
+  assert.match(controller, /formView:\s*\{\s*label:\s*'返回选择方向'/)
+  assert.match(controller, /submissionsView:\s*\{\s*label:\s*'返回活动详情'/)
 })
 
 test('AI 教学工坊顶部只保留提交作品与联系我们', () => {

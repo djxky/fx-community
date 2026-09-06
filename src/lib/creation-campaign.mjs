@@ -6,6 +6,13 @@ const examples = [
   { id: 'FXAI26-00002', title: '班级成长记录工作台', direction: 3, time: '2026-09-16 09:20', url: 'https://feixiang.example/work/class-growth', status: '已提交', example: true },
 ]
 const fields = { title: 'workTitle', url: 'workUrl', description: 'description', creator: 'creator', phone: 'phone', identity: 'identity', region: 'region', organization: 'organization', coCreators: 'coCreators' }
+const backRoutes = {
+  landingView: { label: '返回', ariaLabel: '返回 AI 教学工坊', target: null },
+  directionView: { label: '返回活动详情', ariaLabel: '返回活动详情', target: 'landingView' },
+  formView: { label: '返回选择方向', ariaLabel: '返回选择方向', target: 'directionView' },
+  successView: { label: '返回活动详情', ariaLabel: '返回活动详情', target: 'landingView' },
+  submissionsView: { label: '返回活动详情', ariaLabel: '返回活动详情', target: 'landingView' },
+}
 
 export function setupCreationCampaign(academyRoot) {
   const root = academyRoot?.querySelector('.creation-campaign')
@@ -17,6 +24,7 @@ export function setupCreationCampaign(academyRoot) {
   let pendingWithdrawal = null
   let toastTimer
   let focusFrame
+  let currentViewId = 'landingView'
   const form = $('submissionForm')
   const dialog = $('withdrawDialog')
 
@@ -27,8 +35,11 @@ export function setupCreationCampaign(academyRoot) {
     toastTimer = setTimeout(() => $('toast').classList.remove('show'), 2600)
   }
   function showView(id) {
+    currentViewId = id
     root.querySelectorAll('.view').forEach(view => view.classList.toggle('active', view.id === 'cc-' + id))
-    root.querySelector('.demo-note').hidden = !['submissionsView', 'successView'].includes(id)
+    const backRoute = backRoutes[id] ?? backRoutes.landingView
+    $('backLabel').textContent = backRoute.label
+    $('returnAcademy').setAttribute('aria-label', backRoute.ariaLabel)
     academyRoot.querySelector('.main').scrollTop = 0
     cancelAnimationFrame(focusFrame)
     focusFrame = requestAnimationFrame(() => {
@@ -74,7 +85,7 @@ export function setupCreationCampaign(academyRoot) {
   function renderSubmissions() {
     $('submissionCount').textContent = state.records.length
     $('submissionList').innerHTML = state.records.length ? state.records.map(item => `<article class="submission-item">
-      <div><div class="submission-top"><span class="direction-label">${esc(directions[item.direction].name)}</span><span class="status">${esc(item.status)}${item.example ? ' · 示例' : ''}</span></div><h3>${esc(item.title)}</h3><p>提交时间：${esc(item.time)} · ${esc(item.url)}</p></div>
+      <div><div class="submission-top"><span class="direction-label">${esc(directions[item.direction].name)}</span><span class="status">${esc(item.status)}</span></div><h3>${esc(item.title)}</h3><p>提交时间：${esc(item.time)}</p></div>
       <div class="item-actions"><button data-action="view" data-id="${esc(item.id)}">查看作品</button><button data-action="edit" data-id="${esc(item.id)}">修改信息</button><button data-action="withdraw" data-id="${esc(item.id)}">撤回投稿</button></div>
     </article>`).join('') : '<div class="empty-note">还没有投稿作品。选择一个方向，提交你的第一件作品。</div>'
   }
@@ -83,9 +94,15 @@ export function setupCreationCampaign(academyRoot) {
     if (target.closest('label[for="lp-campaign"]')) showView('landingView')
     if (!root.contains(target)) return
     if (target.closest('#cc-returnAcademy')) {
-      academyRoot.querySelector('#lp-home').checked = true
-      academyRoot.querySelector('.main').scrollTop = 0
-      academyRoot.querySelector('label[for="lp-campaign"]')?.focus({ preventScroll: true })
+      const backRoute = backRoutes[currentViewId] ?? backRoutes.landingView
+      if (backRoute.target) {
+        if (currentViewId === 'formView') readForm()
+        showView(backRoute.target)
+      } else {
+        academyRoot.querySelector('#lp-home').checked = true
+        academyRoot.querySelector('.main').scrollTop = 0
+        academyRoot.querySelector('label[for="lp-campaign"]')?.focus({ preventScroll: true })
+      }
     } else if (target.closest('.chooseDirection')) startNew()
     else if (target.closest('.goLanding')) showView('landingView')
     else if (target.closest('.goDirections')) { readForm(); showView('directionView') }
@@ -107,7 +124,7 @@ export function setupCreationCampaign(academyRoot) {
       const record = state.records.find(item => item.id === button.dataset.id)
       if (!record) return
       if (button.dataset.action === 'view') {
-        if (record.example) toast('这是一条演示投稿，未关联真实作品')
+        if (record.example) toast('该作品链接暂不可用')
         else window.open(record.url, '_blank', 'noopener,noreferrer')
       } else if (button.dataset.action === 'edit') {
         editingId = record.id
@@ -151,7 +168,6 @@ export function setupCreationCampaign(academyRoot) {
   $('miniDirections').innerHTML = directions.map((direction, index) => `<button class="mini-direction" data-direction="${index}"><small>DIRECTION ${String(index + 1).padStart(2, '0')}</small><b>${esc(direction.name)}</b><span>${esc(direction.title)}</span></button>`).join('')
   fillForm()
   renderSubmissions()
-  root.querySelector('.demo-note').hidden = true
   academyRoot.addEventListener('click', onClick)
   root.addEventListener('input', onInput)
   root.addEventListener('change', onInput)

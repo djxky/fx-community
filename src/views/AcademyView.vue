@@ -47,15 +47,51 @@ const renderedRaw = composeAcademyMarkup(raw, renderedCourseUi)
 const academyRoot = ref(null)
 let cleanupAcademyCarousel = () => {}
 let cleanupCreationCampaign = () => {}
+let cleanupCardTitleTooltips = () => {}
+
+const cardTitleSelector = [
+  '.vbody h4',
+  '.lbody h4',
+  '.growth-title',
+  '.pl-t',
+  '.mcard .t',
+  '.acard h3',
+].join(',')
+
+function setupCardTitleTooltips(root) {
+  const titles = Array.from(root?.querySelectorAll(cardTitleSelector) ?? [])
+  const syncTitle = (title) => {
+    const isTruncated = title.scrollWidth > title.clientWidth + 1
+    if (isTruncated) {
+      title.title = title.textContent.trim()
+      title.dataset.overflowTitle = 'true'
+    } else if (title.dataset.overflowTitle === 'true') {
+      title.removeAttribute('title')
+      delete title.dataset.overflowTitle
+    }
+  }
+  const syncAll = () => titles.forEach(syncTitle)
+  const frame = window.requestAnimationFrame(syncAll)
+
+  titles.forEach((title) => title.addEventListener('mouseenter', () => syncTitle(title)))
+  window.addEventListener('resize', syncAll)
+
+  return () => {
+    window.cancelAnimationFrame(frame)
+    window.removeEventListener('resize', syncAll)
+  }
+}
 
 onMounted(() => {
   cleanupAcademyCarousel = setupAcademyCarousel(academyRoot.value, { intervalMs: 5000 })
   cleanupCreationCampaign = setupCreationCampaign(academyRoot.value)
+  cleanupCardTitleTooltips = setupCardTitleTooltips(academyRoot.value)
 })
 
 onBeforeUnmount(() => {
   cleanupAcademyCarousel()
   cleanupCreationCampaign()
+  cleanupCardTitleTooltips()
 })
 
 function handleCourseNavigationKeydown(event) {

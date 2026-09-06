@@ -3,6 +3,7 @@
 #view-academy .creation-campaign button,#view-academy .creation-campaign input,#view-academy .creation-campaign textarea,#view-academy .creation-campaign select{font-family:inherit}
 #view-academy .creation-campaign button,#view-academy .creation-campaign summary{cursor:pointer}
 #view-academy .creation-campaign :focus-visible{outline:2px solid var(--gold-solid);outline-offset:3px}
+#view-academy #LP-campaign{padding-bottom:0}
     #view-academy .creation-campaign .modal-header { z-index: 8; min-height: 68px; flex: 0 0 68px; display: flex; align-items: center; padding: 0 24px; background: rgba(255,255,255,.94); border-bottom: 1px solid var(--hair); backdrop-filter: blur(12px); }
     #view-academy .creation-campaign .modal-brand { display: flex; align-items: center; gap: 11px; font-size: 14px; font-weight: 600; }
     #view-academy .creation-campaign .modal-brand i { width: 9px; height: 9px; border-radius: 50%; background: var(--gold-solid); box-shadow: 0 0 0 5px var(--gold-bg); }
@@ -33,7 +34,7 @@
     #view-academy .creation-campaign .hero-meta { color: var(--muted); font-size: 12px; }
 
     #view-academy .creation-campaign .event-section { padding: 74px 0 0; }
-    #view-academy .creation-campaign .event-section:last-child { padding-bottom: 88px; }
+    #view-academy .creation-campaign .event-section:last-child { padding-bottom: 32px; }
     #view-academy .creation-campaign .section-index { color: var(--gold); font-size: 11px; font-weight: 600; letter-spacing: .12em; }
     #view-academy .creation-campaign .event-title-row { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin: 8px 0 26px; }
     #view-academy .creation-campaign .event-title-row h3 { margin: 0; font-size: 30px; letter-spacing: -.02em; line-height: 1.25; font-weight: 600; }
@@ -91,8 +92,7 @@
 
     /* 投稿表单 / 我的投稿 / 成功 */
     #view-academy .creation-campaign .subview-shell { width: min(920px, calc(100% - 48px)); margin: 0 auto; padding: 46px 0 90px; }
-    #view-academy .creation-campaign .back-link { display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; padding: 0; color: var(--muted); font-size: 13px; font-weight: 500; }
-    #view-academy .creation-campaign .subview-title { margin: 19px 0 7px; font-size: 30px; letter-spacing: -.02em; font-weight: 600; }
+    #view-academy .creation-campaign .subview-title { margin: 0 0 7px; font-size: 30px; letter-spacing: -.02em; font-weight: 600; }
     #view-academy .creation-campaign .subview-desc { margin: 0 0 28px; color: var(--muted); font-size: 13px; text-wrap: pretty; }
     #view-academy .creation-campaign .select-direction { display: grid; grid-template-columns: repeat(2, 1fr); gap: 13px; }
     #view-academy .creation-campaign .mini-direction { padding: 19px; text-align: left; border: 1px solid var(--hair); border-radius: 14px; background: #fff; transition: border-color .15s, transform .15s; }
@@ -126,6 +126,8 @@
     #view-academy .creation-campaign .agreement { display: flex; align-items: flex-start; gap: 10px; margin: 23px 2px; color: #4b524f; font-size: 12px; line-height: 1.7; }
     #view-academy .creation-campaign .agreement input { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--ink); }
     #view-academy .creation-campaign .submit-row { display: flex; justify-content: flex-end; gap: 10px; }
+    #view-academy .creation-campaign #cc-formView .subview-shell { padding-bottom: 0; }
+    #view-academy .creation-campaign .form-submit-actions { position: sticky; z-index: 7; bottom: 0; margin-top: 0; padding: 16px 0 20px; border-top: 1px solid var(--hair); background: rgba(247,248,247,.96); backdrop-filter: blur(12px); }
     #view-academy .creation-campaign .submit-row .primary-btn[disabled] { opacity: .35; cursor: not-allowed; }
 
     #view-academy .creation-campaign .success-box { max-width: 690px; margin: 40px auto 0; padding: 50px; border: 1px solid var(--hair); border-radius: 18px; background: #fff; text-align: center; }
@@ -177,6 +179,8 @@
       #view-academy .creation-campaign .sticky-submit .copy { margin-left: 0; text-align: left; }
       #view-academy .creation-campaign .rule { grid-template-columns: 1fr; gap: 8px; }
       #view-academy .creation-campaign .form-card { padding: 21px 17px; }
+      #view-academy .creation-campaign .form-submit-actions { padding: 12px 0 14px; }
+      #view-academy .creation-campaign .form-submit-actions > button { flex: 1; }
       #view-academy .creation-campaign .field.full { grid-column: auto; }
       #view-academy .creation-campaign .submission-item { grid-template-columns: 1fr; }
       #view-academy .creation-campaign .item-actions { flex-wrap: wrap; }
@@ -193,7 +197,6 @@
 #view-academy .creation-campaign .chip{display:inline-block;line-height:1.5}
 #view-academy .creation-campaign .submission-item p{overflow-wrap:anywhere}
 #view-academy .creation-campaign .sticky-submit{margin-top:0}
-#view-academy .creation-campaign .demo-note{font-size:11px;color:var(--faint);text-align:center;padding:18px}
 #view-academy .creation-campaign .withdraw-dialog{position:fixed;inset:0;margin:auto;padding:28px;border:1px solid var(--hair);border-radius:18px;width:min(420px,calc(100% - 32px));color:var(--ink)}
 #view-academy .creation-campaign .withdraw-dialog::backdrop{background:rgba(20,31,27,.45)}
 #view-academy .creation-campaign .withdraw-dialog h2{font-size:22px}

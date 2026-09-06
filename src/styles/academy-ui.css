@@ -2,6 +2,8 @@
    #app increases specificity above legacy v-html styles without affecting peers. */
 #app #view-academy {
   --academy-gutter: 70px;
+  --academy-card-width: 348px;
+  --academy-card-radius: 20px;
   --academy-control-radius: 10px;
   --academy-modal-radius: 20px;
   --academy-modal-padding: 32px;
@@ -35,7 +37,7 @@
 }
 
 /* Navigation uses the 16px breadcrumb scale; actions have their own scale. */
-#app #view-academy :is(.lp-back, .cc-back, .back-link) {
+#app #view-academy :is(.lp-back, .cc-back) {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -46,11 +48,101 @@
 }
 #app #view-academy :is(.lp-back, .cc-back) svg { display: block; flex-shrink: 0; }
 
-/* Existing category controls are secondary tabs, with radio-driven selection. */
-#app #view-academy .lib-filter .chip {
-  font-size: 14px;
+/* Compact secondary filters and their radio-driven selection. */
+#app #view-academy .lib-filter {
+  gap: 10px;
 }
-/* Color and 400/500 weights come from the catalog's checked-radio rules. */
+#app #view-academy .lib-filter-use {
+  margin-bottom: 10px;
+}
+#app #view-academy .lib-filter .chip {
+  padding: 6px 10px;
+  border-radius: var(--academy-control-radius);
+  font-size: 12px;
+  line-height: 16px;
+}
+/* Selected colors and weight come from the catalog's checked-radio rules. */
+
+/* Replay and course cards use a fixed desktop measure, capped at four columns. */
+#app #view-academy :is(.grid4, .lgrid) {
+  grid-template-columns: repeat(auto-fill, var(--academy-card-width));
+  max-width: calc((var(--academy-card-width) * 4) + 48px);
+  gap: 16px;
+}
+#app #view-academy .replay-group {
+  container: replay-cards / inline-size;
+}
+#app #view-academy .exp-toggle:not(:checked) ~ .exp-grid > .vcard:nth-child(n+5) {
+  display: none;
+}
+@container replay-cards (max-width: 1439px) {
+  #app #view-academy .exp-toggle:not(:checked) ~ .exp-grid > .vcard:nth-child(n+4) {
+    display: none;
+  }
+}
+@container replay-cards (max-width: 1075px) {
+  #app #view-academy .exp-toggle:not(:checked) ~ .exp-grid > .vcard:nth-child(n+3) {
+    display: none;
+  }
+}
+@container replay-cards (max-width: 711px) {
+  #app #view-academy .exp-toggle:not(:checked) ~ .exp-grid > .vcard:nth-child(n+2) {
+    display: none;
+  }
+}
+#app #view-academy .exp-toggle:checked ~ .exp-grid > .vcard {
+  display: block;
+}
+#app #view-academy :is(.vcard, .lcard) {
+  width: var(--academy-card-width);
+  border-radius: var(--academy-card-radius);
+}
+#app #view-academy :is(.vthumb, .lthumb) {
+  border-radius: var(--academy-card-radius);
+  overflow: hidden;
+}
+#app #view-academy .vthumb {
+  aspect-ratio: 16 / 9;
+}
+#app #view-academy .vbody h4 {
+  font-size: 16px;
+  line-height: 22px;
+}
+#app #view-academy .vbody .meta {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 18px;
+}
+#app #view-academy .lbody h4 {
+  min-height: 44px;
+  font-size: 16px;
+  line-height: 22px;
+}
+#app #view-academy .lbody .lc-by {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 18px;
+}
+#app #view-academy :is(
+  .vbody h4,
+  .lbody h4,
+  .growth-title,
+  .pl-t,
+  .mcard .t,
+  .acard h3
+) {
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  -webkit-box-orient: initial;
+  -webkit-line-clamp: unset;
+}
+#app #view-academy .foot {
+  border-top: 0;
+}
 
 #app #view-academy :is(.ws-act, .primary-btn, .secondary-btn, .text-btn, .hc-cta, .st-btn, .hbtn, .exp-btn, .academy-submission-submit, .academy-submission-cancel) {
   border-radius: var(--academy-control-radius);
@@ -125,4 +217,11 @@
   #app #view-academy .academy-submission-aside { display: none; }
   #app #view-academy .ov-contact .apply { grid-template-columns: 1fr; }
   #app #view-academy .creation-campaign .event-hero .content-width { padding-inline: 20px; }
+}
+@media (max-width: 823px) {
+  #app #view-academy :is(.grid4, .lgrid) {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: none;
+  }
+  #app #view-academy :is(.vcard, .lcard) { width: 100%; }
 }
