@@ -273,8 +273,8 @@ test('直播 Banner 提供本地课程详情页与三个真实平台的预约弹
 
   assert.match(raw, /id="lp-live" class="lp-radio"/)
   assert.match(raw, /#lp-live:checked ~ #LP-live\{display:block\}/)
-  assert.match(detail, /返回 AI 教学工坊/)
-  assert.match(detail, /class="live-detail-top"[\s\S]*?课程详情/)
+  assert.match(detail, /class="live-detail-top"[\s\S]*?aria-label="返回"[\s\S]*?<span>返回<\/span>/)
+  assert.doesNotMatch(detail, /live-detail-section-kicker|课程详情|返回 AI 教学工坊/)
   assert.match(detail, /下一场直播/)
   assert.match(detail, /三场专题，一场直播贯通/)
   assert.match(detail, /3<\/b>场专题直播[\s\S]*?3<\/b>位浙江教师[\s\S]*?3<\/b>重教学收获/)
