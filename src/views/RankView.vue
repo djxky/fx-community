@@ -17,7 +17,7 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
 <template>
   <div id="view-rank">
     <div class="page">
-      <Sidebar active="community" />
+      <Sidebar active="home" />
       <main class="rank-main">
         <div class="tbar">
           <div class="tbar-in">

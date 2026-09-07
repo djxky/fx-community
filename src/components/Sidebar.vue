@@ -2,9 +2,10 @@
 import { computed } from 'vue'
 import { store } from '../store'
 const props = defineProps({ active: { type: String, default: '' } }) // 'home' | 'community' | 'skills' | 'academy' | 'mylib' | 'me' | ''
-const homeOn = computed(() => props.active === 'home' || props.active === 'academy')
+const homeOn = computed(() => props.active === 'home')
 const sqOn = computed(() => props.active === 'community')
 const skOn = computed(() => props.active === 'skills')
+const acOn = computed(() => props.active === 'academy')
 const mlOn = computed(() => props.active === 'mylib')
 const meOn = computed(() => props.active === 'me')
 function collapse() { store.sidebarCollapsed = true }
@@ -36,10 +37,13 @@ const history = [
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path><path d="M9 15h6"></path></svg>首页
       </button>
       <button type="button" class="nav nav-discover" :class="{ on: sqOn }" :aria-current="sqOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.3 2.5 3.5 5.5 3.5 9S14.3 18.5 12 21M12 3C9.7 5.5 8.5 8.5 8.5 12S9.7 18.5 12 21"></path></svg>资源广场
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19a5.5 5.5 0 0 1 11 0"></path><circle cx="17" cy="8" r="2.6"></circle><path d="M15.5 13.6A5 5 0 0 1 21 18.5"></path></svg>灵感
       </button>
       <button type="button" class="nav nav-skills" :class="{ on: skOn }" :aria-current="skOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="4"></rect><path d="m9 9-2 3 2 3M15 9l2 3-2 3M11.5 16l1-8"></path></svg>应用广场
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="4"></rect><path d="m9 9-2 3 2 3M15 9l2 3-2 3M11.5 16l1-8"></path></svg>技能广场
+      </button>
+      <button type="button" class="nav nav-academy" :class="{ on: acOn }" :aria-current="acOn ? 'page' : undefined">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"></path><path d="M6 12v4.5c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5V12"></path></svg>AI 教学工坊
       </button>
       <button type="button" class="nav nav-mylib" :class="{ on: mlOn }" :aria-current="mlOn ? 'page' : undefined">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 19h9.7a4.3 4.3 0 0 0 .7-8.5A6.2 6.2 0 0 0 6 8.8 5.1 5.1 0 0 0 7.5 19Z"></path></svg>我的知识库
@@ -98,11 +102,14 @@ const history = [
       <button type="button" class="sm-ic nav-home nav-rank" :class="{ on: homeOn }" title="首页" :aria-current="homeOn ? 'page' : undefined">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path><path d="M9 15h6"></path></svg>
       </button>
-      <button type="button" class="sm-ic nav-discover" :class="{ on: sqOn }" title="资源广场" :aria-current="sqOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.3 2.5 3.5 5.5 3.5 9S14.3 18.5 12 21M12 3C9.7 5.5 8.5 8.5 8.5 12S9.7 18.5 12 21"></path></svg>
+      <button type="button" class="sm-ic nav-discover" :class="{ on: sqOn }" title="灵感" :aria-current="sqOn ? 'page' : undefined">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19a5.5 5.5 0 0 1 11 0"></path><circle cx="17" cy="8" r="2.6"></circle><path d="M15.5 13.6A5 5 0 0 1 21 18.5"></path></svg>
       </button>
-      <button type="button" class="sm-ic nav-skills" :class="{ on: skOn }" title="应用广场" :aria-current="skOn ? 'page' : undefined">
+      <button type="button" class="sm-ic nav-skills" :class="{ on: skOn }" title="技能广场" :aria-current="skOn ? 'page' : undefined">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="4"></rect><path d="m9 9-2 3 2 3M15 9l2 3-2 3M11.5 16l1-8"></path></svg>
+      </button>
+      <button type="button" class="sm-ic nav-academy" :class="{ on: acOn }" title="AI 教学工坊" :aria-current="acOn ? 'page' : undefined">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"></path><path d="M6 12v4.5c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5V12"></path></svg>
       </button>
       <button type="button" class="sm-ic nav-mylib" :class="{ on: mlOn }" title="我的知识库" :aria-current="mlOn ? 'page' : undefined">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 19h9.7a4.3 4.3 0 0 0 .7-8.5A6.2 6.2 0 0 0 6 8.8 5.1 5.1 0 0 0 7.5 19Z"></path></svg>

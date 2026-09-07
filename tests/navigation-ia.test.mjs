@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { after, before, test } from 'node:test'
 
 import { createSSRApp } from 'vue'
@@ -25,21 +26,24 @@ async function renderSidebar(active) {
   return renderToString(createSSRApp(Sidebar, { active }))
 }
 
-test('主导航复原飞象老师正式站的四个入口', async () => {
+test('主导航展示首页、灵感、技能广场、AI 教学工坊和我的知识库', async () => {
   const html = await renderSidebar('academy')
   const primary = html.match(/<nav class="side-navs"[\s\S]*?<\/nav>/)?.[0] || ''
 
   assert.match(primary, /nav-home/)
   assert.match(primary, /首页/)
   assert.match(primary, /nav-discover/)
-  assert.match(primary, /资源广场/)
+  assert.match(primary, /灵感/)
   assert.match(primary, /nav-skills/)
-  assert.match(primary, /应用广场/)
+  assert.match(primary, /技能广场/)
+  assert.match(primary, /nav-academy/)
+  assert.match(primary, /AI 教学工坊/)
   assert.match(primary, /nav-mylib/)
   assert.match(primary, /我的知识库/)
-  assert.doesNotMatch(primary, /灵感|技能广场|AI 教学工坊|nav-notify|>消息</)
-  assert.equal(primary.match(/<button\b/g)?.length, 4)
-  assert.match(primary, /<button[^>]*class="[^"]*nav-home[^"]*"[^>]*aria-current="page"/)
+  assert.doesNotMatch(primary, /资源广场|应用广场|nav-notify|>消息</)
+  assert.equal(primary.match(/<button\b/g)?.length, 5)
+  assert.match(primary, /<button[^>]*class="[^"]*nav-academy[^"]*"[^>]*aria-current="page"/)
+  assert.doesNotMatch(primary, /<button[^>]*class="[^"]*nav-home[^"]*"[^>]*aria-current="page"/)
 })
 
 test('侧栏移除旧积分推广卡并保留正式站底部入口', async () => {
@@ -60,8 +64,21 @@ test('消息只放在我的菜单，并保留未读数', async () => {
   assert.match(html, /avatar-trigger[^>]*aria-expanded="false"/)
 })
 
-test('技能页的侧边栏能正确高亮应用广场', async () => {
-  const html = await renderSidebar('skills')
-  assert.match(html, /<button[^>]*class="[^"]*nav-skills[^"]*"[^>]*aria-current="page"/)
-  assert.doesNotMatch(html, /<button[^>]*class="[^"]*nav-home[^"]*"[^>]*aria-current="page"/)
+test('首页与 AI 教学工坊分别高亮对应入口', async () => {
+  const home = await renderSidebar('home')
+  const academy = await renderSidebar('academy')
+
+  assert.match(home, /<button[^>]*class="[^"]*nav-home[^"]*"[^>]*aria-current="page"/)
+  assert.doesNotMatch(home, /<button[^>]*class="[^"]*nav-academy[^"]*"[^>]*aria-current="page"/)
+  assert.match(academy, /<button[^>]*class="[^"]*nav-academy[^"]*"[^>]*aria-current="page"/)
+})
+
+test('五个主导航入口分别映射到对应页面', () => {
+  const delegation = readFileSync(new URL('../src/composables/delegation.js', import.meta.url), 'utf8')
+
+  assert.match(delegation, /\['\.nav-rank', 'rank'\]/)
+  assert.match(delegation, /\['\.nav-discover', 'discover'\]/)
+  assert.match(delegation, /\['\.nav-skills', 'skills'\]/)
+  assert.match(delegation, /\['\.nav-academy', 'academy'\]/)
+  assert.match(delegation, /\['\.nav-mylib', 'mylib'\]/)
 })
