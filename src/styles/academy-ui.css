@@ -246,7 +246,7 @@
 #app #view-academy .ov-contact .qrbox { align-self: center; width: 180px; height: 180px; flex-basis: 180px; }
 #app #view-academy .withdraw-dialog::backdrop { background: var(--academy-overlay); backdrop-filter: blur(3px); }
 
-@media (max-width: 1199px) {
+@media (max-width: 1599px) {
   #app #view-academy { --academy-gutter: 24px; }
 }
 @media (max-width: 767px) {
