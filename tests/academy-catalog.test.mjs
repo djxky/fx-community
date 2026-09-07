@@ -124,6 +124,16 @@ test('课程渲染结果提供两层筛选、可点击卡片和直播回放式�
   assert.match(rendered.details, /src="https:\/\/metis-online\.fbcontent\.cn\/metis-lectio\//)
 })
 
+test('更多课程完整展示相同资源类型的系列课程，并保持课程原始顺序', async () => {
+  const rendered = await renderUi()
+  const firstCoursePage = rendered.details
+    .split('<div class="lesson-page course-lesson-page" id="LP-course-2">')[0]
+  const relatedCourseIds = [...firstCoursePage.matchAll(/class="pl-item" for="lp-course-(\d+)"/g)]
+    .map((match) => Number(match[1]))
+
+  assert.deepEqual(relatedCourseIds, [5, 6, 8, 10, 17, 18, 19])
+})
+
 test('课程内容被注入原型的筛选区、详情区和可见性样式', async () => {
   const renderer = await loadRenderer()
   const source = '<style><!-- ACADEMY_COURSE_VISIBILITY --></style><!-- ACADEMY_COURSE_RADIOS --><!-- ACADEMY_COURSE_LIBRARY --><!-- ACADEMY_SUBMIT_CTA --><!-- ACADEMY_COURSE_DETAILS -->'

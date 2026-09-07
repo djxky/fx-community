@@ -79,13 +79,12 @@ function renderLibrary(courses, useFilters, typeFilters, coverUrls) {
   </div>`
 }
 
-function relatedCoursesFor(course, courses) {
-  const shared = courses.filter((candidate) => (
+function relatedCoursesFor(course, courses, typeKeys) {
+  const courseTypeKeys = new Set(course.categories.filter((category) => typeKeys.has(category)))
+  return courses.filter((candidate) => (
     candidate.id !== course.id
-      && candidate.categories.some((category) => course.categories.includes(category))
+      && candidate.categories.some((category) => courseTypeKeys.has(category))
   ))
-  const fallback = courses.filter((candidate) => candidate.id !== course.id && !shared.includes(candidate))
-  return [...shared, ...fallback].slice(0, 5)
 }
 
 function renderDetails(courses, useFilters, typeFilters, coverUrls) {
@@ -99,7 +98,7 @@ function renderDetails(courses, useFilters, typeFilters, coverUrls) {
     const useText = course.categories.filter((key) => key !== 'all' && useKeys.has(key)).map((key) => labels[key]).join(' · ')
     const facts = (useText || typeText) ? `<div class="lp-facts">${useText ? `<span class="lp-fact"><b>适用范围</b>${escapeHtml(useText)}</span>` : ''}${typeText ? `<span class="lp-fact"><b>分类</b>${escapeHtml(typeText)}</span>` : ''}</div>` : ''
     const goals = course.goals.map((goal) => `<li>${escapeHtml(goal)}</li>`).join('')
-    const related = relatedCoursesFor(course, courses).map((relatedCourse) => (
+    const related = relatedCoursesFor(course, courses, typeKeys).map((relatedCourse) => (
       `<label class="pl-item" for="${courseRadioId(relatedCourse)}" tabindex="0" role="button">
         <span class="pl-thumb" style="background-image:url('${escapeHtml(coverUrls[relatedCourse.coverFile])}')"><span class="pl-dur">${escapeHtml(relatedCourse.duration)}</span></span>
         <span class="pl-t">${escapeHtml(relatedCourse.title)}</span>
