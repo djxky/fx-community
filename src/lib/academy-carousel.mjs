@@ -9,6 +9,8 @@ export function setupAcademyCarousel(
   const hero = root?.querySelector?.('.hero')
   const radios = Array.from(hero?.querySelectorAll?.('input[name="hs"]') ?? [])
   const dots = Array.from(hero?.querySelectorAll?.('.dots label[for^="hs"]') ?? [])
+  const previousButton = hero?.querySelector?.('.hero-prev')
+  const nextButton = hero?.querySelector?.('.hero-next')
 
   if (!hero || radios.length < 2 || !windowObject || !documentObject) return () => {}
 
@@ -41,6 +43,14 @@ export function setupAcademyCarousel(
   }
 
   const handleDotClick = () => startTimer()
+  const selectRelativeSlide = (offset) => {
+    const currentIndex = radios.findIndex((radio) => radio.checked)
+    const nextIndex = (Math.max(currentIndex, 0) + offset + radios.length) % radios.length
+    radios[nextIndex].checked = true
+    startTimer()
+  }
+  const handlePreviousClick = () => selectRelativeSlide(-1)
+  const handleNextClick = () => selectRelativeSlide(1)
   const handleMouseEnter = () => {
     pausedByHover = true
     stopTimer()
@@ -66,6 +76,8 @@ export function setupAcademyCarousel(
   }
 
   dots.forEach((dot) => dot.addEventListener('click', handleDotClick))
+  previousButton?.addEventListener('click', handlePreviousClick)
+  nextButton?.addEventListener('click', handleNextClick)
   hero.addEventListener('mouseenter', handleMouseEnter)
   hero.addEventListener('mouseleave', handleMouseLeave)
   hero.addEventListener('focusin', handleFocusIn)
@@ -76,6 +88,8 @@ export function setupAcademyCarousel(
   return () => {
     stopTimer()
     dots.forEach((dot) => dot.removeEventListener('click', handleDotClick))
+    previousButton?.removeEventListener('click', handlePreviousClick)
+    nextButton?.removeEventListener('click', handleNextClick)
     hero.removeEventListener('mouseenter', handleMouseEnter)
     hero.removeEventListener('mouseleave', handleMouseLeave)
     hero.removeEventListener('focusin', handleFocusIn)

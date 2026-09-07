@@ -59,7 +59,7 @@ export const POSTS = [
     evi: { use: '902', adapt: '61', star: '2,510' }, views: '9,800',
   },
   {
-    to: 'skill', cover: EDITORIAL_COVERS.courseAuthoring, badge: '应用 · AI 课件', live: false,
+    to: 'res', cover: EDITORIAL_COVERS.courseAuthoring, badge: '应用 · AI 课件', live: false,
     author: '沈砚', avatar: '沈', role: '杭州文澜中学', verify: 'teacher',
     title: '从一张课堂草图开始，自动补齐页面结构、互动步骤和讲解节奏',
     proof: { type: 'new', text: '今天新上架' },
@@ -67,11 +67,11 @@ export const POSTS = [
     evi: { use: '640', adapt: '36', star: '1,920' }, views: '6,800',
   },
   {
-    to: 'skill', cover: EDITORIAL_COVERS.learningAnalytics, badge: '技能 · 题单', live: false,
+    to: 'res', cover: EDITORIAL_COVERS.learningAnalytics, badge: '数学 · 题单', live: false,
     author: '王芳', avatar: '王', role: '深圳南山实验学校', verify: 'teacher',
     title: '一份题单收回三种证据：正确率、易错路径和需要二次讲解的知识点自动归队',
     proof: { type: 'comment', text: '终于知道下一节课该先讲谁' },
-    meta: '数学 · 学情诊断 · 技能 · 题单', verified: false,
+    meta: '数学 · 学情诊断 · 题单', verified: false,
     evi: { use: '526', adapt: '38', star: '1,890' }, views: '8,900',
   },
 ]

@@ -109,7 +109,7 @@ onBeforeUnmount(() => {
 <template>
   <div id="view-skill" ref="viewRoot">
     <div class="page">
-      <Sidebar active="community" />
+      <Sidebar active="skills" />
       <div style="display:contents" v-html="raw"></div>
     </div>
   </div>

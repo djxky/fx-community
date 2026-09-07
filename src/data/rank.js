@@ -74,11 +74,6 @@ const WORKS = {
     sub: '英语 · 教学游戏', kind: '教学游戏 · 英语', author: '苏窈', initial: '苏', portrait: PORTRAITS[1],
     cover: COVERS[1], resourceId: 'res-xl-limin',
   },
-  writingSkill: {
-    name: '作文批改 Skill', blurb: '逐句点评、给改法示范，缩短批改时间',
-    sub: '语文 · 技能', kind: '技能 · 作文批改', author: '沈砚', initial: '沈',
-    cover: COVERS[2], resourceId: 'res-skill-zuowen',
-  },
   crystalModel: {
     name: '晶胞均摊·三维拆解', blurb: '旋转晶体结构，逐层看清均摊关系',
     sub: '化学 · 互动课件', kind: '互动课件 · 化学', author: '李敏', initial: '李',
@@ -88,11 +83,6 @@ const WORKS = {
     name: '点餐口语游戏', blurb: '用餐厅情境练习真实英语表达',
     sub: '英语 · 教学游戏', kind: '教学游戏 · 英语', author: '陈红', initial: '陈',
     cover: COVERS[4], resourceId: 'res-order-game',
-  },
-  differentiated: {
-    name: '分层作业 Skill', blurb: '按学情自动生成不同层级的任务',
-    sub: '全学科 · 技能', kind: '技能 · 分层作业', author: '张伟', initial: '张',
-    cover: COVERS[5], resourceId: 'res-skill-fenceng',
   },
   mineMath: {
     name: '口算矿井·闯关版', blurb: '把计算练习放进有反馈的挑战路径',
@@ -159,10 +149,10 @@ export const BOARDS = [
       ranked(WORKS.learningAnalytics, '620'),
       ranked(WORKS.xianglin, '560'),
       ranked(WORKS.englishLive, '480'),
-      ranked(WORKS.writingSkill, '390'),
+      ranked(WORKS.orderGame, '390'),
       ranked(WORKS.crystalModel, '320'),
-      ranked(WORKS.orderGame, '270'),
-      ranked(WORKS.differentiated, '220'),
+      ranked(WORKS.sportsTrack, '270'),
+      ranked(WORKS.musicWave, '220'),
     ],
   },
   {

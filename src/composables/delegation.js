@@ -18,6 +18,7 @@ import {
 export function installDelegation() {
   function closeMenus() {
     document.querySelectorAll('.avatar-menu').forEach(function (mn) { mn.style.display = 'none' })
+    document.querySelectorAll('.avatar-trigger').forEach(function (trigger) { trigger.setAttribute('aria-expanded', 'false') })
   }
   function go(which, options) {
     var opts = options || {}
@@ -105,7 +106,11 @@ export function installDelegation() {
     if (trig) {
       var mn = trig.parentElement.querySelector('.avatar-menu')
       var open = mn && mn.style.display === 'block'
-      closeMenus(); if (mn) mn.style.display = open ? 'none' : 'block'
+      closeMenus()
+      if (mn) {
+        mn.style.display = open ? 'none' : 'block'
+        trig.setAttribute('aria-expanded', open ? 'false' : 'true')
+      }
       return
     }
     if (!e.target.closest('.avatar-menu')) closeMenus()
@@ -226,7 +231,7 @@ export function installDelegation() {
     var sp = e.target.closest('[data-stab]'); if (sp) { switchSPanel(sp.getAttribute('data-stab')); return }
     var map = [
       ['.nav-res', 'res'], ['.nav-skill', 'skill'], ['.nav-studio', 'studio'],
-      ['.nav-mypage', 'studio'], ['.nav-discover', 'discover'], ['.nav-rank', 'rank'],
+      ['.nav-mypage', 'studio'], ['.nav-community', 'rank'], ['.nav-skills', 'skills'], ['.nav-discover', 'discover'], ['.nav-rank', 'rank'],
       ['.nav-academy', 'academy'], ['.nav-share', 'share'],
       ['.nav-report', 'report'], ['.nav-creator', 'creator'],
       ['.nav-monthly', 'monthly'], ['.nav-activity', 'activity'], ['.nav-lineage', 'lineage'], ['.nav-notify', 'notify'], ['.nav-mylib', 'mylib'],

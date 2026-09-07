@@ -12,6 +12,7 @@ import CreatorView from './views/CreatorView.vue'
 import StudioView from './views/StudioView.vue'
 import ResView from './views/ResView.vue'
 import SkillView from './views/SkillView.vue'
+import SkillPlazaView from './views/SkillPlazaView.vue'
 import ShareView from './views/ShareView.vue'
 import ReportView from './views/ReportView.vue'
 import MonthlyView from './views/MonthlyView.vue'
@@ -46,6 +47,7 @@ onMounted(() => installDelegation())
   <StudioView v-show="store.view === 'studio'" />
   <ResView v-show="store.view === 'res'" />
   <SkillView v-show="store.view === 'skill'" />
+  <SkillPlazaView v-show="store.view === 'skills'" />
   <ShareView v-show="store.view === 'share'" />
   <ReportView v-show="store.view === 'report'" />
   <MonthlyView v-show="store.view === 'monthly'" />

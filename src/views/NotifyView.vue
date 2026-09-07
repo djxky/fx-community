@@ -18,7 +18,7 @@ const EMO = { flip: '🏅', comment: '💬', collect: '🔖', adapt: '🔁', ado
 <template>
   <div id="view-notify">
     <div class="page">
-      <Sidebar active="community" />
+      <Sidebar active="me" />
       <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#F7F7F7;">
       <div class="nt-wrap">
         <div class="nt-head">

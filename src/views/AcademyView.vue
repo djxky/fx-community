@@ -3,6 +3,13 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import raw from './raw/academy.html?raw'
 import Sidebar from '../components/Sidebar.vue'
 import newSemesterCampaign from '../assets/academy/new-semester-ai-campaign.png'
+import workshopHeroBoard from '../assets/academy/workshop-hero-board.jpg'
+import workshopLivePoster from '../assets/academy/workshop-live-poster.jpg'
+import workshopCertificate from '../assets/academy/workshop-certificate.png'
+import workshopMentors from '../assets/academy/workshop-mentors.png'
+import liveWechatQr from '../assets/academy/qr-wechat-video.jpg'
+import liveDouyinQr from '../assets/academy/qr-douyin-official.png'
+import liveXiaohongshuQr from '../assets/academy/qr-xiaohongshu-official.png'
 import workshopCollaboration from '../assets/academy/workshop-collaboration.jpg'
 import coursewarePractice from '../assets/academy/courseware-practice.jpg'
 import mathVisualization from '../assets/academy/math-visualization.jpg'
@@ -24,6 +31,7 @@ import creationArt from '../assets/academy/teacher-ai-creation.png'
 import { setupCreationCampaign } from '../lib/creation-campaign.mjs'
 import '../styles/creation-campaign.css'
 import '../styles/academy-ui.css'
+import '../styles/academy-live-event.css'
 
 const courseCoverModules = import.meta.glob('../assets/academy/course-covers/*.jpg', {
   eager: true,
@@ -46,6 +54,11 @@ const renderedRaw = composeAcademyMarkup(raw, renderedCourseUi)
   .replace('<!-- ACADEMY_CREATION_CAMPAIGN -->', creationCampaign)
   .replace('__ACADEMY_TRAINING_DEMAND_QR__', trainingDemandQr)
   .replace('__ACADEMY_TEACHING_PARTNER_QR__', teachingPartnerQr)
+  .replace('__ACADEMY_LIVE_WECHAT_QR__', liveWechatQr)
+  .replace('__ACADEMY_LIVE_DOUYIN_QR__', liveDouyinQr)
+  .replace('__ACADEMY_LIVE_XIAOHONGSHU_QR__', liveXiaohongshuQr)
+  .replace('__ACADEMY_LIVE_CERTIFICATE__', workshopCertificate)
+  .replace('__ACADEMY_LIVE_MENTORS__', workshopMentors)
 const academyRoot = ref(null)
 let cleanupAcademyCarousel = () => {}
 let cleanupAcademyCourseEmptyState = () => {}
@@ -108,6 +121,8 @@ function handleCourseNavigationKeydown(event) {
 
 const academyImages = {
   '--academy-img-creation': `url(${creationArt})`,
+  '--academy-img-live': `url(${workshopHeroBoard})`,
+  '--academy-img-live-poster': `url(${workshopLivePoster})`,
   '--academy-img-campaign': `url(${newSemesterCampaign})`,
   '--academy-img-workshop': `url(${workshopCollaboration})`,
   '--academy-img-courseware': `url(${coursewarePractice})`,

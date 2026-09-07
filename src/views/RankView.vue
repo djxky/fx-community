@@ -25,7 +25,7 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
               <span class="tbtab on nav-rank">排行榜</span>
               <span class="tbtab nav-discover">发现</span>
             </div>
-            <div class="tbar-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3-3"></path></svg>搜名师、技能、课件、教案…</div>
+            <div class="tbar-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3-3"></path></svg>搜名师、课件、教案、题单…</div>
           </div>
         </div>
 

@@ -208,6 +208,18 @@
   border-color: var(--ink);
   color: #fff;
 }
+#app #view-academy .hero .hc-live-primary {
+  background: #27e978;
+  border-color: #27e978;
+  color: #123d31;
+  font-weight: 700;
+}
+#app #view-academy .hero .hc-live-secondary {
+  background: rgba(255, 255, 255, 0.48);
+  border-color: rgba(23, 63, 52, 0.28);
+  color: #173f34;
+  font-weight: 650;
+}
 #app #view-academy .creation-campaign .cc-back { font-size: 16px; line-height: 28px; }
 
 /* Consistent modal shell, with content-specific widths and a shared close target. */

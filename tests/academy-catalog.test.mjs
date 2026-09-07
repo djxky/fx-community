@@ -243,16 +243,69 @@ test('AI 教学工坊顶部只保留提交作品与联系我们', () => {
   assert.doesNotMatch(raw, /<div class="ws-actions">[\s\S]*?>赛事专区<\/label>/)
 })
 
-test('三张 Banner 分别展示活动、不可点击的直播预告和赛事落地页入口', () => {
+test('三张 Banner 分别展示活动、完整直播入口和赛事落地页入口', () => {
   const raw = readFileSync(new URL('../src/views/raw/academy.html', import.meta.url), 'utf8')
+  const view = readFileSync(new URL('../src/views/AcademyView.vue', import.meta.url), 'utf8')
   const liveBanner = raw.match(/<div class="hslide s2">([\s\S]*?)<\/div>\s*<div class="hslide s3">/)?.[1] ?? ''
 
   assert.match(raw, /class="hslide s1"[\s\S]*?for="lp-campaign"/)
-  assert.match(liveBanner, /直播预告 · 9\.11 20:00/)
-  assert.match(liveBanner, /数学难点互动课件设计（进阶场）/)
-  assert.doesNotMatch(liveBanner, /\bfor=/)
-  assert.doesNotMatch(liveBanner, /role="button"/)
+  assert.match(liveBanner, /近期直播/)
+  assert.match(liveBanner, /新学期，AI怎么真正帮到老师？/)
+  assert.match(liveBanner, /三位浙江一线教师，用真实学科案例拆解 AI 如何进入备课、课堂与评价/)
+  assert.match(liveBanner, /9 月 11 日/)
+  assert.match(liveBanner, /19:00–22:10/)
+  assert.match(liveBanner, /for="ov-live-booking"[\s\S]*?预约直播/)
+  assert.match(liveBanner, /for="lp-live"[\s\S]*?查看课程详情/)
+  assert.doesNotMatch(liveBanner, /三场专题直播 · 浙江一线教师案例拆解/)
+  assert.doesNotMatch(liveBanner, /href=/)
+  assert.match(raw, /\.s2\{background-image:var\(--academy-img-live\)/)
+  assert.match(view, /workshop-hero-board\.jpg/)
+  assert.match(view, /'--academy-img-live'/)
   assert.match(raw, /class="hslide s3"[\s\S]*?for="lp-match"/)
+})
+
+test('直播 Banner 提供本地课程详情页与三个真实平台的预约弹窗', () => {
+  const raw = readFileSync(new URL('../src/views/raw/academy.html', import.meta.url), 'utf8')
+  const view = readFileSync(new URL('../src/views/AcademyView.vue', import.meta.url), 'utf8')
+  const liveCss = readFileSync(new URL('../src/styles/academy-live-event.css', import.meta.url), 'utf8')
+  const detail = raw.match(/<div class="lesson-page live-event-page" id="LP-live">([\s\S]*?)<\/div>\s*<!-- 课程整页 -->/)?.[1] ?? ''
+  const booking = raw.match(/<div class="ov ov-live-booking">([\s\S]*?)<\/div>\s*<div class="ws-main">/)?.[1] ?? ''
+
+  assert.match(raw, /id="lp-live" class="lp-radio"/)
+  assert.match(raw, /#lp-live:checked ~ #LP-live\{display:block\}/)
+  assert.match(detail, /返回 AI 教学工坊/)
+  assert.match(detail, /class="live-detail-top"[\s\S]*?课程详情/)
+  assert.match(detail, /下一场直播/)
+  assert.match(detail, /三场专题，一场直播贯通/)
+  assert.match(detail, /3<\/b>场专题直播[\s\S]*?3<\/b>位浙江教师[\s\S]*?3<\/b>重教学收获/)
+  assert.match(detail, /19:00–20:00 · 杜梦菲[\s\S]*?从提示词到智能体：重构学科备课与教研/)
+  assert.match(detail, /20:00–21:00 · 卓文莉[\s\S]*?AI如何真正进入课堂：让学生思维可见/)
+  assert.match(detail, /21:00–22:10 · 汤和霖[\s\S]*?从批改到诊断：AI赋能教学评一体化/)
+  assert.match(detail, /class="live-program-index"[\s\S]*?01[\s\S]*?本场聚焦[\s\S]*?稳定产出智能备课/)
+  assert.match(detail, /老师能带走什么[\s\S]*?学校能获益什么/)
+  assert.match(detail, /成效获益/)
+  assert.match(detail, /专属权益/)
+  assert.match(detail, /把一次学习，沉淀成一份可分享的成果/)
+  assert.match(detail, /__ACADEMY_LIVE_CERTIFICATE__/)
+  assert.match(detail, /共创导师团[\s\S]*?__ACADEMY_LIVE_MENTORS__/)
+  assert.match(detail, /for="ov-live-booking"[\s\S]*?预约直播/)
+  assert.match(booking, /扫码前往直播平台/)
+  assert.match(booking, /微信视频号[\s\S]*?抖音[\s\S]*?小红书/)
+  assert.match(booking, /__ACADEMY_LIVE_WECHAT_QR__/)
+  assert.match(booking, /__ACADEMY_LIVE_DOUYIN_QR__/)
+  assert.match(booking, /__ACADEMY_LIVE_XIAOHONGSHU_QR__/)
+  assert.match(view, /workshop-live-poster\.jpg/)
+  assert.match(view, /qr-wechat-video\.jpg/)
+  assert.match(view, /qr-douyin-official\.png/)
+  assert.match(view, /qr-xiaohongshu-official\.png/)
+  assert.match(view, /workshop-certificate\.png/)
+  assert.match(view, /workshop-mentors\.png/)
+  assert.match(view, /academy-live-event\.css/)
+  assert.match(liveCss, /\.live-event-page\s*\{[\s\S]*?padding:\s*18px var\(--academy-gutter\) 90px !important/)
+  assert.match(liveCss, /:is\(\.live-detail-top, \.live-detail-hero, \.live-detail-body\)\s*\{[\s\S]*?width:\s*min\(1060px, 100%\)[\s\S]*?margin-inline:\s*auto/)
+  assert.match(liveCss, /\.live-detail-hero\s*\{[\s\S]*?min-height:\s*430px[\s\S]*?border-radius:\s*18px/)
+  assert.match(liveCss, /\.live-booking-trigger\s*\{[\s\S]*?width:\s*fit-content[\s\S]*?min-height:\s*40px[\s\S]*?padding:\s*0 16px[\s\S]*?font-size:\s*13px/)
+  assert.match(liveCss, /\.live-detail-body\s*\{[\s\S]*?padding:\s*74px 0 0/)
 })
 
 test('赛事专区由弹窗改为独立落地页', () => {
@@ -285,6 +338,9 @@ test('顶部 Banner 支持五秒自动轮播、手动切换重计时与悬停暂
   assert.match(view, /onBeforeUnmount\([\s\S]*?cleanupAcademyCarousel/)
   assert.match(raw, /id="hs1"[\s\S]*?id="hs2"[\s\S]*?id="hs3"/)
   assert.match(raw, /label for="hs1"[\s\S]*?label for="hs2"[\s\S]*?label for="hs3"/)
+  assert.match(raw, /class="hero-nav hero-prev" aria-label="上一张 Banner"/)
+  assert.match(raw, /class="hero-nav hero-next" aria-label="下一张 Banner"/)
+  assert.match(raw, /class="hero-controls"[\s\S]*?hero-prev[\s\S]*?class="dots"[\s\S]*?hero-next/)
 })
 
 test('鼠标点击圆点产生的非键盘焦点不会阻止重新计时', async () => {
@@ -346,5 +402,75 @@ test('鼠标点击圆点产生的非键盘焦点不会阻止重新计时', async
   assert.equal(typeof activeInterval, 'function')
   activeInterval()
   assert.equal(radios[1].checked, true)
+  cleanup()
+})
+
+test('Banner 左右按钮循环切换，并在每次手动切换后重新计时', async () => {
+  const createEventTarget = () => {
+    const listeners = new Map()
+    return {
+      addEventListener(type, listener) {
+        const group = listeners.get(type) ?? new Set()
+        group.add(listener)
+        listeners.set(type, group)
+      },
+      removeEventListener(type, listener) {
+        listeners.get(type)?.delete(listener)
+      },
+      emit(type, event = {}) {
+        listeners.get(type)?.forEach((listener) => listener({ target: this, ...event }))
+      },
+    }
+  }
+
+  let selectedIndex = 0
+  const radios = [0, 1, 2].map((index) => ({
+    get checked() { return selectedIndex === index },
+    set checked(value) { if (value) selectedIndex = index },
+  }))
+  const dots = [createEventTarget(), createEventTarget(), createEventTarget()]
+  const previous = createEventTarget()
+  const next = createEventTarget()
+  const hero = {
+    ...createEventTarget(),
+    querySelectorAll(selector) {
+      return selector === 'input[name="hs"]' ? radios : dots
+    },
+    querySelector(selector) {
+      if (selector === '.hero-prev') return previous
+      if (selector === '.hero-next') return next
+      return null
+    },
+    contains() {
+      return false
+    },
+  }
+  const root = {
+    querySelector() {
+      return hero
+    },
+    getClientRects() {
+      return [{}]
+    },
+  }
+  const documentObject = { ...createEventTarget(), visibilityState: 'visible' }
+  let intervalStarts = 0
+  const windowObject = {
+    setInterval() {
+      intervalStarts += 1
+      return intervalStarts
+    },
+    clearInterval() {},
+  }
+  const { setupAcademyCarousel } = await loadCarousel()
+  const cleanup = setupAcademyCarousel(root, { intervalMs: 5000, windowObject, documentObject })
+
+  next.emit('click')
+  assert.equal(selectedIndex, 1)
+  previous.emit('click')
+  assert.equal(selectedIndex, 0)
+  previous.emit('click')
+  assert.equal(selectedIndex, 2)
+  assert.equal(intervalStarts, 4)
   cleanup()
 })

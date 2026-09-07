@@ -20,7 +20,6 @@ const TYPE_CHIPS = [
   { key: '互动课件', label: '互动课件' },
   { key: '教学游戏', label: '教学游戏' },
   { key: '应用', label: '应用' },
-  { key: '技能', label: '技能' },
   { key: '教案', label: '教案' },
   { key: '题单', label: '题单' },
 ]

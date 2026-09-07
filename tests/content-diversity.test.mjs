@@ -28,9 +28,11 @@ test('发现页使用多学科真实内容与学院丰富素材，不再只复�
   for (const subject of ['语文', '数学', '英语', '物理', '化学', '信息科技']) {
     assert.match(text, new RegExp(subject), subject)
   }
-  for (const type of ['互动课件', '教学游戏', '应用', '技能', '教案', '题单']) {
+  for (const type of ['互动课件', '教学游戏', '应用', '教案', '题单']) {
     assert.match(text, new RegExp(type), type)
   }
+  assert.doesNotMatch(text, /技能/)
+  assert.ok(POSTS.every((post) => post.to !== 'skill'))
 })
 
 test('排行榜各模块使用足够多的不同代表作，且作者仍来自固定卡司', async () => {
@@ -63,5 +65,6 @@ test('排行榜各模块使用足够多的不同代表作，且作者仍来自�
   }
   for (const item of [...visibleItems, ...EDITORIAL_FEATURES]) {
     assert.ok(fixedCast.has(item.author || item.name), `${item.author || item.name} 不在固定卡司中`)
+    assert.doesNotMatch(`${item.workTitle || item.name} ${item.sub || ''} ${item.kind || ''}`, /技能/)
   }
 })
