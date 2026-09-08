@@ -4,6 +4,7 @@ import { EDITORIAL_COVERS } from './editorial-covers'
 export const POSTS = [
   {
     to: 'res', cover: EDITORIAL_COVERS.historyMap, badge: '语文 · 教学游戏', live: false,
+    scene: 'classroom', task: 'interact', subject: '语文', stage: '初中', form: '教学游戏',
     author: '周涛', avatar: '周', role: '县域语文教研组', verify: 'teacher',
     title: '把《出师表》的行军路线铺成决策地图，学生第一次主动争论诸葛亮为什么北伐',
     proof: { type: 'comment', text: '地图一铺开，人物动机就讲通了' },
@@ -12,6 +13,7 @@ export const POSTS = [
   },
   {
     to: 'res', cover: EDITORIAL_COVERS.projectileLab, badge: '物理 · 互动课件', live: false,
+    scene: 'classroom', task: 'explain', subject: '物理', stage: '高中', form: '互动课件',
     author: '李明', avatar: '李', role: '北京十一学校', verify: 'teacher',
     title: '平抛运动不再只画虚线：拖动发射角度，落点和速度分解同步变化',
     proof: { type: 'hot', text: '物理组本周使用最多' },
@@ -20,6 +22,7 @@ export const POSTS = [
   },
   {
     to: 'res', cover: EDITORIAL_COVERS.algorithmKitchen, badge: '信息科技 · 互动课件', live: false,
+    scene: 'classroom', task: 'interact', subject: '信息科技', stage: '小学', form: '互动课件',
     author: '张伟', avatar: '张', role: '华东师大二附中', verify: 'teacher',
     title: '西红柿炒鸡蛋也能讲算法：学生拖一遍食材顺序，就懂了输入、判断和输出',
     proof: { type: 'expert', by: '刘彭芝' },
@@ -28,6 +31,7 @@ export const POSTS = [
   },
   {
     to: 'res', cover: EDITORIAL_COVERS.mathCodesign, badge: '数学 · 教案', live: false,
+    scene: 'prep', task: 'design', subject: '数学', stage: '小学', form: '教案',
     author: '沈知微', avatar: '沈', role: '人大附中联合学校', verify: 'expert',
     title: '三位老师一起重做“空间观念”单元：从教案到操作材料，一次把课备完整',
     proof: { type: 'comment', text: '不只给课件，还把课堂追问写清楚了' },
@@ -36,6 +40,7 @@ export const POSTS = [
   },
   {
     to: 'res', cover: EDITORIAL_COVERS.printingPress, badge: '语文 · 互动课件', live: false,
+    scene: 'classroom', task: 'interact', subject: '语文', stage: '初中', form: '互动课件',
     author: '林若水', avatar: '林', role: '杭州求是小学', verify: 'teacher',
     title: '《活版》不再只靠背：让学生亲手排字、刷墨、印纸，理解毕昇到底改变了什么',
     proof: { type: 'hot', text: '使用飙升 +126%' },
@@ -44,6 +49,7 @@ export const POSTS = [
   },
   {
     to: 'res', cover: EDITORIAL_COVERS.musicWave, badge: '英语 · 教学游戏', live: false,
+    scene: 'classroom', task: 'practice', subject: '英语', stage: '初中', form: '教学游戏',
     author: '陈红', avatar: '陈', role: '广州执信中学', verify: 'teacher',
     title: '把重音和语调画成声波轨道，学生跟着节奏闯关，英语朗读终于不再齐声平读',
     proof: { type: 'comment', text: '看得见节奏，孩子更敢开口' },
@@ -52,6 +58,7 @@ export const POSTS = [
   },
   {
     to: 'res', cover: EDITORIAL_COVERS.lessonStudy, badge: '化学 · 教案', live: false,
+    scene: 'research', task: 'co-planning', subject: '化学', stage: '高中', form: '教案',
     author: '刘彭芝', avatar: '刘', role: '跨学科教研共同体', verify: 'expert',
     title: '五位老师共备“物质转化”：实验、追问和评价量规全部放进一份可复用教案',
     proof: { type: 'expert', by: '沈知微' },
@@ -60,6 +67,7 @@ export const POSTS = [
   },
   {
     to: 'res', cover: EDITORIAL_COVERS.courseAuthoring, badge: '应用 · AI 课件', live: false,
+    scene: 'prep', task: 'prep-tools', subject: '全学科', stage: '通用', form: '应用工具',
     author: '沈砚', avatar: '沈', role: '杭州文澜中学', verify: 'teacher',
     title: '从一张课堂草图开始，自动补齐页面结构、互动步骤和讲解节奏',
     proof: { type: 'new', text: '今天新上架' },
@@ -68,6 +76,7 @@ export const POSTS = [
   },
   {
     to: 'res', cover: EDITORIAL_COVERS.learningAnalytics, badge: '数学 · 题单', live: false,
+    scene: 'assessment', task: 'analytics', subject: '数学', stage: '通用', form: '题单',
     author: '王芳', avatar: '王', role: '深圳南山实验学校', verify: 'teacher',
     title: '一份题单收回三种证据：正确率、易错路径和需要二次讲解的知识点自动归队',
     proof: { type: 'comment', text: '终于知道下一节课该先讲谁' },

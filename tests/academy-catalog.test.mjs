@@ -134,6 +134,52 @@ test('更多课程完整展示相同资源类型的系列课程，并保持课�
   assert.deepEqual(relatedCourseIds, [5, 6, 8, 10, 17, 18, 19])
 })
 
+test('全部直播回放在列表和每个详情页的更多课程中都显示真实时长', () => {
+  const raw = readFileSync(new URL('../src/views/raw/academy.html', import.meta.url), 'utf8')
+  const videoIndex = JSON.parse(readFileSync(new URL('../src/data/academy-video-index.json', import.meta.url), 'utf8'))
+  const replayItems = videoIndex.items.filter((item) => item.number >= 24 && item.number <= 34)
+  const expectedDurations = new Map([
+    [30, '50:37'],
+    [31, '1:05:29'],
+    [32, '49:23'],
+    [33, '58:35'],
+    [34, '58:14'],
+  ])
+
+  assert.equal(replayItems.length, 11)
+  for (const item of replayItems) {
+    assert.match(item.duration, /^(?:\d+:)?\d{1,2}:\d{2}$/, `replay ${item.number} duration`)
+    assert.ok(item.durationSeconds > 0, `replay ${item.number} duration seconds`)
+    if (expectedDurations.has(item.number)) {
+      assert.equal(item.duration, expectedDurations.get(item.number), `replay ${item.number} metadata duration`)
+    }
+  }
+
+  const replayCards = [...raw.matchAll(/class="vcard vlink" for="lp-(?:2[4-9]|3[0-4])"><div class="vthumb[^\"]*"><span class="dur">([^<]+)<\/span>/g)]
+  assert.equal(replayCards.length, 11)
+  replayCards.forEach((match) => assert.match(match[1], /^(?:\d+:)?\d{1,2}:\d{2}$/))
+
+  const moreCourseCards = [...raw.matchAll(/class="pl-item" for="lp-(?:2[4-9]|3[0-4])"><span class="pl-thumb[^\"]*">(?:<span class="pl-dur">([^<]+)<\/span>)?<\/span>/g)]
+  assert.equal(moreCourseCards.length, 110)
+  moreCourseCards.forEach((match) => assert.match(match[1] ?? '', /^(?:\d+:)?\d{1,2}:\d{2}$/))
+})
+
+test('全部课程详情页的更多课程也始终显示非空时长', async () => {
+  const { academyCourses } = await loadCatalog()
+  const rendered = await renderUi()
+
+  academyCourses.forEach((course) => {
+    assert.match(course.duration, /^(?:\d+:)?\d{1,2}:\d{2}$/, `course ${course.id} duration`)
+    assert.ok(course.durationSeconds > 0, `course ${course.id} duration seconds`)
+  })
+
+  const moreCourseCount = (rendered.details.match(/class="pl-item"/g) || []).length
+  const durationLabels = [...rendered.details.matchAll(/class="pl-dur">([^<]+)<\/span>/g)]
+  assert.ok(moreCourseCount > 0)
+  assert.equal(durationLabels.length, moreCourseCount)
+  durationLabels.forEach((match) => assert.match(match[1], /^(?:\d+:)?\d{1,2}:\d{2}$/))
+})
+
 test('课程内容被注入原型的筛选区、详情区和可见性样式', async () => {
   const renderer = await loadRenderer()
   const source = '<style><!-- ACADEMY_COURSE_VISIBILITY --></style><!-- ACADEMY_COURSE_RADIOS --><!-- ACADEMY_COURSE_LIBRARY --><!-- ACADEMY_SUBMIT_CTA --><!-- ACADEMY_COURSE_DETAILS -->'
