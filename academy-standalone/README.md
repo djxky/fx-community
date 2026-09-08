@@ -2,6 +2,8 @@
 
 这是从飞象社区原型中拆出的 AI 教学工坊源码工程。它不依赖仓库外的文件，可单独交给研发安装、运行、修改和构建。
 
+独立版只展示教学工坊内容，不渲染社区侧栏，也不预留侧栏空间。内容默认全宽，两侧保留 24px 常规内边距（小屏 20px），课程网格自适应 1–4 列。宿主可在外部自行提供导航。
+
 ## 开发与构建
 
 ```bash
@@ -39,6 +41,6 @@ window.FEIXIANG_ACADEMY_INTEGRATION = {
 如果宿主暂时没有传适配器，本工程会派发以下浏览器事件，便于非 Vue 宿主接入：
 
 - `academy:request-login`：请求打开登录弹窗。
-- `academy:navigate`：侧栏导航请求，`event.detail.view` 为目标页面。
+- `academy:navigate`：保留的宿主导航扩展事件，`event.detail.view` 为目标页面；独立版不展示侧栏导航。
 
 独立预览默认允许完成本地模拟提交；正式接入时必须提供 `isLoggedIn` 与 `openLogin`。

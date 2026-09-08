@@ -1,7 +1,6 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import raw from './raw/academy.html?raw'
-import Sidebar from '../components/Sidebar.vue'
 import newSemesterCampaign from '../assets/academy/new-semester-ai-campaign.jpg'
 import workshopHeroBoard from '../assets/academy/workshop-hero-board.jpg'
 import workshopLivePoster from '../assets/academy/workshop-live-poster.jpg'
@@ -135,7 +134,6 @@ const academyImages = {
 <template>
   <div id="view-academy" ref="academyRoot" :style="academyImages">
     <div class="page">
-      <Sidebar active="academy" />
       <div style="display:contents" @keydown="handleCourseNavigationKeydown" v-html="renderedRaw"></div>
     </div>
   </div>

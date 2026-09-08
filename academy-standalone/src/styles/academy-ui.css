@@ -1,9 +1,7 @@
 /* UI specification supplied on 2026-09-04. Scoped to AI 教学工坊 only.
    #app increases specificity above legacy v-html styles without affecting peers. */
 #app #view-academy {
-  --academy-gutter: 70px;
-  --academy-card-width: 348px;
-  --academy-content-width: 713px;
+  --academy-gutter: 24px;
   --academy-grid-gap: 17px;
   --academy-card-radius: 20px;
   --academy-control-radius: 10px;
@@ -15,7 +13,8 @@
   --muted: #7A7C7C;
 }
 #app #view-academy .main {
-  min-width: 785px;
+  min-width: 0;
+  width: 100%;
   container: academy-main / inline-size;
 }
 
@@ -27,10 +26,10 @@
   padding: 0 !important;
 }
 #app #view-academy .shell {
-  width: min(100%, var(--academy-content-width));
-  max-width: var(--academy-content-width);
-  margin-inline: auto;
-  padding-inline: 0 !important;
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: var(--academy-gutter) !important;
 }
 #app #view-academy .lesson-page {
   width: 100%;
@@ -115,11 +114,11 @@
   line-height: 18px;
 }
 
-/* Replay and course cards use a fixed desktop measure, capped at four columns. */
+/* Fill the standalone viewport; retain one collapsed row at each breakpoint. */
 #app #view-academy :is(.grid4, .lgrid) {
   width: 100%;
   max-width: none;
-  grid-template-columns: repeat(2, var(--academy-card-width));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--academy-grid-gap);
 }
 #app #view-academy .replay-group {
@@ -128,17 +127,17 @@
 #app #view-academy .exp-toggle:not(:checked) ~ .exp-grid > .vcard:nth-child(n+5) {
   display: none;
 }
-@container replay-cards (max-width: 1463px) {
+@container academy-main (width < 1288px) {
   #app #view-academy .exp-toggle:not(:checked) ~ .exp-grid > .vcard:nth-child(n+4) {
     display: none;
   }
 }
-@container replay-cards (max-width: 1077px) {
+@container academy-main (width < 968px) {
   #app #view-academy .exp-toggle:not(:checked) ~ .exp-grid > .vcard:nth-child(n+3) {
     display: none;
   }
 }
-@container replay-cards (max-width: 712px) {
+@container academy-main (width < 648px) {
   #app #view-academy .exp-toggle:not(:checked) ~ .exp-grid > .vcard:nth-child(n+2) {
     display: none;
   }
@@ -147,7 +146,8 @@
   display: block;
 }
 #app #view-academy :is(.vcard, .lcard) {
-  width: var(--academy-card-width);
+  width: 100%;
+  min-width: 0;
   border-radius: var(--academy-card-radius);
 }
 #app #view-academy :is(.vthumb, .lthumb) {
@@ -281,19 +281,19 @@
 #app #view-academy .ov-contact .qrbox { align-self: center; width: 180px; height: 180px; flex-basis: 180px; }
 #app #view-academy .withdraw-dialog::backdrop { background: var(--academy-overlay); backdrop-filter: blur(3px); }
 
-@container academy-main (min-width: 1151px) {
-  #app #view-academy .shell { --academy-content-width: 1078px; }
+@container academy-main (min-width: 648px) {
   #app #view-academy :is(.grid4, .lgrid) {
-    grid-template-columns: repeat(3, var(--academy-card-width));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@container academy-main (min-width: 1537px) {
-  #app #view-academy .shell {
-    --academy-content-width: 1464px;
-    --academy-grid-gap: 24px;
-  }
+@container academy-main (min-width: 968px) {
   #app #view-academy :is(.grid4, .lgrid) {
-    grid-template-columns: repeat(4, var(--academy-card-width));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@container academy-main (min-width: 1288px) {
+  #app #view-academy :is(.grid4, .lgrid) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
