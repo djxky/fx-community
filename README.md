@@ -19,6 +19,10 @@ npm run build      # 产出 dist/index.html(单文件,自包含)
 npm run preview    # 预览构建产物
 ```
 
+## AI 教学工坊独立交付
+
+研发二次加工请直接使用 [`academy-standalone/`](./academy-standalone/)。该目录包含独立源码、接入说明和已拆分的 `dist/`，不依赖社区其他页面。
+
 ## 目录结构
 
 ```

@@ -1,0 +1,882 @@
+/* Adapted from the official 2026 fall opening-class page and scoped to AI 教学工坊. */
+#app #view-academy .hero {
+  height: 236px;
+}
+
+#app #view-academy .hero .hero-live {
+  justify-content: center;
+  gap: 0;
+  padding: 24px clamp(28px, 4%, 48px) 40px;
+}
+
+#app #view-academy .hero .hero-live .hc-kk {
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
+#app #view-academy .hero .hero-live .hc-t {
+  max-width: 720px;
+  margin: 8px 0 4px;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.16;
+  letter-spacing: 0;
+}
+
+#app #view-academy .hero .hero-live .hc-d {
+  max-width: 650px;
+  margin: 0;
+  color: rgba(23, 63, 52, 0.76);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+#app #view-academy .hero .hero-live .hc-live-meta {
+  gap: 14px;
+  margin-top: 9px;
+  color: rgba(23, 63, 52, 0.86);
+  font-size: 11.5px;
+}
+
+#app #view-academy .hero .hero-live .hc-live-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#app #view-academy .hero .hero-live .hc-live-meta svg {
+  width: 14px;
+  height: 14px;
+  color: #087747;
+}
+
+#app #view-academy .hero .hero-live .hc-live-meta i {
+  display: none;
+}
+
+#app #view-academy .hero .hc-live-actions {
+  margin-top: 10px;
+}
+
+#app #view-academy .hero .hc-live-actions .hc-cta {
+  min-height: 36px;
+  gap: 6px;
+  padding: 0 14px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+#app #view-academy .hero .hc-live-actions svg {
+  width: 15px;
+  height: 15px;
+}
+
+#app #view-academy .live-booking-card {
+  max-width: 720px;
+  padding: 30px 32px 32px;
+  border-radius: 12px;
+}
+
+#app #view-academy .live-booking-head {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  gap: 0 12px;
+  align-items: center;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+#app #view-academy .live-booking-icon {
+  grid-row: 1 / 3;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  color: #004737;
+  background: #d8f7e3;
+  border-radius: 7px;
+}
+
+#app #view-academy .live-booking-icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+#app #view-academy .live-booking-head h2 {
+  align-self: end;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 27px;
+  font-weight: 600;
+}
+
+#app #view-academy .live-booking-head p {
+  align-self: start;
+  margin: 1px 0 0;
+  color: #71847c;
+  font-size: 12px;
+}
+
+#app #view-academy .live-booking-grid {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+#app #view-academy .live-booking-platform {
+  gap: 9px;
+  padding: 16px 12px 14px;
+  background: #f5f9f6;
+  border-color: #dce8e1;
+  border-radius: 7px;
+}
+
+#app #view-academy .live-booking-platform:nth-child(2) {
+  background: #f8f7fb;
+  border-color: #e1ddec;
+}
+
+#app #view-academy .live-booking-platform:nth-child(3) {
+  background: #fff8f5;
+  border-color: #f0ded6;
+}
+
+#app #view-academy .live-booking-platform img {
+  width: 132px;
+  padding: 7px;
+  border: 1px solid #d7e4dc;
+  border-radius: 5px;
+  image-rendering: pixelated;
+}
+
+#app #view-academy .live-booking-platform b {
+  margin: 0;
+  color: #1f4437;
+  font-size: 13px;
+}
+
+#app #view-academy .live-booking-platform span {
+  margin: 0;
+  color: #75877f;
+  font-size: 10px;
+}
+
+#app #view-academy :is(.live-booking-platform, .live-booking-card .ov-x, .live-detail-top .lp-back, .live-booking-trigger, .hc-live-actions .hc-cta):focus-visible {
+  outline: 2px solid #18a85d;
+  outline-offset: 3px;
+}
+
+#app #view-academy .live-event-page {
+  padding: 18px var(--academy-gutter) 90px !important;
+  overflow-x: hidden;
+  color: #18352c;
+  background: #f7f8f7;
+}
+
+#app #view-academy :is(.live-detail-top, .live-detail-hero, .live-detail-body) {
+  width: min(1060px, 100%);
+  margin-inline: auto;
+}
+
+#app #view-academy .live-detail-top {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 68px;
+  padding: 0 0 16px;
+  background: transparent;
+  border-bottom: 1px solid var(--hair);
+  backdrop-filter: none;
+}
+
+#app #view-academy .live-detail-top .lp-back {
+  gap: 10px;
+  margin: 0;
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+#app #view-academy .live-detail-top .lp-back-icon {
+  width: 28px;
+  height: 28px;
+}
+
+#app #view-academy .live-detail-section-kicker {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+#app #view-academy .live-detail-hero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 36px;
+  align-items: center;
+  min-height: 430px;
+  padding: 54px 24px;
+  color: #fff;
+  background: #063f31;
+  border: 0;
+  border-radius: 18px;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+#app #view-academy .live-detail-hero > div {
+  min-width: 0;
+}
+
+#app #view-academy .live-detail-kicker {
+  padding: 4px 9px;
+  color: #086e47;
+  background: #c9f7d9;
+  border-radius: 5px;
+  font-size: 11px;
+}
+
+#app #view-academy .live-detail-copy h1 {
+  max-width: 650px;
+  margin: 16px 0;
+  color: #fff;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: clamp(35px, 3.2vw, 45px);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+#app #view-academy .live-detail-copy > p {
+  max-width: 560px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+#app #view-academy .live-detail-meta {
+  gap: 18px;
+  margin: 24px 0 28px;
+  color: #b2f5c8;
+  font-size: 13px;
+}
+
+#app #view-academy .live-detail-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#app #view-academy .live-detail-meta svg {
+  width: 16px;
+  height: 16px;
+}
+
+#app #view-academy .live-booking-trigger {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 0;
+  padding: 0 16px;
+  color: #003d2b;
+  background: #39e66f;
+  border: 1px solid #39e66f;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+#app #view-academy .live-booking-trigger:hover {
+  background: #51f283;
+  border-color: #51f283;
+}
+
+#app #view-academy .live-booking-trigger:active {
+  transform: translateY(1px);
+}
+
+#app #view-academy .live-booking-trigger svg {
+  width: 16px;
+  height: 16px;
+}
+
+#app #view-academy .live-detail-poster {
+  aspect-ratio: 3407 / 1916;
+  background-color: #f6fbf9;
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+#app #view-academy .live-detail-body {
+  padding: 74px 0 0;
+}
+
+#app #view-academy .live-detail-body > section {
+  max-width: none;
+  margin: 0 0 74px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+#app #view-academy .live-detail-body > section:last-child {
+  margin-bottom: 0;
+}
+
+#app #view-academy .live-detail-body h2 {
+  margin: 10px 0 18px;
+  font-family: Georgia, "Songti SC", "STSong", serif;
+  font-size: 30px;
+  font-weight: 600;
+}
+
+#app #view-academy .live-detail-lead {
+  max-width: 820px;
+  margin: 0;
+  color: #23483b;
+  font-size: 14px;
+  line-height: 1.85;
+}
+
+#app #view-academy .live-principles {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 32px;
+}
+
+#app #view-academy .live-principle {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  min-height: 142px;
+  padding: 19px;
+  background: #f3f8f4;
+  border: 1px solid #dce8e1;
+  border-radius: 14px;
+}
+
+#app #view-academy .live-principle > svg {
+  width: 25px;
+  height: 25px;
+  color: #0daa57;
+}
+
+#app #view-academy .live-principle > div {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+
+#app #view-academy .live-principle b {
+  font-size: 15px;
+}
+
+#app #view-academy .live-principle p {
+  margin: 0;
+  color: #687e74;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+#app #view-academy .live-curriculum-lead {
+  max-width: 760px;
+  color: #61776e;
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+#app #view-academy .live-curriculum-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0 16px;
+}
+
+#app #view-academy .live-curriculum-summary span {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  min-height: 32px;
+  padding: 0 11px;
+  color: #4f6a5f;
+  background: #edf8f0;
+  border: 1px solid #d5ebdb;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+#app #view-academy .live-curriculum-summary b {
+  color: #0a9e4e;
+  font-family: Georgia, serif;
+  font-size: 20px;
+}
+
+#app #view-academy .live-program-list {
+  position: relative;
+  display: grid;
+  gap: 0;
+  margin-top: 8px;
+  border-top: 1px solid #d5e4db;
+}
+
+#app #view-academy .live-program-list::before {
+  content: "";
+  position: absolute;
+  top: 36px;
+  bottom: 36px;
+  left: 49px;
+  width: 1px;
+  background: #c7ddd0;
+}
+
+#app #view-academy .live-program {
+  position: relative;
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr) 190px;
+  gap: 24px;
+  align-items: start;
+  padding: 30px 0;
+  background: transparent;
+  border-bottom: 1px solid #d5e4db;
+  border-radius: 0;
+}
+
+#app #view-academy .live-program:hover {
+  background: linear-gradient(90deg, rgba(235, 249, 239, 0.7), transparent 78%);
+}
+
+#app #view-academy .live-program-index {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 7px;
+  padding: 9px 7px;
+}
+
+#app #view-academy .live-program-index small {
+  color: #0a9e4e;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+}
+
+#app #view-academy .live-program-index b {
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  color: #fff;
+  background: #004737;
+  border: 3px solid #dff4e5;
+  border-radius: 50%;
+  font-family: Georgia, serif;
+  font-size: 16px;
+}
+
+#app #view-academy .live-program-core {
+  min-width: 0;
+}
+
+#app #view-academy .live-program-time {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  color: inherit;
+  font-size: inherit;
+}
+
+#app #view-academy .live-program-time span {
+  min-height: 22px;
+  padding: 0 7px;
+  color: #55756a;
+  background: #eef5f1;
+  border-radius: 3px;
+  font-size: 10px;
+  line-height: 22px;
+}
+
+#app #view-academy .live-program-time span:last-child {
+  color: #0b8850;
+  background: #ddf5e5;
+}
+
+#app #view-academy .live-program h3 {
+  margin: 10px 0 8px;
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+#app #view-academy .live-program p {
+  margin: 0;
+  color: #5e766d;
+  font-size: 13px;
+  line-height: 1.75;
+}
+
+#app #view-academy .live-program ul {
+  display: grid;
+  gap: 6px;
+  margin: 15px 0 0;
+  padding: 0;
+}
+
+#app #view-academy .live-program li {
+  position: relative;
+  padding: 0 0 0 14px;
+  color: #46665a;
+  background: transparent;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+#app #view-academy .live-program li::before {
+  content: "";
+  position: absolute;
+  top: 0.6em;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  background: #1fc466;
+  border-radius: 50%;
+}
+
+#app #view-academy .live-program-output {
+  align-self: stretch;
+  display: grid;
+  align-content: center;
+  gap: 7px;
+  padding: 18px;
+  background: #f4f8f5;
+  border: 1px solid #dbe9e0;
+  border-radius: 13px;
+}
+
+#app #view-academy .live-program-output small {
+  color: #719086;
+  font-size: 10px;
+}
+
+#app #view-academy .live-program-output strong {
+  color: #0b5d43;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+#app #view-academy .live-program-output span {
+  color: #6d837a;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+#app #view-academy .live-outcomes {
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+#app #view-academy .live-outcome {
+  padding: 28px;
+  background: #eef9f1;
+  border: 1px solid #dce8e1;
+  border-radius: 17px;
+}
+
+#app #view-academy .live-outcome:last-child {
+  background: #eef6f8;
+}
+
+#app #view-academy .live-outcome-title {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+#app #view-academy .live-outcome-title svg {
+  width: 32px;
+  height: 32px;
+  color: #004737;
+}
+
+#app #view-academy .live-outcome-title small {
+  color: #0aa957;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+#app #view-academy .live-outcome h3 {
+  margin: 4px 0 0;
+  font-size: 19px;
+}
+
+#app #view-academy .live-outcome ul {
+  display: grid;
+  gap: 11px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+#app #view-academy .live-outcome li {
+  position: relative;
+  padding-left: 17px;
+  color: #50685e;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+#app #view-academy .live-outcome li::before {
+  content: "";
+  position: absolute;
+  top: 0.65em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  background: #15bc62;
+  border-radius: 50%;
+}
+
+#app #view-academy .live-benefits {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 28px;
+}
+
+#app #view-academy .live-benefit {
+  min-height: 190px;
+  padding: 22px;
+  background: #f4f8f5;
+  border: 1px solid #dce8e1;
+  border-radius: 17px;
+}
+
+#app #view-academy .live-benefit svg {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 36px;
+  color: #0cad58;
+}
+
+#app #view-academy .live-benefit b {
+  font-size: 15px;
+}
+
+#app #view-academy .live-benefit p {
+  margin: 8px 0 0;
+  color: #71847c;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+#app #view-academy .live-certificate-section {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 7%;
+  align-items: center;
+  padding: 52px !important;
+  color: #fff;
+  background: #073e33 !important;
+  border-radius: 18px !important;
+}
+
+#app #view-academy .live-certificate-section h2 {
+  color: #fff;
+}
+
+#app #view-academy .live-certificate-section p {
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.8;
+}
+
+#app #view-academy .live-certificate-rules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+#app #view-academy .live-certificate-rules span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 5px 9px;
+  color: #bbf5cc;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  font-size: 10px;
+}
+
+#app #view-academy .live-certificate-rules svg {
+  width: 13px;
+  height: 13px;
+}
+
+#app #view-academy .live-certificate-card {
+  overflow: hidden;
+  background: #fff;
+  border-radius: 14px;
+}
+
+#app #view-academy .live-certificate-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+#app #view-academy .live-mentor-section {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 7%;
+  align-items: center;
+}
+
+#app #view-academy .live-mentor-section p {
+  color: #71847c;
+  line-height: 1.8;
+}
+
+#app #view-academy .live-mentor-image {
+  min-width: 0;
+  overflow: hidden;
+  aspect-ratio: 2880 / 1749;
+  background: #fff;
+  border-radius: 17px;
+}
+
+#app #view-academy .live-mentor-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 980px) {
+  #app #view-academy .live-detail-hero {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding-block: 52px;
+  }
+
+  #app #view-academy .live-detail-poster {
+    width: min(620px, 100%);
+  }
+
+  #app #view-academy .live-program {
+    grid-template-columns: 86px minmax(0, 1fr);
+  }
+
+  #app #view-academy .live-program-output {
+    grid-column: 2;
+  }
+
+  #app #view-academy .live-program-list::before {
+    left: 42px;
+  }
+
+  #app #view-academy .live-benefits {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  #app #view-academy .hero {
+    height: 250px;
+  }
+
+  #app #view-academy .hero .hero-live {
+    padding: 22px 24px 40px;
+  }
+
+  #app #view-academy .hero .hero-live .hc-t {
+    margin-block: 8px 4px;
+    font-size: 28px;
+  }
+
+  #app #view-academy .hero .hero-live .hc-d {
+    font-size: 12px;
+    line-height: 1.65;
+  }
+
+  #app #view-academy .live-detail-body {
+    padding: 52px 0 0;
+  }
+
+  #app #view-academy .live-detail-body > section {
+    margin-bottom: 58px;
+  }
+
+  #app #view-academy .live-principles,
+  #app #view-academy .live-outcomes,
+  #app #view-academy .live-certificate-section,
+  #app #view-academy .live-mentor-section {
+    grid-template-columns: 1fr;
+  }
+
+  #app #view-academy .live-certificate-section {
+    padding: 34px !important;
+  }
+}
+
+@media (max-width: 620px) {
+  #app #view-academy .live-booking-grid,
+  #app #view-academy .live-benefits {
+    grid-template-columns: 1fr;
+  }
+
+  #app #view-academy .live-booking-platform img {
+    width: 142px;
+  }
+
+  #app #view-academy .live-detail-top {
+    padding-inline: 0;
+  }
+
+  #app #view-academy .live-detail-hero {
+    padding: 38px 22px;
+  }
+
+  #app #view-academy .live-detail-copy h1 {
+    font-size: 32px;
+  }
+
+  #app #view-academy .live-detail-body {
+    padding: 42px 0 0;
+  }
+
+  #app #view-academy .live-detail-body h2 {
+    font-size: 27px;
+  }
+
+  #app #view-academy .live-principles {
+    grid-template-columns: 1fr;
+  }
+
+  #app #view-academy .live-program-list::before {
+    display: none;
+  }
+
+  #app #view-academy .live-program {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  #app #view-academy .live-program-index {
+    grid-template-columns: auto auto;
+    justify-content: start;
+    align-items: center;
+  }
+
+  #app #view-academy .live-program-output {
+    grid-column: auto;
+  }
+}
