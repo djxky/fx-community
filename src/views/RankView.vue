@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import Sidebar from '../components/Sidebar.vue'
+import '../styles/community.css'
 import RankBoardCard from '../components/RankBoardCard.vue'
 import { BOARDS, EDITORIAL_FEATURES } from '../data/rank'
 
@@ -17,19 +18,19 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
 <template>
   <div id="view-rank">
     <div class="page">
-      <Sidebar active="home" />
-      <main class="rank-main">
+      <Sidebar active="community" />
+      <main class="rank-main community-main">
         <div class="tbar">
           <div class="tbar-in">
             <div class="tbar-tabs">
               <span class="tbtab on nav-rank">排行榜</span>
               <span class="tbtab nav-discover">发现</span>
             </div>
-            <div class="tbar-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9A9A9A" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3-3"></path></svg>搜名师、课件、教案、题单…</div>
+            <div class="tbar-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3-3"></path></svg>搜知识点、课型、课件、教案…</div>
           </div>
         </div>
 
-        <div class="rank-shell">
+        <div class="rank-shell community-body">
           <!-- 1. 编辑推荐（运营精选，固定不挂筛选） -->
           <section class="rank-block" aria-label="编辑推荐">
             <div class="rank-heading">
@@ -126,16 +127,7 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
 
 <style scoped>
 button { font:inherit; }
-.rank-main { flex:1; min-width:0; height:100vh; overflow-y:auto; background:#F7F7F7; }
-.tbar { height:54px; display:flex; align-items:stretch; padding:0 70px; background:#FFFFFF; border-bottom:1px solid #EFEFEF; }
-.tbar-in { display:flex; align-items:stretch; justify-content:space-between; width:calc(100% - 140px) !important; max-width:none; }
-.tbar-tabs { display:flex; align-items:stretch; gap:26px; }
-.tbar .tbtab { color:#7A7C7C; font-size:16px; font-weight:400; }
-.tbar .tbtab.on { color:#141F1B; font-weight:500; }
-.tbar-search { display:flex; flex:0 0 260px; align-items:center; gap:8px; background:#F6F6F6; border:1px solid #ECECEC; border-radius:10px; padding:9px 14px; width:260px; align-self:center; font-size:13px; color:#929695; }
-
-#view-rank .rank-shell { width:min(100%, 1320px); margin:0 auto; padding:24px 70px 64px !important; box-sizing:border-box; }
-.rank-block { margin-bottom:30px; }
+.rank-block { margin-bottom:32px; }
 .rank-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:14px; }
 .rank-heading-title { min-width:0; }
 .rank-heading-title h2 { margin:0; color:#141F1B; font-size:19px; letter-spacing:-.03em; }
@@ -148,10 +140,10 @@ button { font:inherit; }
 .seg-btn.on { background:#FFFFFF; color:#141F1B; font-weight:600; box-shadow:0 1px 2px rgba(20,31,27,.08); }
 
 /* 编辑推荐 */
-.rank-editorial-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
-.rank-editorial-card { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr); min-width:0; overflow:hidden; border:1px solid #ECECEC; border-radius:16px; background:#FFFFFF; box-shadow:0 2px 8px rgba(20,31,27,.03); cursor:pointer; transition:transform .18s ease,box-shadow .18s ease; }
+.rank-editorial-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:var(--community-gap); }
+.rank-editorial-card { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr); min-width:0; overflow:hidden; border:1px solid #ECECEC; border-radius:var(--community-card-radius); background:#FFFFFF; box-shadow:none; cursor:pointer; transition:transform .18s ease,box-shadow .18s ease; }
 .rank-editorial-card > * { min-width:0; }
-.rank-editorial-card:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(20,31,27,.06); }
+.rank-editorial-card:hover { transform:translateY(-2px); border-color:#D4D4D4; box-shadow:var(--fx-shadow-float); }
 .rank-editorial-cover { position:relative; min-height:172px; overflow:hidden; background:#F7F7F7; }
 .rank-editorial-cover img { width:100%; height:100%; display:block; object-fit:cover; }
 .rank-editorial-eyebrow { position:absolute; left:10px; top:10px; padding:5px 8px; border-radius:8px; background:#141F1B; color:#FFFFFF; font-size:9px; font-weight:700; }
@@ -169,7 +161,5 @@ button { font:inherit; }
 .rank-editorial-metric b { color:#141F1B; font-size:14px; }
 
 @media (max-width:900px) { .rank-heading-filter { flex-direction:column; align-items:flex-start; gap:12px; } }
-@media (max-width:820px) { #view-rank .rank-shell { padding-left:20px !important; padding-right:20px !important; } }
-@media (max-width:720px) { #view-rank .rank-shell { padding-top:22px !important; padding-bottom:46px !important; } .rank-editorial-grid { grid-template-columns:1fr; } .rank-editorial-card { grid-template-columns:1fr; } .rank-editorial-cover { min-height:160px; aspect-ratio:16 / 9; } .seg { flex-wrap:wrap; } }
-@media (max-width:620px) { #view-rank .rank-shell { padding-left:14px !important; padding-right:14px !important; } }
+@media (max-width:720px) { .rank-editorial-grid { grid-template-columns:1fr; } .rank-editorial-card { grid-template-columns:1fr; } .rank-editorial-cover { min-height:160px; aspect-ratio:16 / 9; } .seg { flex-wrap:wrap; } }
 </style>

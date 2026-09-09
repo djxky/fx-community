@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import { after, before, test } from 'node:test'
 
 import { createSSRApp } from 'vue'
@@ -45,4 +46,19 @@ test('技能广场保留专家入口，并把推荐与探索技能组织成可�
   assert.match(html, /即将开放/)
   assert.doesNotMatch(html, /互动课件|教案|题单/)
   assert.doesNotMatch(html, /精选文章|创作者激励计划|活动 banner/)
+})
+
+test('技能广场与灵感页共用内容边界，并按侧栏后的可用宽度切换卡片列数', async () => {
+  const { default: SkillPlazaView } = await vite.ssrLoadModule('/src/views/SkillPlazaView.vue')
+  const html = await renderToString(createSSRApp(SkillPlazaView))
+  const source = readFileSync(new URL('../src/views/SkillPlazaView.vue', import.meta.url), 'utf8')
+  const shared = readFileSync(new URL('../src/styles/community.css', import.meta.url), 'utf8')
+
+  assert.match(html, /class="[^"]*community-main/)
+  assert.match(html, /class="[^"]*community-body/)
+  assert.match(source, /import '\.\.\/styles\/community\.css'/)
+  assert.match(source, /\.featured-grid\s*\{[^}]*grid-template-columns:repeat\(var\(--community-columns\),minmax\(0,1fr\)\)[^}]*gap:var\(--community-gap\)/)
+  assert.match(shared, /:is\(#view-discover, #view-rank, #view-skills\)/)
+  assert.doesNotMatch(source, /\.skills-shell\s*\{[^}]*width:min\(/)
+  assert.doesNotMatch(source, /@media\(max-width:1100px\)\s*\{[^}]*\.featured-grid/)
 })

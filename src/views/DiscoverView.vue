@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import Sidebar from '../components/Sidebar.vue'
+import '../styles/community.css'
 import PostCard from '../components/PostCard.vue'
 import { POSTS } from '../data/discover'
 import { FEED } from '../data/feed'
@@ -96,7 +97,7 @@ function selectTask(task) {
   <div id="view-discover">
     <div class="page">
       <Sidebar active="community" />
-      <main class="discover-main">
+      <main class="discover-main community-main">
         <div class="tbar">
           <div class="tbar-in">
             <div class="tbar-tabs">
@@ -112,7 +113,7 @@ function selectTask(task) {
           </div>
         </div>
 
-        <div id="disc-body" class="discover-body">
+        <div id="disc-body" class="discover-body community-body">
           <section class="discover-toolbar" aria-label="发现内容筛选">
             <div class="toolbar-primary">
               <div class="primary-tabs" role="tablist" aria-label="灵感分类">
@@ -186,16 +187,6 @@ function selectTask(task) {
 </template>
 
 <style scoped>
-.discover-main { flex-grow:1; min-width:0; overflow-y:auto; height:100vh; background:#fff; }
-.tbar { background:#fff; border-bottom:1px solid #EFEFEF; height:54px; display:flex; align-items:stretch; padding:0 70px; }
-.tbar-in { display:flex; align-items:stretch; justify-content:space-between; width:calc(100% - 140px) !important; max-width:none; }
-.tbar-tabs { display:flex; align-items:stretch; gap:26px; }
-.tbar .tbtab { color:#7A7C7C; font-size:16px; font-weight:400; }
-.tbar .tbtab.on { color:#141F1B; font-weight:500; }
-.tbar-right { display:flex; align-items:center; gap:12px; align-self:center; }
-.tbar-search { display:flex; align-items:center; gap:8px; background:#F6F6F6; border:1px solid #ECECEC; border-radius:10px; padding:9px 14px; width:260px; font-size:13px; color:#929695; }
-
-#view-discover .discover-body { width:min(100%, 1320px); margin:0 auto; padding:30px 70px 56px !important; box-sizing:border-box; }
 .discover-toolbar { margin-bottom:20px; }
 .toolbar-primary { min-height:60px; display:flex; align-items:center; gap:0; border-bottom:1px solid #ECEFED; }
 .primary-tabs { display:flex; align-items:stretch; align-self:stretch; flex:1 1 auto; gap:42px; flex-wrap:wrap; }
@@ -225,30 +216,22 @@ function selectTask(task) {
 .empty-state { display:flex; flex-direction:column; align-items:center; gap:8px; padding:76px 0; color:#989D9A; font-size:13px; text-align:center; }
 .empty-state strong { color:#555D59; font-size:15px; }
 
-.flow { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:20px; }
+.flow { display:grid; grid-template-columns:repeat(var(--community-columns), minmax(0, 1fr)); gap:var(--community-gap); align-items:start; }
 button:focus-visible { outline:3px solid rgba(38,115,80,.24); outline-offset:3px; }
 
 @media (max-width:1180px) {
-  #view-discover .discover-body { width:100%; }
   .primary-tabs { gap:20px; }
-  .flow { grid-template-columns:repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width:820px) {
-  .tbar-in { width:calc(100% - 40px) !important; }
-  .tbar-search { width:200px; }
-  #view-discover .discover-body { padding:24px 20px 44px !important; }
   .toolbar-primary { align-items:center; }
   .primary-tabs { min-height:44px; gap:24px; }
   .primary-tab { min-height:44px; font-size:14px; }
 }
 
 @media (max-width:620px) {
-  .tbar-search { display:none; }
-  #view-discover .discover-body { padding:16px 14px 36px !important; }
   .discover-toolbar { margin-bottom:22px; }
   .primary-tabs { gap:20px; }
-  .flow { grid-template-columns:1fr; }
 }
 
 @media (max-width:430px) {
