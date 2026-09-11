@@ -132,6 +132,27 @@ function renderResourceActions(actions, favoriteCount) {
   return `<div class="fg-action-lightweight">${lightweight}</div><div class="fg-action-buttons">${buttons}</div>`
 }
 
+function renderResourcePrimaryActions(actions) {
+  return renderResourceActions(actions.filter((action) => action.emphasis !== 'lightweight'), 0)
+}
+
+function renderResourceLightweightActions(actions, favoriteCount) {
+  return renderResourceActions(actions.filter((action) => action.emphasis === 'lightweight'), favoriteCount)
+}
+
+function renderResourceDetailHead(resource) {
+  if (resource.contentType !== 'app') return `<h1>${escapeHtml(resource.title)}</h1>`
+
+  const icon = resource.id === 'res-order-game' ? '🍽️' : '✦'
+  return `<div class="fg-v2-app-head">
+    <div class="fg-v2-app-icon" aria-hidden="true">${icon}</div>
+    <div class="fg-v2-app-head-copy">
+      <h1>${escapeHtml(resource.title)}</h1>
+      <div class="fg-v2-app-date">创建时间：2026年8月6日</div>
+    </div>
+  </div>`
+}
+
 const ACTIVITY_ICONS = {
   adapt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M17 7L7 17"></path><path d="M7 11V7h4"></path></svg>',
   favorite: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4-3.9-3.8 5.4-.8z"></path></svg>',
@@ -173,28 +194,29 @@ function renderRecentActivities(resource) {
 }
 
 function renderResourceDiscussionPanel(resource) {
-  const activities = renderRecentActivities(resource)
+  const actions = getResourceActions({
+    contentType: resource.contentType,
+    isOwner: isResourceOwner(resource, store.currentUser),
+    isAdapted: Boolean(resource.forkedFrom),
+  })
+  const lightweightActions = renderResourceLightweightActions(actions, resource.stats.star)
   return `<section class="fg-v2-discussion-panel" aria-labelledby="fg-v2-discussion-title">
     <div class="fg-v2-discussion-head"><div><span class="fg-v2-data-kicker">社区反馈</span><h3 id="fg-v2-discussion-title">讨论 <span>86</span></h3></div><button type="button" class="fg-v2-follow-link">参与讨论</button></div>
-    ${activities}
     <div class="fg-v2-comment-list" aria-label="精选评论">
       <article class="fg-v2-comment"><div class="fg-v2-comment-avatar">王</div><div><strong>王慧老师</strong><p>“先发人物关系卡”特别适合基础弱的班，学生进入状态快多了。</p><small>👍 62 · 3 天前</small></div></article>
       <article class="fg-v2-comment"><div class="fg-v2-comment-avatar is-warm">李</div><div><strong>李敏老师</strong><p>学生为了当“首席检察官”，提前把课文读了三遍。</p><small>👍 41 · 5 天前</small></div></article>
       <article class="fg-v2-comment"><div class="fg-v2-comment-avatar is-muted">周</div><div><strong>周涛老师</strong><p>我做了一个 1 课时简化版，已经发布到改编版本区。</p><small>👍 28 · 1 周前</small></div></article>
     </div>
     <button type="button" class="fg-v2-more-comments">查看全部 86 条讨论 <span aria-hidden="true">→</span></button>
+    <div class="fg-v2-discussion-composer" aria-label="参与讨论">
+      <button class="fg-v2-comment-input" type="button">说点什么…</button>
+      <div class="fg-v2-discussion-actions">${lightweightActions}</div>
+    </div>
   </section>`
 }
 
 function renderResourceAboutPanel(resource) {
-  const contributor = resource.contributors[0]?.name || resource.author.name
-  return `<section class="fg-v2-about-panel" aria-labelledby="fg-v2-about-title">
-    <div class="fg-v2-section-kicker">关于这个资源</div>
-    <h2 id="fg-v2-about-title">${escapeHtml(resource.title)}</h2>
-    <p>让学生在${escapeHtml(resource.fit.subject)}课堂中，通过角色扮演与文本证据重构人物处境，形成自己的判断。</p>
-    <p>这份资源把课堂目标拆成可直接使用的环节，老师可以根据班级基础调整节奏，也可以在此基础上继续改编。</p>
-    <p class="fg-v2-about-note">使用建议：先让学生进入情境，再开始讨论；${escapeHtml(contributor)}老师的改法已被作者采纳。</p>
-  </section>`
+  return ''
 }
 
 function renderResourceVersionsPanel(resource) {
@@ -204,11 +226,10 @@ function renderResourceVersionsPanel(resource) {
 }
 
 function renderResourceDetailPanel(resource) {
-  const mode = getResourcePanelState(panelState.value).activePanel
   const detail = `${renderResourceAboutPanel(resource)}<section class="fg-v2-tags-panel"><div class="fg-v2-section-kicker">作品标签</div><div class="fg-v2-tags"><span>${escapeHtml(resource.topic.split('·')[0])}</span><span>${escapeHtml(resource.fit.lessonType)}</span><span>${escapeHtml(resource.kind)}</span></div></section>`
   const discussion = renderResourceDiscussionPanel(resource)
   const versions = renderResourceVersionsPanel(resource)
-  return `<div class="fg-v2-panel-inner">${renderPanelTabs(mode)}${renderPanelState(mode)}
+  return `<div class="fg-v2-panel-inner">
     <div class="fg-v2-panel-content" data-v2-panel-content>
       <section class="fg-v2-panel-section" data-v2-panel="detail">${detail}</section>
       <section class="fg-v2-panel-section" data-v2-panel="discussion">${discussion}</section>
@@ -286,7 +307,9 @@ function renderMotherResourceHtml(template, resource) {
     __RES_STAR__: formatNumber(resource.stats.star),
     __RES_ADAPT__: formatNumber(resource.stats.adapt),
     __RES_ACTIONS__: renderResourceActions(actions, resource.stats.star),
-    __RES_FOOTER_ACTIONS__: renderResourceActions(actions, resource.stats.star),
+    __RES_DETAIL_HEAD__: renderResourceDetailHead(resource),
+    __RES_PRIMARY_ACTIONS__: renderResourcePrimaryActions(actions),
+    __RES_FOOTER_ACTIVITY__: renderRecentActivities(resource),
     __RES_RECENT_ACTIVITY__: renderRecentActivities(resource),
     __RES_STATE_SWITCHER__: renderStatePreview(previewState, previewEnabled.value),
     __RES_CONTRIBUTOR_NAME__: contributor.name,
@@ -303,7 +326,7 @@ function renderMotherResourceHtml(template, resource) {
     __RES_PREVIEW_LABEL__: slideResource ? '课件 · 1 / 6' : `${kindLabel} · 运行预览`,
   }
 
-  let html = renderSlots(template, slots, ['__RES_ACTIONS__', '__RES_FOOTER_ACTIONS__', '__RES_RECENT_ACTIVITY__', '__RES_STATE_SWITCHER__', '__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__', '__RES_DETAIL_PANEL__'])
+  let html = renderSlots(template, slots, ['__RES_ACTIONS__', '__RES_FOOTER_ACTIONS__', '__RES_DETAIL_HEAD__', '__RES_PRIMARY_ACTIONS__', '__RES_FOOTER_ACTIVITY__', '__RES_RECENT_ACTIVITY__', '__RES_STATE_SWITCHER__', '__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__', '__RES_DETAIL_PANEL__'])
 
   html = html.replace('社区改编 · 12 个版本', `社区改编 · ${formatNumber(resource.stats.adapt)} 个版本`)
   html = html.replace('查看改编脉络 · 23 个版本', `查看改编脉络 · ${versionRange}`)
@@ -383,8 +406,8 @@ function renderAdaptedResourceHtml(template, resource) {
   html = html.replace('<div class="fg-hero fg-v2-layout">', '<div class="fg-hero fg-v2-layout fg-adapted-hero">')
   html = html.replace('<div class="fg-prev">', `<div class="fg-prev fg-adapted-prev">${adaptedCover}`)
   html = html.replace(
-    /<div class="fg-author nav-studio">[\s\S]*?<\/div>\s*<p class="fg-summary">/,
-    `${authorLine}<p class="fg-summary">`,
+    /<div class="fg-author nav-studio">[\s\S]*?<\/div>\s*<div class="fg-v2-intro">/,
+    `${authorLine}<div class="fg-v2-intro">`,
   )
   html = html.replace('<div id="fg-about">', `<div id="fg-about">${aboutSource}`)
   return html

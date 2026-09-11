@@ -731,6 +731,41 @@ a:hover { color: #141F1B; }
     #view-res .fg-v2-fork-row p { margin:3px 0 0; color:#929B96; font-size:11px; }
     #view-res .fg-v2-fork-row > span { color:#8A6D00; font-size:10.5px; }
     #view-res .fg-v2-empty { color:#9AA19E; font-size:12px; }
+    /* v2 线上布局收敛：右栏连续阅读，操作与动态各就各位 */
+    #view-res .fg-state-preview { position:fixed !important; top:8px; left:50%; right:auto; width:max-content; max-width:min(760px,calc(100% - 24px)); margin:0; transform:translateX(-50%) scale(.82); transform-origin:top center; z-index:50; }
+    #view-res .fg-v2-app-head { display:flex; align-items:center; gap:12px; margin:0 0 15px; }
+    #view-res .fg-v2-app-icon { width:48px; height:48px; display:grid; place-items:center; flex:0 0 auto; border-radius:12px; background:#E8F4EA; font-size:24px; }
+    #view-res .fg-v2-app-head-copy { min-width:0; }
+    #view-res .fg-v2-app-head h1 { margin:0; font-size:22px; line-height:1.25; }
+    #view-res .fg-v2-app-date { margin-top:5px; color:#9AA19E; font-size:11px; }
+    #view-res .fg-v2-intro { margin:1px 0 16px; }
+    #view-res .fg-v2-intro .fg-v2-section-kicker { margin-bottom:5px; }
+    #view-res .fg-v2-intro .fg-summary { margin:0; }
+    #view-res .fg-v2-inline-actions { margin:0 0 19px; }
+    #view-res .fg-v2-inline-actions .fg-action-lightweight { display:none; }
+    #view-res .fg-v2-inline-actions .fg-action-buttons { display:flex; gap:8px; }
+    #view-res .fg-v2-inline-actions .fg-action-button { min-height:40px; padding:9px 17px; }
+    #view-res .fg-v2-panel-tabs { display:none; }
+    #view-res .fg-v2-panel-inner { margin-top:0; padding-top:17px; }
+    #view-res .fg-v2-about-panel h2 { display:none; }
+    #view-res .fg-v2-about-panel p { margin:0; }
+    #view-res .fg-v2-tags-panel { margin-top:18px; padding-top:16px; }
+    #view-res .fg-v2-resource-footer { display:block; padding:10px 0 0; }
+    #view-res .fg-v2-resource-footer .fg-activity-card { margin:0; border-radius:10px; box-shadow:none; }
+    #view-res .fg-v2-resource-footer .fg-activity-head { padding:8px 12px 6px; }
+    #view-res .fg-v2-resource-footer .fg-activity-kicker { font-size:9px; }
+    #view-res .fg-v2-resource-footer .fg-activity-head h3 { font-size:12px; }
+    #view-res .fg-v2-resource-footer .fg-activity-live { font-size:10px; }
+    #view-res .fg-v2-resource-footer .fg-activity-viewport { height:84px; }
+    #view-res .fg-v2-resource-footer .fg-activity-item { grid-template-columns:23px minmax(0,1fr) auto; gap:7px; height:28px; padding:0 12px; font-size:10.5px; }
+    #view-res .fg-v2-resource-footer .fg-activity-icon { width:22px; height:22px; border-radius:6px; }
+    #view-res .fg-v2-resource-footer .fg-activity-item time { font-size:9px; }
+    #view-res .fg-v2-discussion-composer { position:sticky; bottom:0; z-index:3; display:flex; align-items:center; gap:9px; margin-top:16px; padding:10px 0 2px; border-top:1px solid #EEF1EF; background:#fff; }
+    #view-res .fg-v2-comment-input { flex:1 1 auto; min-width:0; text-align:left; padding:10px 13px; border:0; border-radius:999px; background:#F5F7F5; color:#9AA19E; font:inherit; font-size:12px; cursor:text; }
+    #view-res .fg-v2-discussion-actions { flex:0 0 auto; }
+    #view-res .fg-v2-discussion-actions .fg-action-buttons { display:none; }
+    #view-res .fg-v2-discussion-actions .fg-action-lightweight { display:flex; align-items:center; gap:10px; min-height:0; }
+    #view-res .fg-v2-discussion-actions .fg-action-link { padding:7px 2px; }
     .rd-topic-strip { display:inline-flex; align-items:center; gap:6px; width:fit-content; margin:0 0 22px; color:#69746F; font-size:12.5px; }
     .rd-topic-strip strong { color:#28332E; font-weight:600; }
     .rd-topic-strip svg { margin-left:1px; }

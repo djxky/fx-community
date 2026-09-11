@@ -38,5 +38,14 @@ test('v2 面板状态切换只改变右栏内容，不创建弹窗或抽屉', ()
 test('v2 操作区沿用线上布局，位于左侧预览底部', () => {
   const raw = readFileSync(new URL('../src/views/raw/res.html', import.meta.url), 'utf8')
   assert.match(raw, /fg-v2-resource-footer/)
-  assert.match(raw, /__RES_FOOTER_ACTIONS__/)
+  assert.match(raw, /__RES_FOOTER_ACTIVITY__/)
+})
+
+test('v2 详情页不再显示面包屑或详情 Tab，讨论区保留输入入口', () => {
+  const raw = readFileSync(new URL('../src/views/raw/res.html', import.meta.url), 'utf8')
+  const view = readFileSync(new URL('../src/views/ResView.vue', import.meta.url), 'utf8')
+  assert.doesNotMatch(raw, /class="fg-crumb"/)
+  assert.doesNotMatch(raw, /fg-v2-panel-tabs/)
+  assert.match(view, /fg-v2-discussion-composer/)
+  assert.match(view, /说点什么/)
 })
