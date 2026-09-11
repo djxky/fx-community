@@ -174,8 +174,8 @@ function renderActivityRow(activity, duplicate = false) {
   </div>`
 }
 
-function renderRecentActivities(resource) {
-  const activities = getRecentResourceActivities(resource)
+function renderRecentActivities(resource, limit = 2) {
+  const activities = getRecentResourceActivities(resource).slice(0, limit)
   const rows = activities.map((activity) => renderActivityRow(activity)).join('')
   const duplicateRows = activities.map((activity) => renderActivityRow(activity, true)).join('')
 
@@ -203,7 +203,7 @@ function renderResourceDiscussionPanel(resource) {
   return `<section class="fg-v2-discussion-panel" aria-labelledby="fg-v2-discussion-title">
     <div class="fg-v2-discussion-head"><div><span class="fg-v2-data-kicker">社区反馈</span><h3 id="fg-v2-discussion-title">讨论 <span>86</span></h3></div><button type="button" class="fg-v2-follow-link">参与讨论</button></div>
     <div class="fg-v2-comment-list" aria-label="精选评论">
-      <article class="fg-v2-comment"><div class="fg-v2-comment-avatar">王</div><div><strong>王慧老师</strong><p>“先发人物关系卡”特别适合基础弱的班，学生进入状态快多了。</p><small>👍 62 · 3 天前</small></div></article>
+      <article class="fg-v2-comment is-pinned"><div class="fg-v2-comment-avatar">王</div><div><div class="fg-v2-comment-meta"><strong>王慧老师</strong><span class="fg-v2-pinned-badge">置顶</span></div><p>“先发人物关系卡”特别适合基础弱的班，学生进入状态快多了。</p><small>👍 62 · 3 天前</small><div class="fg-v2-author-reply"><strong>作者回复</strong><span>谢谢你的反馈，我也把这套卡片放进了最新版本。</span></div></div></article>
       <article class="fg-v2-comment"><div class="fg-v2-comment-avatar is-warm">李</div><div><strong>李敏老师</strong><p>学生为了当“首席检察官”，提前把课文读了三遍。</p><small>👍 41 · 5 天前</small></div></article>
       <article class="fg-v2-comment"><div class="fg-v2-comment-avatar is-muted">周</div><div><strong>周涛老师</strong><p>我做了一个 1 课时简化版，已经发布到改编版本区。</p><small>👍 28 · 1 周前</small></div></article>
     </div>
@@ -213,6 +213,13 @@ function renderResourceDiscussionPanel(resource) {
       <div class="fg-v2-discussion-actions">${lightweightActions}</div>
     </div>
   </section>`
+}
+
+function renderResourceIntro(resource) {
+  const extra = resource.contentType === 'app'
+    ? '面向班级、教师和家长的互动练习场景，支持多角色体验、课堂任务和结果反馈，老师可以直接使用，也可以按班级需要继续调整。'
+    : '适合直接带入课堂使用，也支持按班级基础调整环节、材料和节奏。'
+  return `<p class="fg-summary">${escapeHtml(resource.goal)}</p><p class="fg-summary fg-summary-extra">${extra}</p>`
 }
 
 function renderResourceAboutPanel(resource) {
@@ -232,8 +239,8 @@ function renderResourceDetailPanel(resource) {
   return `<div class="fg-v2-panel-inner">
     <div class="fg-v2-panel-content" data-v2-panel-content>
       <section class="fg-v2-panel-section" data-v2-panel="detail">${detail}</section>
-      <section class="fg-v2-panel-section" data-v2-panel="discussion">${discussion}</section>
       <section class="fg-v2-panel-section" data-v2-panel="versions">${versions}</section>
+      <section class="fg-v2-panel-section" data-v2-panel="discussion">${discussion}</section>
     </div>
   </div>`
 }
@@ -302,6 +309,7 @@ function renderMotherResourceHtml(template, resource) {
     __RES_AUTHOR_NAME__: resource.author.name,
     __RES_TITLE__: resource.title,
     __RES_GOAL__: resource.goal,
+    __RES_INTRO__: renderResourceIntro(resource),
     __RES_KIND__: kindLabel,
     __RES_USE__: formatNumber(resource.stats.use),
     __RES_STAR__: formatNumber(resource.stats.star),
@@ -326,7 +334,7 @@ function renderMotherResourceHtml(template, resource) {
     __RES_PREVIEW_LABEL__: slideResource ? '课件 · 1 / 6' : `${kindLabel} · 运行预览`,
   }
 
-  let html = renderSlots(template, slots, ['__RES_ACTIONS__', '__RES_FOOTER_ACTIONS__', '__RES_DETAIL_HEAD__', '__RES_PRIMARY_ACTIONS__', '__RES_FOOTER_ACTIVITY__', '__RES_RECENT_ACTIVITY__', '__RES_STATE_SWITCHER__', '__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__', '__RES_DETAIL_PANEL__'])
+  let html = renderSlots(template, slots, ['__RES_ACTIONS__', '__RES_FOOTER_ACTIONS__', '__RES_DETAIL_HEAD__', '__RES_INTRO__', '__RES_PRIMARY_ACTIONS__', '__RES_FOOTER_ACTIVITY__', '__RES_RECENT_ACTIVITY__', '__RES_STATE_SWITCHER__', '__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__', '__RES_DETAIL_PANEL__'])
 
   html = html.replace('社区改编 · 12 个版本', `社区改编 · ${formatNumber(resource.stats.adapt)} 个版本`)
   html = html.replace('查看改编脉络 · 23 个版本', `查看改编脉络 · ${versionRange}`)

@@ -673,7 +673,10 @@ a:hover { color: #141F1B; }
     .fg-v2-more-comments:hover { border-color:#AFC2B5; background:#F7FAF8; }
     #view-res .fg-body-l > #fg-discussion { display:none; }
     /* v2 首屏：左侧预览锁定，右侧信息栏独立滚动；原型状态控件悬浮不占位 */
-    #view-res main > .fg-wrap { position:relative; width:100%; max-width:none; height:calc(100vh - 52px); box-sizing:border-box; overflow:hidden; padding-inline:24px; }
+    /* 线上详情页以弹层卡片承载内容，背景只保留轻微遮罩感 */
+    #view-res main { background:#D9DCDA !important; }
+    #view-res .fg-top { display:none; }
+    #view-res main > .fg-wrap { position:relative; width:min(1440px,calc(100vw - 48px)); max-width:none; height:calc(100vh - 48px); margin:24px auto; box-sizing:border-box; overflow:hidden; padding-inline:24px; border-radius:22px; background:#fff; box-shadow:0 18px 55px rgba(16,35,28,.12); }
     #view-res .fg-state-preview { position:absolute; top:8px; right:0; z-index:20; width:max-content; max-width:min(720px,calc(100% - 24px)); margin-top:0; padding:7px 10px; transform:scale(.88); transform-origin:top right; box-shadow:0 8px 24px rgba(16,35,28,.08); }
     #view-res .fg-state-preview .fg-state-eyebrow { display:none; }
     #view-res .fg-state-preview .fg-state-heading { min-width:104px; }
@@ -741,22 +744,25 @@ a:hover { color: #141F1B; }
     #view-res .fg-v2-intro { margin:1px 0 16px; }
     #view-res .fg-v2-intro .fg-v2-section-kicker { margin-bottom:5px; }
     #view-res .fg-v2-intro .fg-summary { margin:0; }
-    #view-res .fg-v2-inline-actions { margin:0 0 19px; }
-    #view-res .fg-v2-inline-actions .fg-action-lightweight { display:none; }
-    #view-res .fg-v2-inline-actions .fg-action-buttons { display:flex; gap:8px; }
-    #view-res .fg-v2-inline-actions .fg-action-button { min-height:40px; padding:9px 17px; }
+    #view-res .fg-v2-intro .fg-summary-extra { margin-top:8px; color:#68736E; }
+    #view-res .fg-v2-inline-actions { display:none; }
     #view-res .fg-v2-panel-tabs { display:none; }
     #view-res .fg-v2-panel-inner { margin-top:0; padding-top:17px; }
     #view-res .fg-v2-about-panel h2 { display:none; }
     #view-res .fg-v2-about-panel p { margin:0; }
     #view-res .fg-v2-tags-panel { margin-top:18px; padding-top:16px; }
-    #view-res .fg-v2-resource-footer { display:block; padding:10px 0 0; }
+    #view-res .fg-v2-resource-footer { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; align-items:end; padding:10px 0 0; }
+    #view-res .fg-v2-footer-activity { min-width:0; }
+    #view-res .fg-v2-footer-actions { display:flex; align-items:center; justify-content:flex-end; gap:8px; padding-bottom:1px; }
+    #view-res .fg-v2-footer-actions .fg-action-lightweight { display:none; }
+    #view-res .fg-v2-footer-actions .fg-action-buttons { display:flex; align-items:center; gap:8px; }
+    #view-res .fg-v2-footer-actions .fg-action-button { min-height:42px; padding:9px 17px; white-space:nowrap; }
     #view-res .fg-v2-resource-footer .fg-activity-card { margin:0; border-radius:10px; box-shadow:none; }
     #view-res .fg-v2-resource-footer .fg-activity-head { padding:8px 12px 6px; }
     #view-res .fg-v2-resource-footer .fg-activity-kicker { font-size:9px; }
     #view-res .fg-v2-resource-footer .fg-activity-head h3 { font-size:12px; }
     #view-res .fg-v2-resource-footer .fg-activity-live { font-size:10px; }
-    #view-res .fg-v2-resource-footer .fg-activity-viewport { height:84px; }
+    #view-res .fg-v2-resource-footer .fg-activity-viewport { height:56px; }
     #view-res .fg-v2-resource-footer .fg-activity-item { grid-template-columns:23px minmax(0,1fr) auto; gap:7px; height:28px; padding:0 12px; font-size:10.5px; }
     #view-res .fg-v2-resource-footer .fg-activity-icon { width:22px; height:22px; border-radius:6px; }
     #view-res .fg-v2-resource-footer .fg-activity-item time { font-size:9px; }
@@ -766,6 +772,11 @@ a:hover { color: #141F1B; }
     #view-res .fg-v2-discussion-actions .fg-action-buttons { display:none; }
     #view-res .fg-v2-discussion-actions .fg-action-lightweight { display:flex; align-items:center; gap:10px; min-height:0; }
     #view-res .fg-v2-discussion-actions .fg-action-link { padding:7px 2px; }
+    #view-res .fg-v2-comment-meta { display:flex; align-items:center; gap:7px; }
+    #view-res .fg-v2-pinned-badge { padding:2px 6px; border-radius:5px; background:#FFF4D8; color:#9B650B; font-size:10px; font-weight:700; }
+    #view-res .fg-v2-author-reply { display:flex; align-items:flex-start; gap:6px; margin-top:8px; padding:7px 9px; border-radius:7px; background:#F6F8F6; color:#65716B; font-size:11px; line-height:1.5; }
+    #view-res .fg-v2-author-reply strong { flex:0 0 auto; color:#315D3D; font-size:11px; }
+    #view-res .fg-v2-author-reply span { min-width:0; }
     .rd-topic-strip { display:inline-flex; align-items:center; gap:6px; width:fit-content; margin:0 0 22px; color:#69746F; font-size:12.5px; }
     .rd-topic-strip strong { color:#28332E; font-weight:600; }
     .rd-topic-strip svg { margin-left:1px; }
@@ -1245,6 +1256,7 @@ a:hover { color: #141F1B; }
 }
 
 @media (max-width:719px) {
+  #view-res main > .fg-wrap { width:calc(100vw - 20px); height:calc(100vh - 20px); margin:10px auto; padding-inline:14px; border-radius:14px; }
   #view-res .fg-top { height:56px; padding:0 16px; }
   #view-res .fg-search { display:none; }
   #view-res .fg-crumb { padding-top:12px; }
