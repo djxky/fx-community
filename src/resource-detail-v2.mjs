@@ -1,4 +1,4 @@
-const VALID_PANEL_MODES = new Set(['detail', 'discussion'])
+const VALID_PANEL_MODES = new Set(['detail', 'discussion', 'versions'])
 
 export function getResourcePanelState(mode) {
   return { activePanel: VALID_PANEL_MODES.has(mode) ? mode : 'detail' }
@@ -9,6 +9,7 @@ export function renderPanelTabs(activePanel = 'detail') {
   return `<div class="fg-v2-panel-tabs" role="tablist" aria-label="资源详情面板">
     <button class="fg-v2-panel-tab${mode === 'detail' ? ' is-active' : ''}" type="button" data-panel="detail" role="tab" aria-selected="${mode === 'detail'}">详情</button>
     <button class="fg-v2-panel-tab${mode === 'discussion' ? ' is-active' : ''}" type="button" data-panel="discussion" role="tab" aria-selected="${mode === 'discussion'}">讨论</button>
+    <button class="fg-v2-panel-tab${mode === 'versions' ? ' is-active' : ''}" type="button" data-panel="versions" role="tab" aria-selected="${mode === 'versions'}">改编</button>
   </div>`
 }
 
@@ -17,7 +18,7 @@ export function renderPanelState(activePanel = 'detail') {
   return `<div class="fg-v2-panel-state" data-v2-panel-state data-active-panel="${mode}" aria-live="polite"></div>`
 }
 
-export function renderPanelLayout({ preview = '', authorActions = '', detail = '', discussion = '', lower = '' } = {}) {
+export function renderPanelLayout({ preview = '', authorActions = '', detail = '', discussion = '', versions = '', lower = '' } = {}) {
   return `<section class="fg-v2-layout">
     <div class="fg-v2-left">${preview}${authorActions}</div>
     <aside class="fg-v2-panel">
@@ -26,6 +27,7 @@ export function renderPanelLayout({ preview = '', authorActions = '', detail = '
       <div class="fg-v2-panel-content" data-v2-panel-content>
         <section class="fg-v2-panel-section" data-v2-panel="detail">${detail}</section>
         <section class="fg-v2-panel-section" data-v2-panel="discussion" hidden>${discussion}</section>
+        <section class="fg-v2-panel-section" data-v2-panel="versions" hidden>${versions}</section>
       </div>
     </aside>
   </section>

@@ -172,20 +172,6 @@ function renderRecentActivities(resource) {
   </section>`
 }
 
-function renderResourceDataChart(resource) {
-  const useCount = Number(resource.stats?.use || 0)
-  const points = useCount > 50000 ? '8,102 34,101 60,100 86,96 112,82 138,68 164,52 190,38 216,24 242,10' : '8,102 34,101 60,99 86,94 112,86 138,76 164,65 190,49 216,32 242,16'
-  return `<section class="fg-v2-data-card" aria-labelledby="fg-v2-data-title">
-    <div class="fg-v2-data-head"><div><span class="fg-v2-data-kicker">应用数据</span><h3 id="fg-v2-data-title">累计使用次数（次）</h3></div><strong>${formatNumber(useCount)}</strong></div>
-    <svg class="fg-v2-data-chart" viewBox="0 0 250 116" role="img" aria-label="累计使用次数趋势图">
-      <path class="fg-v2-chart-grid" d="M8 20H242 M8 48H242 M8 76H242 M8 104H242"></path>
-      <path class="fg-v2-chart-area" d="M8 104L${points.replaceAll(' ', 'L')}L242 104Z"></path>
-      <polyline class="fg-v2-chart-line" points="${points}"></polyline>
-    </svg>
-    <div class="fg-v2-data-axis"><span>近 30 天</span><span>持续增长</span></div>
-  </section>`
-}
-
 function renderResourceDiscussionPanel(resource) {
   const activities = renderRecentActivities(resource)
   return `<section class="fg-v2-discussion-panel" aria-labelledby="fg-v2-discussion-title">
@@ -200,14 +186,33 @@ function renderResourceDiscussionPanel(resource) {
   </section>`
 }
 
+function renderResourceAboutPanel(resource) {
+  const contributor = resource.contributors[0]?.name || resource.author.name
+  return `<section class="fg-v2-about-panel" aria-labelledby="fg-v2-about-title">
+    <div class="fg-v2-section-kicker">关于这个资源</div>
+    <h2 id="fg-v2-about-title">${escapeHtml(resource.title)}</h2>
+    <p>让学生在${escapeHtml(resource.fit.subject)}课堂中，通过角色扮演与文本证据重构人物处境，形成自己的判断。</p>
+    <p>这份资源把课堂目标拆成可直接使用的环节，老师可以根据班级基础调整节奏，也可以在此基础上继续改编。</p>
+    <p class="fg-v2-about-note">使用建议：先让学生进入情境，再开始讨论；${escapeHtml(contributor)}老师的改法已被作者采纳。</p>
+  </section>`
+}
+
+function renderResourceVersionsPanel(resource) {
+  const versions = resource.versions.slice(-3).reverse().map((version, index) => `<div class="fg-v2-version-row"><span class="fg-v2-version-dot${index ? '' : ' is-current'}"></span><div><strong>${escapeHtml(version.v)}</strong><small>${index ? '历史版本' : '最新版本'}</small><p>${escapeHtml(version.note || '持续优化课堂使用体验。')}</p></div></div>`).join('')
+  const forks = resource.forks.map((id) => RESOURCES_BY_ID[id]).filter(Boolean).map((fork) => `<div class="fg-v2-fork-row"><div class="fg-v2-fork-avatar">${escapeHtml(fork.author.name.slice(0, 1))}</div><div><strong>${escapeHtml(fork.title)}</strong><p>${escapeHtml(fork.author.name)} · ${formatNumber(fork.stats.use)} 位老师使用</p></div><span>改编</span></div>`).join('')
+  return `<section class="fg-v2-versions-panel" aria-labelledby="fg-v2-versions-title"><div class="fg-v2-section-kicker">版本与改编</div><div class="fg-v2-version-head"><h2 id="fg-v2-versions-title">版本与改编</h2><span>${formatNumber(resource.stats.adapt)} 个版本</span></div><div class="fg-v2-version-list">${versions}</div><div class="fg-v2-fork-title">社区改编</div>${forks || '<div class="fg-v2-empty">暂无社区改编</div>'}</section>`
+}
+
 function renderResourceDetailPanel(resource) {
   const mode = getResourcePanelState(panelState.value).activePanel
-  const detail = `<div class="fg-v2-detail-body"><div class="fg-v2-detail-label">资源简介</div><p class="fg-v2-detail-summary">${escapeHtml(resource.goal)}</p>${renderResourceDataChart(resource)}</div>`
+  const detail = `${renderResourceAboutPanel(resource)}<section class="fg-v2-tags-panel"><div class="fg-v2-section-kicker">作品标签</div><div class="fg-v2-tags"><span>${escapeHtml(resource.topic.split('·')[0])}</span><span>${escapeHtml(resource.fit.lessonType)}</span><span>${escapeHtml(resource.kind)}</span></div></section>`
   const discussion = renderResourceDiscussionPanel(resource)
+  const versions = renderResourceVersionsPanel(resource)
   return `<div class="fg-v2-panel-inner">${renderPanelTabs(mode)}${renderPanelState(mode)}
     <div class="fg-v2-panel-content" data-v2-panel-content>
       <section class="fg-v2-panel-section" data-v2-panel="detail"${mode === 'detail' ? '' : ' hidden'}>${detail}</section>
       <section class="fg-v2-panel-section" data-v2-panel="discussion"${mode === 'discussion' ? '' : ' hidden'}>${discussion}</section>
+      <section class="fg-v2-panel-section" data-v2-panel="versions"${mode === 'versions' ? '' : ' hidden'}>${versions}</section>
     </div>
   </div>`
 }
