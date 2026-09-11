@@ -772,7 +772,11 @@ a:hover { color: #141F1B; }
     #view-res .fg-v2-comment-input { flex:1 1 auto; min-width:0; text-align:left; padding:10px 13px; border:0; border-radius:999px; background:#F5F7F5; color:#9AA19E; font:inherit; font-size:12px; cursor:text; }
     #view-res .fg-v2-discussion-actions { flex:0 0 auto; }
     #view-res .fg-v2-discussion-actions .fg-action-buttons { display:none; }
-    #view-res .fg-v2-discussion-actions .fg-action-lightweight { display:flex; align-items:center; gap:10px; min-height:0; }
+    #view-res .fg-v2-discussion-actions .fg-action-lightweight { display:contents; }
+    #view-res .fg-v2-discussion-actions .fg-action-link { display:inline-flex; align-items:center; gap:5px; }
+    #view-res .fg-v2-discussion-actions .fg-favorite { order:1; }
+    #view-res .fg-v2-discussion-actions .fg-comment-action { order:2; }
+    #view-res .fg-v2-discussion-actions .fg-share-action { order:3; }
     #view-res .fg-v2-discussion-actions .fg-action-link { padding:7px 2px; }
     #view-res .fg-v2-comment-meta { display:flex; align-items:center; gap:7px; }
     #view-res .fg-v2-pinned-badge { padding:2px 6px; border-radius:5px; background:#FFF4D8; color:#9B650B; font-size:10px; font-weight:700; }

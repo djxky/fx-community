@@ -111,14 +111,18 @@ const ACTION_ICONS = {
   adapt: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4 4.1.6-3 3 .7 4.4L12 17l-3.7 2 .7-4.4-3-3 4.1-.6z"></path></svg>',
 }
 
-function renderResourceActions(actions, favoriteCount) {
-  const lightweight = actions.filter((action) => action.emphasis === 'lightweight').map((action) => {
-    if (action.key === 'favorite') {
-      return `<button class="fg-action-link fg-favorite" type="button" title="收藏" aria-label="收藏" aria-pressed="false">${ACTION_ICONS.favorite}<span class="fg-action-label">${action.label}</span><span class="fg-action-count" data-count="${favoriteCount}">${formatNumber(favoriteCount)}</span></button>`
-    }
+function renderFavoriteAction(action, favoriteCount) {
+  return `<button class="fg-action-link fg-favorite" type="button" title="收藏" aria-label="收藏" aria-pressed="false">${ACTION_ICONS.favorite}<span class="fg-action-label">${action.label}</span><span class="fg-action-count" data-count="${favoriteCount}">${formatNumber(favoriteCount)}</span></button>`
+}
 
-    return `<label for="fg-share-toggle" class="fg-action-link fg-share-action" title="分享" aria-label="分享" role="button" tabindex="0">${ACTION_ICONS.share}<span class="fg-action-label">${action.label}</span></label>`
-  }).join('')
+function renderShareAction(action) {
+  return `<label for="fg-share-toggle" class="fg-action-link fg-share-action" title="分享" aria-label="分享" role="button" tabindex="0">${ACTION_ICONS.share}<span class="fg-action-label">${action.label}</span></label>`
+}
+
+function renderResourceActions(actions, favoriteCount) {
+  const lightweight = actions.filter((action) => action.emphasis === 'lightweight').map((action) => action.key === 'favorite'
+    ? renderFavoriteAction(action, favoriteCount)
+    : renderShareAction(action)).join('')
 
   const buttons = actions.filter((action) => action.emphasis !== 'lightweight').map((action) => {
     if (action.key === 'adapt') {
@@ -136,8 +140,11 @@ function renderResourcePrimaryActions(actions) {
   return renderResourceActions(actions.filter((action) => action.emphasis !== 'lightweight'), 0)
 }
 
-function renderResourceLightweightActions(actions, favoriteCount) {
-  return renderResourceActions(actions.filter((action) => action.emphasis === 'lightweight'), favoriteCount)
+function renderDiscussionActionBar(actions, favoriteCount) {
+  const favorite = actions.find((action) => action.key === 'favorite')
+  const share = actions.find((action) => action.key === 'share')
+  const comment = '<button class="fg-action-link fg-comment-action" type="button" aria-label="评论"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6.5A3.5 3.5 0 018.5 3h7A3.5 3.5 0 0119 6.5v5a3.5 3.5 0 01-3.5 3.5H11l-4.5 4v-4.3A3.5 3.5 0 015 11.5z"></path></svg><span class="fg-action-label">评论</span><span class="fg-action-count">86</span></button>'
+  return `${favorite ? renderFavoriteAction(favorite, favoriteCount) : ''}${comment}${share ? renderShareAction(share) : ''}`
 }
 
 function renderResourceDetailHead(resource) {
@@ -174,19 +181,16 @@ function renderActivityRow(activity, duplicate = false) {
   </div>`
 }
 
-function renderRecentActivities(resource, limit = 2) {
+function renderRecentActivities(resource, limit = 2, withHeader = true) {
   const activities = getRecentResourceActivities(resource).slice(0, limit)
   const rows = activities.map((activity) => renderActivityRow(activity)).join('')
   const duplicateRows = activities.map((activity) => renderActivityRow(activity, true)).join('')
 
-  return `<section class="fg-activity-card" aria-labelledby="fg-activity-title">
-    <div class="fg-activity-head">
-      <div>
-        <span class="fg-activity-kicker">资源动态</span>
-        <h3 id="fg-activity-title">最近动态</h3>
-      </div>
+  return `<section class="fg-activity-card${withHeader ? '' : ' is-compact'}" aria-labelledby="fg-activity-title">
+    ${withHeader ? `<div class="fg-activity-head">
+      <div><span class="fg-activity-kicker">资源动态</span><h3 id="fg-activity-title">最近动态</h3></div>
       <span class="fg-activity-live"><i aria-hidden="true"></i>持续更新</span>
-    </div>
+    </div>` : ''}
     <div class="fg-activity-viewport" role="list" aria-label="关于这个资源的最近动态">
       <div class="fg-activity-track">${rows}${duplicateRows}</div>
     </div>
@@ -199,7 +203,7 @@ function renderResourceDiscussionPanel(resource) {
     isOwner: isResourceOwner(resource, store.currentUser),
     isAdapted: Boolean(resource.forkedFrom),
   })
-  const lightweightActions = renderResourceLightweightActions(actions, resource.stats.star)
+  const discussionActions = renderDiscussionActionBar(actions, resource.stats.star)
   return `<section class="fg-v2-discussion-panel" aria-labelledby="fg-v2-discussion-title">
     <div class="fg-v2-discussion-head"><div><span class="fg-v2-data-kicker">社区反馈</span><h3 id="fg-v2-discussion-title">讨论 <span>86</span></h3></div><button type="button" class="fg-v2-follow-link">参与讨论</button></div>
     <div class="fg-v2-comment-list" aria-label="精选评论">
@@ -210,7 +214,7 @@ function renderResourceDiscussionPanel(resource) {
     <button type="button" class="fg-v2-more-comments">查看全部 86 条讨论 <span aria-hidden="true">→</span></button>
     <div class="fg-v2-discussion-composer" aria-label="参与讨论">
       <button class="fg-v2-comment-input" type="button">说点什么…</button>
-      <div class="fg-v2-discussion-actions">${lightweightActions}</div>
+      <div class="fg-v2-discussion-actions">${discussionActions}</div>
     </div>
   </section>`
 }
@@ -227,9 +231,9 @@ function renderResourceAboutPanel(resource) {
 }
 
 function renderResourceVersionsPanel(resource) {
-  const versions = resource.versions.slice(-3).reverse().map((version, index) => `<div class="fg-v2-version-row"><span class="fg-v2-version-dot${index ? '' : ' is-current'}"></span><div><strong>${escapeHtml(version.v)}</strong><small>${index ? '历史版本' : '最新版本'}</small><p>${escapeHtml(version.note || '持续优化课堂使用体验。')}</p></div></div>`).join('')
+  const versions = resource.versions.slice(-2).reverse().map((version, index) => `<div class="fg-v2-version-row"><span class="fg-v2-version-dot${index ? '' : ' is-current'}"></span><div><strong>${escapeHtml(version.v)}</strong><small>${index ? '历史版本' : '最新版本'}</small><p>${escapeHtml(version.note || '持续优化课堂使用体验。')}</p></div></div>`).join('')
   const forks = resource.forks.map((id) => RESOURCES_BY_ID[id]).filter(Boolean).map((fork) => `<div class="fg-v2-fork-row"><div class="fg-v2-fork-avatar">${escapeHtml(fork.author.name.slice(0, 1))}</div><div><strong>${escapeHtml(fork.title)}</strong><p>${escapeHtml(fork.author.name)} · ${formatNumber(fork.stats.use)} 位老师使用</p></div><span>改编</span></div>`).join('')
-  return `<section class="fg-v2-versions-panel" aria-labelledby="fg-v2-versions-title"><div class="fg-v2-section-kicker">版本与改编</div><div class="fg-v2-version-head"><h2 id="fg-v2-versions-title">版本与改编</h2><span>${formatNumber(resource.stats.adapt)} 个版本</span></div><div class="fg-v2-version-list">${versions}</div><div class="fg-v2-fork-title">社区改编</div>${forks || '<div class="fg-v2-empty">暂无社区改编</div>'}</section>`
+  return `<section class="fg-v2-versions-panel" aria-labelledby="fg-v2-versions-title"><div class="fg-v2-version-head"><h2 id="fg-v2-versions-title">版本与改编</h2><span>${formatNumber(resource.stats.adapt)} 个版本</span></div><div class="fg-v2-version-list">${versions}</div>${forks ? `<div class="fg-v2-fork-title">社区改编</div>${forks}` : ''}</section>`
 }
 
 function renderResourceDetailPanel(resource) {
@@ -317,7 +321,7 @@ function renderMotherResourceHtml(template, resource) {
     __RES_ACTIONS__: renderResourceActions(actions, resource.stats.star),
     __RES_DETAIL_HEAD__: renderResourceDetailHead(resource),
     __RES_PRIMARY_ACTIONS__: renderResourcePrimaryActions(actions),
-    __RES_FOOTER_ACTIVITY__: renderRecentActivities(resource),
+    __RES_FOOTER_ACTIVITY__: renderRecentActivities(resource, 2, false),
     __RES_RECENT_ACTIVITY__: renderRecentActivities(resource),
     __RES_STATE_SWITCHER__: renderStatePreview(previewState, previewEnabled.value),
     __RES_CONTRIBUTOR_NAME__: contributor.name,
