@@ -210,9 +210,9 @@ function renderResourceDetailPanel(resource) {
   const versions = renderResourceVersionsPanel(resource)
   return `<div class="fg-v2-panel-inner">${renderPanelTabs(mode)}${renderPanelState(mode)}
     <div class="fg-v2-panel-content" data-v2-panel-content>
-      <section class="fg-v2-panel-section" data-v2-panel="detail"${mode === 'detail' ? '' : ' hidden'}>${detail}</section>
-      <section class="fg-v2-panel-section" data-v2-panel="discussion"${mode === 'discussion' ? '' : ' hidden'}>${discussion}</section>
-      <section class="fg-v2-panel-section" data-v2-panel="versions"${mode === 'versions' ? '' : ' hidden'}>${versions}</section>
+      <section class="fg-v2-panel-section" data-v2-panel="detail">${detail}</section>
+      <section class="fg-v2-panel-section" data-v2-panel="discussion">${discussion}</section>
+      <section class="fg-v2-panel-section" data-v2-panel="versions">${versions}</section>
     </div>
   </div>`
 }
@@ -283,8 +283,10 @@ function renderMotherResourceHtml(template, resource) {
     __RES_GOAL__: resource.goal,
     __RES_KIND__: kindLabel,
     __RES_USE__: formatNumber(resource.stats.use),
+    __RES_STAR__: formatNumber(resource.stats.star),
     __RES_ADAPT__: formatNumber(resource.stats.adapt),
     __RES_ACTIONS__: renderResourceActions(actions, resource.stats.star),
+    __RES_FOOTER_ACTIONS__: renderResourceActions(actions, resource.stats.star),
     __RES_RECENT_ACTIVITY__: renderRecentActivities(resource),
     __RES_STATE_SWITCHER__: renderStatePreview(previewState, previewEnabled.value),
     __RES_CONTRIBUTOR_NAME__: contributor.name,
@@ -301,7 +303,7 @@ function renderMotherResourceHtml(template, resource) {
     __RES_PREVIEW_LABEL__: slideResource ? '课件 · 1 / 6' : `${kindLabel} · 运行预览`,
   }
 
-  let html = renderSlots(template, slots, ['__RES_ACTIONS__', '__RES_RECENT_ACTIVITY__', '__RES_STATE_SWITCHER__', '__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__', '__RES_DETAIL_PANEL__'])
+  let html = renderSlots(template, slots, ['__RES_ACTIONS__', '__RES_FOOTER_ACTIONS__', '__RES_RECENT_ACTIVITY__', '__RES_STATE_SWITCHER__', '__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__', '__RES_DETAIL_PANEL__'])
 
   html = html.replace('社区改编 · 12 个版本', `社区改编 · ${formatNumber(resource.stats.adapt)} 个版本`)
   html = html.replace('查看改编脉络 · 23 个版本', `查看改编脉络 · ${versionRange}`)
@@ -407,6 +409,10 @@ function handlePreviewClick(event) {
   if (panel) {
     const nextPanel = getResourcePanelState(panel.dataset.panel).activePanel
     panelState.value = nextPanel
+    requestAnimationFrame(() => {
+      const section = document.querySelector(`#view-res [data-v2-panel="${nextPanel}"]`)
+      section?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
     return
   }
 

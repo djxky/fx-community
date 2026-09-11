@@ -26,8 +26,8 @@ export function renderPanelLayout({ preview = '', authorActions = '', detail = '
       ${renderPanelState('detail')}
       <div class="fg-v2-panel-content" data-v2-panel-content>
         <section class="fg-v2-panel-section" data-v2-panel="detail">${detail}</section>
-        <section class="fg-v2-panel-section" data-v2-panel="discussion" hidden>${discussion}</section>
-        <section class="fg-v2-panel-section" data-v2-panel="versions" hidden>${versions}</section>
+        <section class="fg-v2-panel-section" data-v2-panel="discussion">${discussion}</section>
+        <section class="fg-v2-panel-section" data-v2-panel="versions">${versions}</section>
       </div>
     </aside>
   </section>
