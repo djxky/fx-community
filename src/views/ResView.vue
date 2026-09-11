@@ -7,6 +7,7 @@ import { bindForkCardResourceIds, isSlideResourceKind } from '../resource-naviga
 import { getAdaptedAttribution, getResourceCredits, getResourceTopicMembership } from '../resource-attribution.mjs'
 import { getResourceActions, isResourceOwner } from '../resource-actions.mjs'
 import { getRecentResourceActivities } from '../resource-activity.mjs'
+import { getResourcePanelState, renderPanelState, renderPanelTabs } from '../resource-detail-v2.mjs'
 import {
   buildResourcePreviewUrl,
   clearResourcePreviewUrl,
@@ -16,6 +17,7 @@ import {
 } from '../resource-state-preview.mjs'
 
 const DEFAULT_RESOURCE_ID = 'res-xianglin'
+const panelState = ref('detail')
 
 function escapeHtml(value) {
   return String(value)
@@ -170,6 +172,46 @@ function renderRecentActivities(resource) {
   </section>`
 }
 
+function renderResourceDataChart(resource) {
+  const useCount = Number(resource.stats?.use || 0)
+  const points = useCount > 50000 ? '8,102 34,101 60,100 86,96 112,82 138,68 164,52 190,38 216,24 242,10' : '8,102 34,101 60,99 86,94 112,86 138,76 164,65 190,49 216,32 242,16'
+  return `<section class="fg-v2-data-card" aria-labelledby="fg-v2-data-title">
+    <div class="fg-v2-data-head"><div><span class="fg-v2-data-kicker">应用数据</span><h3 id="fg-v2-data-title">累计使用次数（次）</h3></div><strong>${formatNumber(useCount)}</strong></div>
+    <svg class="fg-v2-data-chart" viewBox="0 0 250 116" role="img" aria-label="累计使用次数趋势图">
+      <path class="fg-v2-chart-grid" d="M8 20H242 M8 48H242 M8 76H242 M8 104H242"></path>
+      <path class="fg-v2-chart-area" d="M8 104L${points.replaceAll(' ', 'L')}L242 104Z"></path>
+      <polyline class="fg-v2-chart-line" points="${points}"></polyline>
+    </svg>
+    <div class="fg-v2-data-axis"><span>近 30 天</span><span>持续增长</span></div>
+  </section>`
+}
+
+function renderResourceDiscussionPanel(resource) {
+  const activities = renderRecentActivities(resource)
+  return `<section class="fg-v2-discussion-panel" aria-labelledby="fg-v2-discussion-title">
+    <div class="fg-v2-discussion-head"><div><span class="fg-v2-data-kicker">社区反馈</span><h3 id="fg-v2-discussion-title">讨论 <span>86</span></h3></div><button type="button" class="fg-v2-follow-link">参与讨论</button></div>
+    ${activities}
+    <div class="fg-v2-comment-list" aria-label="精选评论">
+      <article class="fg-v2-comment"><div class="fg-v2-comment-avatar">王</div><div><strong>王慧老师</strong><p>“先发人物关系卡”特别适合基础弱的班，学生进入状态快多了。</p><small>👍 62 · 3 天前</small></div></article>
+      <article class="fg-v2-comment"><div class="fg-v2-comment-avatar is-warm">李</div><div><strong>李敏老师</strong><p>学生为了当“首席检察官”，提前把课文读了三遍。</p><small>👍 41 · 5 天前</small></div></article>
+      <article class="fg-v2-comment"><div class="fg-v2-comment-avatar is-muted">周</div><div><strong>周涛老师</strong><p>我做了一个 1 课时简化版，已经发布到改编版本区。</p><small>👍 28 · 1 周前</small></div></article>
+    </div>
+    <button type="button" class="fg-v2-more-comments">查看全部 86 条讨论 <span aria-hidden="true">→</span></button>
+  </section>`
+}
+
+function renderResourceDetailPanel(resource) {
+  const mode = getResourcePanelState(panelState.value).activePanel
+  const detail = `<div class="fg-v2-detail-body"><div class="fg-v2-detail-label">资源简介</div><p class="fg-v2-detail-summary">${escapeHtml(resource.goal)}</p>${renderResourceDataChart(resource)}</div>`
+  const discussion = renderResourceDiscussionPanel(resource)
+  return `<div class="fg-v2-panel-inner">${renderPanelTabs(mode)}${renderPanelState(mode)}
+    <div class="fg-v2-panel-content" data-v2-panel-content>
+      <section class="fg-v2-panel-section" data-v2-panel="detail"${mode === 'detail' ? '' : ' hidden'}>${detail}</section>
+      <section class="fg-v2-panel-section" data-v2-panel="discussion"${mode === 'discussion' ? '' : ' hidden'}>${discussion}</section>
+    </div>
+  </div>`
+}
+
 const PREVIEW_OPTIONS = [
   {
     key: 'contentType',
@@ -246,6 +288,7 @@ function renderMotherResourceHtml(template, resource) {
     __RES_CONTRIBUTOR_COUNT__: resource.contributors.length,
     __RES_CONTRIBUTORS__: renderContributors(resource.contributors),
     __RES_TOPIC_MEMBERSHIP__: renderTopicMembership(resource),
+    __RES_DETAIL_PANEL__: renderResourceDetailPanel(resource),
     __RES_TOPIC_LABEL__: topicLabel,
     __RES_TOPIC__: resource.topic.replaceAll('·', ' · '),
     __RES_PREVIEW_CLASS__: slideResource ? 'is-slides' : 'is-app',
@@ -253,7 +296,7 @@ function renderMotherResourceHtml(template, resource) {
     __RES_PREVIEW_LABEL__: slideResource ? '课件 · 1 / 6' : `${kindLabel} · 运行预览`,
   }
 
-  let html = renderSlots(template, slots, ['__RES_ACTIONS__', '__RES_RECENT_ACTIVITY__', '__RES_STATE_SWITCHER__', '__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__'])
+  let html = renderSlots(template, slots, ['__RES_ACTIONS__', '__RES_RECENT_ACTIVITY__', '__RES_STATE_SWITCHER__', '__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__', '__RES_DETAIL_PANEL__'])
 
   html = html.replace('社区改编 · 12 个版本', `社区改编 · ${formatNumber(resource.stats.adapt)} 个版本`)
   html = html.replace('查看改编脉络 · 23 个版本', `查看改编脉络 · ${versionRange}`)
@@ -330,7 +373,7 @@ function renderAdaptedResourceHtml(template, resource) {
   const adaptedCover = renderAdaptedCover(resource, parent)
 
   html = html.replace('<main style=', '<main class="fg-adapted-detail" style=')
-  html = html.replace('<div class="fg-hero">', '<div class="fg-hero fg-adapted-hero">')
+  html = html.replace('<div class="fg-hero fg-v2-layout">', '<div class="fg-hero fg-v2-layout fg-adapted-hero">')
   html = html.replace('<div class="fg-prev">', `<div class="fg-prev fg-adapted-prev">${adaptedCover}`)
   html = html.replace(
     /<div class="fg-author nav-studio">[\s\S]*?<\/div>\s*<p class="fg-summary">/,
@@ -355,6 +398,13 @@ function replacePreviewUrl(url) {
 }
 
 function handlePreviewClick(event) {
+  const panel = event.target.closest('[data-panel]')
+  if (panel) {
+    const nextPanel = getResourcePanelState(panel.dataset.panel).activePanel
+    panelState.value = nextPanel
+    return
+  }
+
   const reset = event.target.closest('[data-preview-reset]')
   if (reset) {
     previewEnabled.value = false
@@ -374,6 +424,7 @@ function handlePreviewClick(event) {
 }
 
 watch(() => store.resourceId, () => {
+  panelState.value = 'detail'
   previewEnabled.value = false
   Object.assign(previewState, getResourcePreviewState(actualResource.value, store.currentUser))
 })
