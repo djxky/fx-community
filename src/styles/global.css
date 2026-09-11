@@ -673,10 +673,10 @@ a:hover { color: #141F1B; }
     .fg-v2-more-comments:hover { border-color:#AFC2B5; background:#F7FAF8; }
     #view-res .fg-body-l > #fg-discussion { display:none; }
     /* v2 首屏：左侧预览锁定，右侧信息栏独立滚动；原型状态控件悬浮不占位 */
-    /* 线上详情页以弹层卡片承载内容，背景只保留轻微遮罩感 */
-    #view-res main { background:#D9DCDA !important; }
-    #view-res .fg-top { display:none; }
-    #view-res main > .fg-wrap { position:relative; width:min(1440px,calc(100vw - 48px)); max-width:none; height:calc(100vh - 48px); margin:24px auto; box-sizing:border-box; overflow:hidden; padding-inline:24px; border-radius:22px; background:#fff; box-shadow:0 18px 55px rgba(16,35,28,.12); }
+    /* 线上详情页是单一网页，保留顶栏与全宽内容区 */
+    #view-res main { background:#fff !important; }
+    #view-res .fg-top { display:flex; }
+    #view-res main > .fg-wrap { position:relative; width:100%; max-width:none; height:calc(100vh - 52px); margin:0; box-sizing:border-box; overflow:hidden; padding-inline:24px; border-radius:0; background:#fff; box-shadow:none; }
     #view-res .fg-state-preview { position:absolute; top:8px; right:0; z-index:20; width:max-content; max-width:min(720px,calc(100% - 24px)); margin-top:0; padding:7px 10px; transform:scale(.88); transform-origin:top right; box-shadow:0 8px 24px rgba(16,35,28,.08); }
     #view-res .fg-state-preview .fg-state-eyebrow { display:none; }
     #view-res .fg-state-preview .fg-state-heading { min-width:104px; }
@@ -737,6 +737,8 @@ a:hover { color: #141F1B; }
     /* v2 线上布局收敛：右栏连续阅读，操作与动态各就各位 */
     #view-res .fg-state-preview { position:fixed !important; top:8px; left:50%; right:auto; width:max-content; max-width:min(760px,calc(100% - 24px)); margin:0; transform:translateX(-50%) scale(.82); transform-origin:top center; z-index:50; }
     #view-res .fg-v2-app-head { display:flex; align-items:center; gap:12px; margin:0 0 15px; }
+    #view-res .fg-v2-detail-kicker { margin:0 0 10px; color:#24332D; font-size:14px; font-weight:700; }
+    #view-res .fg-v2-detail-kicker + h1 { margin-top:0; }
     #view-res .fg-v2-app-icon { width:48px; height:48px; display:grid; place-items:center; flex:0 0 auto; border-radius:12px; background:#E8F4EA; font-size:24px; }
     #view-res .fg-v2-app-head-copy { min-width:0; }
     #view-res .fg-v2-app-head h1 { margin:0; font-size:22px; line-height:1.25; }
@@ -1256,7 +1258,7 @@ a:hover { color: #141F1B; }
 }
 
 @media (max-width:719px) {
-  #view-res main > .fg-wrap { width:calc(100vw - 20px); height:calc(100vh - 20px); margin:10px auto; padding-inline:14px; border-radius:14px; }
+  #view-res main > .fg-wrap { width:100%; height:calc(100vh - 56px); margin:0; padding-inline:14px; border-radius:0; }
   #view-res .fg-top { height:56px; padding:0 16px; }
   #view-res .fg-search { display:none; }
   #view-res .fg-crumb { padding-top:12px; }

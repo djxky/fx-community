@@ -141,10 +141,10 @@ function renderResourceLightweightActions(actions, favoriteCount) {
 }
 
 function renderResourceDetailHead(resource) {
-  if (resource.contentType !== 'app') return `<h1>${escapeHtml(resource.title)}</h1>`
+  if (resource.contentType !== 'app') return `<div class="fg-v2-detail-kicker">资源详情</div><h1>${escapeHtml(resource.title)}</h1>`
 
   const icon = resource.id === 'res-order-game' ? '🍽️' : '✦'
-  return `<div class="fg-v2-app-head">
+  return `<div class="fg-v2-detail-kicker">应用详情</div><div class="fg-v2-app-head">
     <div class="fg-v2-app-icon" aria-hidden="true">${icon}</div>
     <div class="fg-v2-app-head-copy">
       <h1>${escapeHtml(resource.title)}</h1>
