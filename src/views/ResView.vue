@@ -1,11 +1,19 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import raw from './raw/res.html?raw'
-import Sidebar from '../components/Sidebar.vue'
 import { RESOURCES_BY_ID } from '../data/resources'
 import { store } from '../store'
 import { bindForkCardResourceIds, isSlideResourceKind } from '../resource-navigation.mjs'
 import { getAdaptedAttribution, getResourceCredits, getResourceTopicMembership } from '../resource-attribution.mjs'
+import { getResourceActions, isResourceOwner } from '../resource-actions.mjs'
+import { getRecentResourceActivities } from '../resource-activity.mjs'
+import {
+  buildResourcePreviewUrl,
+  clearResourcePreviewUrl,
+  createPreviewResource,
+  getResourcePreviewState,
+  getResourcePreviewStateFromSearch,
+} from '../resource-state-preview.mjs'
 
 const DEFAULT_RESOURCE_ID = 'res-xianglin'
 
@@ -95,6 +103,111 @@ function renderTopicMembership(resource) {
   </div>`
 }
 
+const ACTION_ICONS = {
+  favorite: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4 4.1.6-3 3 .7 4.4L12 17l-3.7 2 .7-4.4-3-3 4.1-.6z"></path></svg>',
+  share: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"></path><path d="M7 9l5-5 5 5"></path><path d="M5 13v6h14v-6"></path></svg>',
+  adapt: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4 4.1.6-3 3 .7 4.4L12 17l-3.7 2 .7-4.4-3-3 4.1-.6z"></path></svg>',
+}
+
+function renderResourceActions(actions, favoriteCount) {
+  const lightweight = actions.filter((action) => action.emphasis === 'lightweight').map((action) => {
+    if (action.key === 'favorite') {
+      return `<button class="fg-action-link fg-favorite" type="button" title="收藏" aria-label="收藏" aria-pressed="false">${ACTION_ICONS.favorite}<span class="fg-action-label">${action.label}</span><span class="fg-action-count" data-count="${favoriteCount}">${formatNumber(favoriteCount)}</span></button>`
+    }
+
+    return `<label for="fg-share-toggle" class="fg-action-link fg-share-action" title="分享" aria-label="分享" role="button" tabindex="0">${ACTION_ICONS.share}<span class="fg-action-label">${action.label}</span></label>`
+  }).join('')
+
+  const buttons = actions.filter((action) => action.emphasis !== 'lightweight').map((action) => {
+    if (action.key === 'adapt') {
+      return `<button class="fg-action-button fg-action-outline nav-adapt" type="button">${ACTION_ICONS.adapt}${action.label}</button>`
+    }
+
+    const handlerClass = action.key === 'copy' ? ' fg-save-copy' : ''
+    return `<button class="fg-action-button fg-action-solid fg-action-${action.key}${handlerClass}" type="button">${action.label}</button>`
+  }).join('')
+
+  return `<div class="fg-action-lightweight">${lightweight}</div><div class="fg-action-buttons">${buttons}</div>`
+}
+
+const ACTIVITY_ICONS = {
+  adapt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M17 7L7 17"></path><path d="M7 11V7h4"></path></svg>',
+  favorite: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4-3.9-3.8 5.4-.8z"></path></svg>',
+  download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="M7.5 10.5L12 15l4.5-4.5"></path><path d="M5 20h14"></path></svg>',
+}
+
+function formatActivityActor(actor) {
+  return actor.endsWith('老师') ? actor : `${actor}老师`
+}
+
+function renderActivityRow(activity, duplicate = false) {
+  const icon = ACTIVITY_ICONS[activity.type] || ACTIVITY_ICONS.favorite
+  const hiddenAttribute = duplicate ? ' aria-hidden="true"' : ''
+
+  return `<div class="fg-activity-item is-${escapeHtml(activity.type)}" role="listitem"${hiddenAttribute}>
+    <span class="fg-activity-icon">${icon}</span>
+    <span class="fg-activity-copy"><strong>${escapeHtml(formatActivityActor(activity.actor))}</strong> ${escapeHtml(activity.action)}</span>
+    <time>${escapeHtml(activity.time)}</time>
+  </div>`
+}
+
+function renderRecentActivities(resource) {
+  const activities = getRecentResourceActivities(resource)
+  const rows = activities.map((activity) => renderActivityRow(activity)).join('')
+  const duplicateRows = activities.map((activity) => renderActivityRow(activity, true)).join('')
+
+  return `<section class="fg-activity-card" aria-labelledby="fg-activity-title">
+    <div class="fg-activity-head">
+      <div>
+        <span class="fg-activity-kicker">资源动态</span>
+        <h3 id="fg-activity-title">最近动态</h3>
+      </div>
+      <span class="fg-activity-live"><i aria-hidden="true"></i>持续更新</span>
+    </div>
+    <div class="fg-activity-viewport" role="list" aria-label="关于这个资源的最近动态">
+      <div class="fg-activity-track">${rows}${duplicateRows}</div>
+    </div>
+  </section>`
+}
+
+const PREVIEW_OPTIONS = [
+  {
+    key: 'contentType',
+    label: '内容',
+    options: [{ value: 'resource', label: '资源' }, { value: 'app', label: '应用' }],
+  },
+  {
+    key: 'viewer',
+    label: '视角',
+    options: [{ value: 'guest', label: '客态' }, { value: 'owner', label: '主态' }],
+  },
+  {
+    key: 'source',
+    label: '来源',
+    options: [{ value: 'original', label: '原创' }, { value: 'adapted', label: '改编' }],
+  },
+]
+
+function renderStatePreview(state, enabled) {
+  const summary = `${state.viewer === 'owner' ? '主态' : '客态'} · ${state.source === 'adapted' ? '改编' : '原创'}${state.contentType === 'app' ? '应用' : '资源'}`
+  const groups = PREVIEW_OPTIONS.map((group) => `<div class="fg-state-group" role="group" aria-label="${group.label}">
+    <span>${group.label}</span>
+    <div class="fg-state-segments">
+      ${group.options.map((option) => `<button class="fg-state-option${state[group.key] === option.value ? ' is-selected' : ''}" type="button" data-preview-dimension="${group.key}" data-preview-value="${option.value}" aria-pressed="${state[group.key] === option.value}">${option.label}</button>`).join('')}
+    </div>
+  </div>`).join('')
+
+  return `<section class="fg-state-preview${enabled ? ' is-active' : ''}" aria-label="详情页状态预览器">
+    <div class="fg-state-heading">
+      <span class="fg-state-eyebrow">仅原型预览</span>
+      <strong>详情状态</strong>
+      <em>${escapeHtml(summary)}</em>
+    </div>
+    <div class="fg-state-controls">${groups}</div>
+    <button class="fg-state-reset" type="button" data-preview-reset${enabled ? '' : ' disabled'}>还原真实数据</button>
+  </section>`
+}
+
 function replaceMotherForkSection(html, resource) {
   return html.replace(
     /<div style="font-size:13px;color:#9A9A9A;font-weight:600;margin:20px 0 12px;">社区改编 · [\s\S]*?<\/div><\/div>(?=\n\s*<\/div>\n\s*<div>\n\s*<div class="fg-sec-h">🤝 共创贡献)/,
@@ -110,6 +223,11 @@ function renderMotherResourceHtml(template, resource) {
   const fitLabel = `${resource.fit.subject} · ${resource.fit.lessonType}`
   const topicLabel = resource.topic.split('·')[0]
   const slideResource = isSlideResource(resource)
+  const actions = getResourceActions({
+    contentType: resource.contentType,
+    isOwner: isResourceOwner(resource, store.currentUser),
+    isAdapted: Boolean(resource.forkedFrom),
+  })
   const slots = {
     __RES_FIT__: fitLabel,
     __RES_AUTHOR_INITIAL__: resource.author.avatar || resource.author.name.slice(0, 1),
@@ -119,6 +237,9 @@ function renderMotherResourceHtml(template, resource) {
     __RES_KIND__: kindLabel,
     __RES_USE__: formatNumber(resource.stats.use),
     __RES_ADAPT__: formatNumber(resource.stats.adapt),
+    __RES_ACTIONS__: renderResourceActions(actions, resource.stats.star),
+    __RES_RECENT_ACTIVITY__: renderRecentActivities(resource),
+    __RES_STATE_SWITCHER__: renderStatePreview(previewState, previewEnabled.value),
     __RES_CONTRIBUTOR_NAME__: contributor.name,
     __RES_LATEST_VERSION__: latestVersion.v,
     __RES_CREDIT_ROWS__: renderResourceCredits(resource),
@@ -132,9 +253,8 @@ function renderMotherResourceHtml(template, resource) {
     __RES_PREVIEW_LABEL__: slideResource ? '课件 · 1 / 6' : `${kindLabel} · 运行预览`,
   }
 
-  let html = renderSlots(template, slots, ['__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__'])
+  let html = renderSlots(template, slots, ['__RES_ACTIONS__', '__RES_RECENT_ACTIVITY__', '__RES_STATE_SWITCHER__', '__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__'])
 
-  html = html.replace('data-count="1334">1,334', `data-count="${resource.stats.star}">${formatNumber(resource.stats.star)}`)
   html = html.replace('社区改编 · 12 个版本', `社区改编 · ${formatNumber(resource.stats.adapt)} 个版本`)
   html = html.replace('查看改编脉络 · 23 个版本', `查看改编脉络 · ${versionRange}`)
 
@@ -217,12 +337,47 @@ function renderAdaptedResourceHtml(template, resource) {
     `${authorLine}<p class="fg-summary">`,
   )
   html = html.replace('<div id="fg-about">', `<div id="fg-about">${aboutSource}`)
-  html = html.replace('<button class="fg-use fg-save-copy">保存副本</button>', '<button class="fg-use fg-save-copy">使用此版本</button>')
-  html = html.replace('>改编</button></div>', '>继续改编</button></div>')
   return html
 }
 
-const currentResource = computed(() => RESOURCES_BY_ID[store.resourceId] || RESOURCES_BY_ID[DEFAULT_RESOURCE_ID])
+const actualResource = computed(() => RESOURCES_BY_ID[store.resourceId] || RESOURCES_BY_ID[DEFAULT_RESOURCE_ID])
+const initialPreview = getResourcePreviewStateFromSearch(window.location.search)
+const previewEnabled = ref(initialPreview.enabled)
+const previewState = reactive(
+  initialPreview.state || getResourcePreviewState(actualResource.value, store.currentUser),
+)
+const currentResource = computed(() => previewEnabled.value
+  ? createPreviewResource(previewState, { currentUser: store.currentUser, resourcesById: RESOURCES_BY_ID })
+  : actualResource.value)
+
+function replacePreviewUrl(url) {
+  window.history.replaceState(window.history.state, '', url)
+}
+
+function handlePreviewClick(event) {
+  const reset = event.target.closest('[data-preview-reset]')
+  if (reset) {
+    previewEnabled.value = false
+    Object.assign(previewState, getResourcePreviewState(actualResource.value, store.currentUser))
+    replacePreviewUrl(clearResourcePreviewUrl(window.location.pathname, window.location.search))
+    return
+  }
+
+  const option = event.target.closest('[data-preview-dimension][data-preview-value]')
+  if (!option) return
+  const dimension = option.dataset.previewDimension
+  if (!Object.hasOwn(previewState, dimension)) return
+
+  previewState[dimension] = option.dataset.previewValue
+  previewEnabled.value = true
+  replacePreviewUrl(buildResourcePreviewUrl(window.location.pathname, window.location.search, previewState))
+}
+
+watch(() => store.resourceId, () => {
+  previewEnabled.value = false
+  Object.assign(previewState, getResourcePreviewState(actualResource.value, store.currentUser))
+})
+
 const renderedRaw = computed(() => {
   const resource = currentResource.value
   return resource.forkedFrom
@@ -233,8 +388,7 @@ const renderedRaw = computed(() => {
 
 <template>
   <div id="view-res">
-    <div class="page">
-      <Sidebar active="community" />
+    <div class="page" @click="handlePreviewClick">
       <div style="display:contents" v-html="renderedRaw"></div>
     </div>
   </div>

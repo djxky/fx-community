@@ -2,9 +2,6 @@
   <style>
     .fg-share-toggle { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
     .fg-share-toggle:checked ~ .fg-body-r .fg-side-share { display:block !important; }
-    .fg-actions .fg-aux-light { width:100%; min-width:0; height:40px; padding:0 12px; border:1px solid #E0E4E2; border-radius:9px; background:#fff; color:#141F1B; gap:6px; font-size:12px; font-weight:600; box-sizing:border-box; }
-    .fg-actions .fg-aux-light:hover { border-color:#BFC8C3; background:#F7F8F7; }
-    .fg-actions .fg-action-count { color:#141F1B; font-size:11px; font-weight:500; }
   </style>
   <main style="flex-grow:1; min-width:0; overflow-y:auto; height:100vh; background:#fff;">
     <!-- 顶栏 -->
@@ -19,6 +16,8 @@
       <!-- 面包屑 -->
       <div class="fg-crumb"><span class="hm nav-discover"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg></span><span>›</span><span class="nav-discover">__RES_FIT__</span></div>
 
+      __RES_STATE_SWITCHER__
+
       <!-- 首屏两列 -->
       <input id="fg-share-toggle" class="fg-share-toggle" type="checkbox" aria-label="展开分享面板">
       <div class="fg-hero">
@@ -27,10 +26,7 @@
           <div class="fg-author nav-studio"><div class="av">__RES_AUTHOR_INITIAL__</div><span class="nm">__RES_AUTHOR_NAME__ <span class="vf"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span></span></div>
           __RES_TOPIC_MEMBERSHIP__
           <p class="fg-summary">__RES_GOAL__</p>
-          <div class="fg-actions">
-            <div class="fg-action-primary"><button class="fg-use fg-save-copy">保存副本</button><button class="fg-adapt nav-adapt"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4 4.1.6-3 3 .7 4.4L12 17l-3.7 2 .7-4.4-3-3 4.1-.6z"></path></svg>改编</button></div>
-            <div class="fg-action-secondary"><button class="fg-ic fg-labeled fg-favorite fg-aux-light" title="收藏" aria-label="收藏" aria-pressed="false"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4 4.1.6-3 3 .7 4.4L12 17l-3.7 2 .7-4.4-3-3 4.1-.6z"></path></svg><span class="fg-action-label">收藏</span><span class="fg-action-count" data-count="1334">1,334</span></button><label for="fg-share-toggle" class="fg-ic fg-labeled fg-share-action fg-aux-light" title="分享" aria-label="分享" role="button" tabindex="0"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"></path><path d="M7 9l5-5 5 5"></path><path d="M5 13v6h14v-6"></path></svg><span class="fg-action-label">分享</span></label></div>
-          </div>
+          <div class="fg-actions">__RES_ACTIONS__</div>
           <div class="fg-meta"><span class="mi"><b>__RES_USE__</b> 位老师使用</span><span class="dot">·</span><span class="mi"><b>__RES_ADAPT__</b> 次改编</span></div>
         </div>
         <div class="fg-hero-r">
@@ -50,8 +46,8 @@
       <!-- 详情导航 -->
       <div class="fg-tabs">
         <button class="fg-tab on" type="button" data-section="fg-about">关于</button>
-        <button class="fg-tab" type="button" data-section="fg-versions">版本与改编</button>
         <button class="fg-tab" type="button" data-section="fg-discussion">讨论 <span class="cnt">86</span></button>
+        <button class="fg-tab" type="button" data-section="fg-versions">版本与改编</button>
       </div>
 
       <!-- 下方两列 -->
@@ -79,6 +75,7 @@
           </div>
 
           <div id="fg-discussion">
+            __RES_RECENT_ACTIVITY__
             <div class="fg-sec-h">讨论 <span class="sub">· 86 条</span></div>
             
         <div class="fbtypes" style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span class="fbtype" data-ft="used" style="display:inline-flex;align-items:center;gap:5px;background:#141F1B;color:#fff;font-size:13px;font-weight:500;padding:7px 14px;border-radius:999px;cursor:pointer;">✋ 我用过</span><span class="fbtype" data-ft="improve" style="display:inline-flex;align-items:center;gap:5px;background:#fff;color:#141F1B;border:1px solid #ECECEC;font-size:13px;font-weight:500;padding:7px 14px;border-radius:999px;cursor:pointer;">✎ 我有改进</span><span class="fbtype" data-ft="ask" style="display:inline-flex;align-items:center;gap:5px;background:#fff;color:#141F1B;border:1px solid #ECECEC;font-size:13px;font-weight:500;padding:7px 14px;border-radius:999px;cursor:pointer;">? 我想问作者</span><span style="margin-left:auto;font-size:12px;color:#9A9A9A;">选一种,把"分享课堂反馈 / 提改编建议 / 问作者"分开,别人也更好回</span></div>
