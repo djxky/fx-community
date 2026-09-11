@@ -597,6 +597,8 @@ a:hover { color: #141F1B; }
     .fg-top { display:flex; align-items:center; gap:22px; padding:0 26px; height:52px; border-bottom:1px solid #ECECEC; background:#fff; position:sticky; top:0; z-index:6; }
     .fg-brand { font-weight:700; font-size:16px; color:#141F1B; letter-spacing:0.3px; cursor:pointer; }
     .fg-brand sup { font-size:8px; }
+    .fg-brand-divider { margin:0 13px; color:#C9CECB; font-weight:400; }
+    .fg-brand-domain { color:#89928E; font-size:14px; font-weight:500; letter-spacing:1px; }
     .fg-nav { display:flex; align-items:center; gap:17px; }
     .fg-navi { font-size:13px; color:#7A7C7C; font-weight:500; cursor:pointer; display:inline-flex; align-items:center; gap:4px; }
     .fg-navi:hover { color:#141F1B; }
