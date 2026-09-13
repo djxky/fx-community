@@ -14,6 +14,10 @@ test('技能广场独立地址会恢复到技能页面', () => {
   assert.deepEqual(getViewRouteFromSearch('?view=skills'), { view: 'skills' })
 })
 
+test('老师主页独立地址会恢复到主页页面', () => {
+  assert.deepEqual(getViewRouteFromSearch('?view=studio'), { view: 'studio' })
+})
+
 test('资源详情参数和未知页面参数不会误判为学院页面', () => {
   assert.equal(getViewRouteFromSearch('?view=res&resource=res-xianglin'), null)
   assert.equal(getViewRouteFromSearch('?view=unknown'), null)
@@ -22,5 +26,6 @@ test('资源详情参数和未知页面参数不会误判为学院页面', () =>
 test('进入 AI 教学工坊会生成可分享的独立地址，离开时清除页面参数', () => {
   assert.equal(buildViewUrl('/fx-community/', 'academy'), '/fx-community/?view=academy')
   assert.equal(buildViewUrl('/fx-community/', 'skills'), '/fx-community/?view=skills')
+  assert.equal(buildViewUrl('/fx-community/', 'studio'), '/fx-community/?view=studio')
   assert.equal(buildViewUrl('/fx-community/', 'rank'), '/fx-community/')
 })
