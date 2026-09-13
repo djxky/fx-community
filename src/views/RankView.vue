@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import '../styles/community.css'
 import RankBoardCard from '../components/RankBoardCard.vue'
 import { BOARDS, EDITORIAL_FEATURES } from '../data/rank'
+import { formatCount } from '../lib/format-count.mjs'
 
 const periods = ['本周', '本月', '年度']
 const subjects = ['全部', '语文', '数学', '英语', '物理', '化学', '信息科技', '音乐', '体育']
@@ -38,7 +39,6 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
             <div class="rank-heading">
               <div class="rank-heading-title">
                 <h2>编辑推荐</h2>
-                <span class="rank-heading-note">本周值得被看见的课堂方法</span>
               </div>
             </div>
             <div class="rank-editorial-grid">
@@ -56,7 +56,7 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
                       <span class="rank-author-name">{{ feature.author }}</span>
                       <span v-if="feature.role" class="rank-role-badge">{{ feature.role }}</span>
                     </div>
-                    <span v-if="feature.metric" class="rank-editorial-metric"><b>{{ feature.metric }}</b> {{ feature.metricLabel }}</span>
+                    <span v-if="feature.metric" class="rank-editorial-metric"><b>{{ formatCount(feature.metric) }}</b> {{ feature.metricLabel }}</span>
                   </div>
                 </div>
               </article>
@@ -68,7 +68,6 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
             <div class="rank-heading rank-heading-with-actions">
               <div class="rank-heading-title">
                 <h2>课堂使用榜</h2>
-                <span class="rank-heading-note">真的被带进课堂的，不是刷出来的</span>
               </div>
               <div class="rank-heading-actions">
                 <label class="rank-subject-select">
@@ -89,7 +88,6 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
             <div class="rank-heading rank-heading-with-actions">
               <div class="rank-heading-title">
                 <h2>每周热门</h2>
-                <span class="rank-heading-note">本周老师用得最多的资源</span>
               </div>
               <label class="rank-subject-select">
                 <select v-model="hotSubject" aria-label="每周热门学科选择">
@@ -105,7 +103,6 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
             <div class="rank-heading rank-heading-with-actions">
               <div class="rank-heading-title">
                 <h2>优质改编</h2>
-                <span class="rank-heading-note">沿着真实课堂继续长出的新版本</span>
               </div>
               <label class="rank-subject-select">
                 <select v-model="remixSubject" aria-label="优质改编学科选择">
@@ -113,7 +110,7 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
                 </select>
               </label>
             </div>
-            <RankBoardCard :board="remixBoard" variant="remix" :subject="remixSubject" />
+            <RankBoardCard :board="remixBoard" variant="chart" :subject="remixSubject" />
           </section>
 
           <!-- 5. 创作达人榜：复用课堂主榜结构，按代表作呈现创作者 -->
@@ -121,10 +118,9 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
             <div class="rank-heading">
               <div class="rank-heading-title">
                 <h2>创作达人榜</h2>
-                <span class="rank-heading-note">{{ recognizedBoard.desc }}</span>
               </div>
             </div>
-            <RankBoardCard :board="recognizedBoard" variant="main" :period="activePeriod" />
+            <RankBoardCard :board="recognizedBoard" variant="creator-card" :period="activePeriod" />
           </section>
 
           <!-- 6. 新锐创作者榜：复用每周热门作品网格 -->
@@ -132,10 +128,9 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
             <div class="rank-heading">
               <div class="rank-heading-title">
                 <h2>新锐创作者榜</h2>
-                <span class="rank-heading-note">{{ risingBoard.desc }}</span>
               </div>
             </div>
-            <RankBoardCard :board="risingBoard" variant="grid" />
+            <RankBoardCard :board="risingBoard" variant="creator-main" />
           </section>
         </div>
 

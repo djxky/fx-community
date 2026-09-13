@@ -2,11 +2,13 @@
 defineProps({
   post: { type: Object, required: true },
   metricMode: { type: String, default: 'full' },
+  // 精简卡:只保留封面、标题和作者(发现页使用)
+  compact: { type: Boolean, default: false },
 })
 
 function showOverflowTitle(event) {
   const title = event.currentTarget
-  if (title.scrollWidth > title.clientWidth) title.title = title.textContent
+  if (title.scrollWidth > title.clientWidth || title.scrollHeight > title.clientHeight) title.title = title.textContent
   else title.removeAttribute('title')
 }
 </script>
@@ -22,10 +24,10 @@ function showOverflowTitle(event) {
     </div>
 
     <!-- 标题 -->
-    <div class="pc-title" @mouseenter="showOverflowTitle">{{ post.title }}</div>
+    <div class="pc-title" :class="{ 'pc-title--2l': compact }" @mouseenter="showOverflowTitle">{{ post.title }}</div>
 
     <!-- 基础信息(压成一行淡灰文字,不再用一排标签块) -->
-    <div class="pc-meta">
+    <div v-if="!compact" class="pc-meta">
       {{ post.meta }}<span v-if="post.verified" class="pc-ok"> · <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#141F1B" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg> 课堂验证</span>
     </div>
 
@@ -33,9 +35,7 @@ function showOverflowTitle(event) {
     <div class="pc-foot">
       <span class="pc-av" :class="{ ring: post.verify === 'expert' }">{{ post.avatar?.slice(0, 1) }}</span>
       <span class="pc-nm" :title="post.author">{{ post.author }}</span>
-      <span v-if="post.verify === 'expert'" class="pc-ck pc-ck--expert"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>
-      <span v-else-if="post.verify === 'teacher'" class="pc-ck pc-ck--teacher"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>
-      <span class="pc-metric" :class="{ 'pc-metric--use-only': metricMode === 'use-only' }">
+      <span v-if="!compact" class="pc-metric" :class="{ 'pc-metric--use-only': metricMode === 'use-only' }">
         <b>{{ post.evi.use }}</b><span class="pc-metric-label"> 使用</span>
         <template v-if="metricMode !== 'use-only'"> <span class="pc-sep">·</span> <b>{{ post.evi.star }}</b> 收藏</template>
       </span>
@@ -54,6 +54,8 @@ function showOverflowTitle(event) {
 .pc-region { position:absolute; top:10px; right:10px; background:#FFF6DF; color:#8A6D00; font-size:11px; font-weight:600; padding:3px 9px; border-radius:var(--fx-radius-tag); border:1px solid #FBEFC6; }
 
 .pc-title { margin:12px 16px 0; font-size:var(--community-card-title-size, 16px); font-weight:500; color:#141F1B; line-height:22px; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; }
+/* 精简卡标题最多两行(约 24 字),固定占两行高度保证同排卡片对齐 */
+.pc-title--2l { white-space:normal; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; min-height:44px; }
 
 /* 社会证明信号(每卡最多一条) */
 .pc-proof { padding:10px 16px 0; font-size:12px; line-height:1; min-height:26px; }
@@ -70,9 +72,6 @@ function showOverflowTitle(event) {
 .pc-av { overflow:hidden; white-space:nowrap; width:20px; height:20px; border-radius:50%; background:#ECECEC; color:#141F1B; font-size:10.5px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .pc-av.ring { box-shadow:0 0 0 1px #fff, 0 0 0 2px #D9AF3C; }
 .pc-nm { min-width:0; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; color:#141F1B; font-weight:500; }
-.pc-ck { flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; width:12px; height:12px; border-radius:50%; }
-.pc-ck--expert { background:#D9AF3C; }
-.pc-ck--teacher { background:#141F1B; }
 .pc-metric { flex-shrink:0; margin-left:auto; white-space:nowrap; font-variant-numeric:tabular-nums; }
 .pc-metric b { color:#141F1B; font-weight:600; }
 .pc-metric--use-only { display:inline-flex; align-items:baseline; gap:3px; color:#7A7C7C; }

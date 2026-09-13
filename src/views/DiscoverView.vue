@@ -167,7 +167,7 @@ function selectTask(task) {
           </div>
 
           <div class="flow">
-            <PostCard v-for="(post, i) in visiblePosts" :key="post.resourceId || post.title || i" :post="post" metric-mode="use-only" />
+            <PostCard v-for="(post, i) in visiblePosts" :key="post.resourceId || post.title || i" :post="post" compact />
           </div>
           <div v-if="visiblePosts.length === 0" class="empty-state">
             <strong>这个组合下还没有内容</strong>

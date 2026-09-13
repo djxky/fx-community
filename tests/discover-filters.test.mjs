@@ -82,6 +82,25 @@ test('发现卡片只放大展示使用数，其他页默认指标不受影响',
   assert.match(defaultHtml, /收藏/)
 })
 
+test('发现页精简卡片只保留标题和作者信息', async () => {
+  const { default: PostCard } = await vite.ssrLoadModule('/src/components/PostCard.vue')
+  const post = {
+    to: 'res', cover: '/cover.jpg', badge: '教案', title: '单元教案', meta: '小学数学',
+    author: '沈知微', avatar: '沈', verify: 'expert', verified: true,
+    evi: { use: '860', star: '2,330' },
+  }
+  const compactHtml = await renderToString(createSSRApp(PostCard, { post, compact: true }))
+
+  assert.match(compactHtml, /pc-title--2l[^>]*>单元教案</)
+  assert.match(compactHtml, /沈知微/)
+  assert.doesNotMatch(compactHtml, /pc-meta|小学数学|课堂验证/)
+  assert.doesNotMatch(compactHtml, /pc-metric|860|使用/)
+  assert.doesNotMatch(compactHtml, /pc-ck|M20 6L9 17l-5-5/)
+
+  const source = readFileSync(new URL('../src/views/DiscoverView.vue', import.meta.url), 'utf8')
+  assert.match(source, /<PostCard[^>]*\bcompact\b/)
+})
+
 test('发现页右上角只保留搜索框，不再重复展示学科学段选择器', async () => {
   const { default: DiscoverView } = await vite.ssrLoadModule('/src/views/DiscoverView.vue')
   const html = await renderToString(createSSRApp(DiscoverView))

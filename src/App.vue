@@ -22,6 +22,7 @@ import ActivityView from './views/ActivityView.vue'
 import LineageView from './views/LineageView.vue'
 import NotifyView from './views/NotifyView.vue'
 import MyLibraryView from './views/MyLibraryView.vue'
+import ReviewPanel from './review/ReviewPanel.vue'
 
 const initialResourceRoute = getResourceRouteFromSearch(
   window.location.search,
@@ -64,5 +65,6 @@ onMounted(() => installDelegation())
       <NotifyView v-show="store.view === 'notify'" />
       <MyLibraryView v-show="store.view === 'mylib'" />
     </div>
+    <ReviewPanel />
   </div>
 </template>

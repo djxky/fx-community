@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { formatCount } from '../lib/format-count.mjs'
 
 const props = defineProps({
   board: { type: Object, required: true },
@@ -25,6 +26,20 @@ const restItems = computed(() => filteredItems.value.slice(3, 9))
 const compactItems = computed(() => (compactExpanded.value ? filteredItems.value : filteredItems.value.slice(0, 6)))
 const compactHidden = computed(() => Math.max(filteredItems.value.length - 6, 0))
 
+// A 焦点大卡 / C 紧凑榜单 的取数：
+// creator-card = 纯大卡；creator-main = 前 3 大卡 + 其余紧凑行；chart = 纯紧凑行
+const cardItems = computed(() => {
+  if (props.variant === 'creator-card') return filteredItems.value.slice(0, 6)
+  if (props.variant === 'creator-main') return filteredItems.value.slice(0, 3)
+  return []
+})
+const chartOffset = computed(() => (props.variant === 'creator-main' ? 3 : 0))
+const chartItems = computed(() => {
+  if (props.variant === 'chart') return filteredItems.value.slice(0, 8)
+  if (props.variant === 'creator-main') return filteredItems.value.slice(3, 9)
+  return []
+})
+
 function placeClass(index) {
   return index === 0 ? 'rank-gold' : index === 1 ? 'rank-silver' : index === 2 ? 'rank-bronze' : 'rank-number'
 }
@@ -44,7 +59,7 @@ function itemKind(item) {
 
 <template>
   <article class="rank-board" :class="[`rank-${variant}-board`, `rank-${board.key}-board`]">
-    <header v-if="variant !== 'main' && variant !== 'grid' && variant !== 'remix'" class="rank-board-head">
+    <header v-if="variant === 'compact'" class="rank-board-head">
       <div class="rank-board-title"><span v-if="board.hot" class="rank-board-mark">●</span>{{ board.title }}</div>
       <span class="rank-board-period">{{ period }} · {{ variant === 'creator' ? board.metricLabel : board.period }}</span>
     </header>
@@ -54,6 +69,41 @@ function itemKind(item) {
       <span>换个学科看看本期内容</span>
     </div>
 
+    <!-- A 焦点大卡（创作者版）+ C 紧凑榜单，按 variant 决定各渲染多少条 -->
+    <template v-else-if="variant === 'creator-card' || variant === 'creator-main' || variant === 'chart'">
+      <div v-if="cardItems.length" class="rank-creator-grid">
+        <article v-for="(it, i) in cardItems" :key="it.rankKey || it.resourceId || it.name" class="rank-creator-card nav-res" :data-resource-id="it.resourceId" tabindex="0" role="button">
+          <div class="rank-creator-head">
+            <span class="rank-avatar rank-creator-avatar"><img v-if="it.portrait" :src="it.portrait" alt="" /><b v-else>{{ it.initial }}</b></span>
+            <div class="rank-creator-headtext">
+              <span class="rank-creator-name">{{ itemAuthor(it) }}</span>
+              <span class="rank-creator-stats"><b>{{ formatCount(it.metric) }}</b> {{ board.metricLabel }}<template v-if="it.metricNote"> · {{ it.metricNote }}</template></span>
+            </div>
+          </div>
+          <div class="rank-creator-media">
+            <img :src="it.cover" :alt="itemTitle(it) + '封面'" />
+            <span v-if="i < 3" class="rank-place" :class="placeClass(i)"><b>{{ medals[i] }}</b>{{ i + 1 }}</span>
+          </div>
+          <h3 class="rank-creator-caption">{{ itemTitle(it) }}</h3>
+        </article>
+      </div>
+
+      <!-- C 紧凑榜单：序号 + 作品封面 + 作品名 + 创作者署名 + 数据，两列密排。
+           点击目标是资源详情，故资源为视觉主体，创作者只作署名。 -->
+      <div v-if="chartItems.length" class="rank-chart rank-chart-2col" :class="{ 'rank-chart-after-cards': cardItems.length }">
+        <div v-for="(it, i) in chartItems" :key="it.rankKey || it.resourceId || it.name" class="rank-chart-row nav-res" :data-resource-id="it.resourceId" tabindex="0" role="button">
+          <!-- 只标记前三名；若前三名已在上方大卡里（chartOffset > 0），整列不出 -->
+          <span v-if="chartOffset === 0" class="rank-chart-num" :class="{ on: i < 3 }">{{ i < 3 ? i + 1 : '' }}</span>
+          <span class="rank-chart-thumb"><img :src="it.cover" :alt="itemTitle(it) + '封面'" /></span>
+          <span class="rank-chart-copy">
+            <strong>{{ itemTitle(it) }}</strong>
+            <small><span class="rank-avatar rank-avatar-xs"><img v-if="it.portrait" :src="it.portrait" alt="" /><b v-else>{{ it.initial }}</b></span>{{ itemAuthor(it) }}</small>
+          </span>
+          <span class="rank-chart-metric"><b>{{ formatCount(it.metric) }}</b><small>{{ board.metricLabel }}</small></span>
+        </div>
+      </div>
+    </template>
+
     <!-- 主榜：三名重点位 + 两列密集列表 -->
     <template v-else-if="variant === 'main'">
       <div class="rank-podium">
@@ -61,14 +111,13 @@ function itemKind(item) {
           <div class="rank-podium-media">
             <img :src="it.cover" :alt="itemTitle(it) + '封面'" />
             <span class="rank-place" :class="placeClass(i)"><b>{{ medals[i] }}</b>{{ i + 1 }}</span>
-            <span class="rank-podium-kind">{{ itemKind(it) }}</span>
           </div>
           <div class="rank-podium-body">
             <h3>{{ itemTitle(it) }}</h3>
             <p v-if="it.blurb" class="rank-podium-blurb">{{ it.blurb }}</p>
             <div class="rank-podium-foot">
               <span class="rank-mini-author"><span class="rank-avatar"><img v-if="it.portrait" :src="it.portrait" alt="" /><b v-else>{{ it.initial }}</b></span>{{ itemAuthor(it) }}</span>
-              <span class="rank-podium-metric"><b>{{ it.metric }}</b><small>{{ board.metricLabel }}</small></span>
+              <span class="rank-podium-metric"><b>{{ formatCount(it.metric) }}</b><small>{{ board.metricLabel }}</small></span>
             </div>
           </div>
         </article>
@@ -82,10 +131,9 @@ function itemKind(item) {
             <span v-if="it.blurb" class="rank-list-blurb">{{ it.blurb }}</span>
             <span class="rank-list-meta">
               <span class="rank-list-author"><span class="rank-avatar rank-avatar-xs"><img v-if="it.portrait" :src="it.portrait" alt="" /><b v-else>{{ it.initial }}</b></span>{{ itemAuthor(it) }}</span>
-              <span class="rank-list-chip">{{ it.sub }}</span>
             </span>
           </span>
-          <span class="rank-list-metric"><b>{{ it.metric }}</b><small>{{ board.metricLabel }}</small></span>
+          <span class="rank-list-metric"><b>{{ formatCount(it.metric) }}</b><small>{{ board.metricLabel }}</small><small v-if="it.metricNote" class="rank-metric-note">{{ it.metricNote }}</small></span>
         </div>
       </div>
     </template>
@@ -93,7 +141,7 @@ function itemKind(item) {
     <!-- 资源网格（每周热门）：web 端自然换行，无横滑 -->
     <template v-else-if="variant === 'grid'">
       <div class="rank-grid">
-        <article v-for="(it, i) in filteredItems.slice(0, 8)" :key="it.rankKey || it.resourceId || it.name" class="rank-grid-card nav-res" :data-resource-id="it.resourceId" tabindex="0" role="button">
+        <article v-for="(it, i) in filteredItems.slice(0, 6)" :key="it.rankKey || it.resourceId || it.name" class="rank-grid-card nav-res" :data-resource-id="it.resourceId" tabindex="0" role="button">
           <div class="rank-grid-media">
             <img :src="it.cover" :alt="itemTitle(it) + '封面'" />
             <span v-if="i < 3" class="rank-place" :class="placeClass(i)"><b>{{ medals[i] }}</b>{{ i + 1 }}</span>
@@ -102,7 +150,7 @@ function itemKind(item) {
             <h3>{{ itemTitle(it) }}</h3>
             <div class="rank-grid-foot">
               <span class="rank-mini-author"><span class="rank-avatar rank-avatar-xs"><img v-if="it.portrait" :src="it.portrait" alt="" /><b v-else>{{ it.initial }}</b></span>{{ itemAuthor(it) }}</span>
-              <strong>{{ it.metric }}<small>{{ board.metricLabel }}</small></strong>
+              <strong>{{ formatCount(it.metric) }}<small>{{ board.metricLabel }}</small></strong>
             </div>
           </div>
         </article>
@@ -121,7 +169,7 @@ function itemKind(item) {
             <h3>{{ it.name }}</h3>
             <div class="rank-remix-foot">
               <span class="rank-mini-author"><span class="rank-avatar rank-avatar-xs"><img v-if="it.portrait" :src="it.portrait" alt="" /><b v-else>{{ it.initial }}</b></span>{{ it.author }}<span v-if="it.role" class="rank-remix-role">{{ it.role }}</span></span>
-              <strong>{{ it.metric }}<small>{{ board.metricLabel }}</small></strong>
+              <strong>{{ formatCount(it.metric) }}<small>{{ board.metricLabel }}</small></strong>
             </div>
           </div>
         </article>
@@ -135,7 +183,7 @@ function itemKind(item) {
           <span class="rank-place" :class="placeClass(i)"><b v-if="i < 3">{{ medals[i] }}</b>{{ i + 1 }}</span>
           <span class="rank-avatar rank-compact-avatar"><img v-if="it.portrait" :src="it.portrait" alt="" /><img v-else-if="it.logo" :src="it.logo" alt="" /><b v-else>{{ it.initial }}</b></span>
           <span class="rank-compact-copy"><strong>{{ it.name }}</strong><small>{{ it.sub }}</small></span>
-          <span class="rank-compact-metric"><b>{{ it.metric }}</b><small>{{ it.unit }}</small></span>
+          <span class="rank-compact-metric"><b>{{ formatCount(it.metric) }}</b><small>{{ it.unit }}</small></span>
         </div>
       </div>
       <button v-if="compactHidden > 0" type="button" class="rank-more rank-more-sm" @click="compactExpanded = !compactExpanded">
@@ -148,7 +196,8 @@ function itemKind(item) {
 <style scoped>
 button { font:inherit; }
 .rank-board { min-width:0; background:#FFFFFF; border:1px solid #ECECEC; border-radius:var(--community-card-radius, 20px); padding:20px; color:#141F1B; box-shadow:none; }
-.rank-grid-board, .rank-remix-board { background:transparent; border:0; padding:0; box-shadow:none; }
+/* 无外框版式（卡片直接落在页面底色上）：B 卡片网格、A 焦点大卡 */
+.rank-grid-board, .rank-remix-board, .rank-creator-card-board { background:transparent; border:0; padding:0; box-shadow:none; }
 .rank-board-head { display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin-bottom:15px; }
 .rank-board-title { font-size:16px; font-weight:700; letter-spacing:-.02em; }
 .rank-board-period { color:#9A9A9A; font-size:11px; white-space:nowrap; }
@@ -166,11 +215,42 @@ button { font:inherit; }
 .rank-podium-kind { position:absolute; right:8px; top:8px; max-width:calc(100% - 52px); padding:4px 7px; overflow:hidden; border-radius:8px; background:rgba(20,31,27,.55); color:#FFFFFF; font-size:9px; text-overflow:ellipsis; white-space:nowrap; }
 .rank-podium-body { padding:12px 16px 14px; }
 .rank-podium-body h3 { margin:0 0 5px; overflow:hidden; color:#141F1B; font-size:var(--community-card-title-size, 16px); font-weight:500; line-height:22px; text-overflow:ellipsis; white-space:nowrap; }
+/* 创作者榜：统一的创作者卡 —— 创作者在上（头像+人名+数据）→ 代表作封面 → 作品名 */
+.rank-creator-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--community-gap, 24px); }
+.rank-creator-card { min-width:0; overflow:hidden; border:1px solid #ECECEC; border-radius:var(--community-card-radius, 20px); background:#FFFFFF; cursor:pointer; transition:transform .18s ease,box-shadow .18s ease; }
+.rank-creator-card:hover { transform:translateY(-2px); border-color:#D4D4D4; box-shadow:var(--fx-shadow-float); }
+.rank-creator-media { position:relative; aspect-ratio:var(--community-cover-ratio, 16 / 9); overflow:hidden; background:#F7F7F7; }
+.rank-creator-media img { width:100%; height:100%; display:block; object-fit:cover; }
+.rank-creator-head { display:flex; align-items:center; gap:10px; padding:13px 14px 11px; }
+.rank-creator-avatar { width:40px; height:40px; flex:0 0 40px; font-size:15px; }
+.rank-creator-headtext { min-width:0; flex:1 1 auto; display:flex; flex-direction:column; gap:2px; }
+.rank-creator-name { overflow:hidden; color:#141F1B; font-size:15px; font-weight:650; line-height:20px; text-overflow:ellipsis; white-space:nowrap; }
+.rank-creator-stats { overflow:hidden; color:#9A9A9A; font-size:12px; line-height:17px; text-overflow:ellipsis; white-space:nowrap; }
+.rank-creator-stats b { color:#141F1B; font-weight:700; font-variant-numeric:tabular-nums; }
+/* C 紧凑榜单：序号 + 小图 + 名称 + 数据 */
+.rank-chart-2col { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 22px; }
+.rank-chart-after-cards { margin-top:18px; }
+.rank-chart-row { display:flex; align-items:center; gap:11px; padding:10px 8px; border-top:1px solid #F1F1F1; border-radius:11px; cursor:pointer; transition:background .15s ease; }
+.rank-chart-2col > .rank-chart-row:nth-child(-n+2) { border-top:0; }
+.rank-chart-row:hover { background:#F7F7F7; }
+.rank-chart-num { flex:0 0 18px; text-align:center; color:#C4C7C6; font-size:13px; font-weight:700; font-variant-numeric:tabular-nums; }
+.rank-chart-num.on { color:#D9AF3C; }
+.rank-chart-thumb { flex:0 0 52px; width:52px; height:38px; overflow:hidden; border-radius:9px; background:#F7F7F7; }
+.rank-chart-thumb img { width:100%; height:100%; display:block; object-fit:cover; }
+.rank-chart-copy { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:4px; }
+.rank-chart-copy strong { overflow:hidden; color:#141F1B; font-size:14px; font-weight:650; text-overflow:ellipsis; white-space:nowrap; }
+.rank-chart-copy small { display:flex; align-items:center; gap:5px; min-width:0; overflow:hidden; color:#7A7C7C; font-size:11px; text-overflow:ellipsis; white-space:nowrap; }
+.rank-chart-metric { flex:0 0 auto; text-align:right; white-space:nowrap; }
+.rank-chart-metric b { display:block; color:#141F1B; font-size:14px; font-weight:700; font-variant-numeric:tabular-nums; }
+.rank-chart-metric small { display:block; margin-top:1px; color:#9A9A9A; font-size:9px; }
+
+.rank-creator-caption { margin:0; padding:11px 16px 14px; overflow:hidden; color:#141F1B; font-size:15px; font-weight:500; line-height:21px; text-overflow:ellipsis; white-space:nowrap; }
 .rank-podium-blurb { margin:0 0 10px; overflow:hidden; color:#9A9A9A; font-size:12px; line-height:18px; text-overflow:ellipsis; white-space:nowrap; }
 .rank-podium-foot { display:flex; align-items:center; justify-content:space-between; gap:8px; }
 .rank-podium-metric { flex:0 0 auto; text-align:right; white-space:nowrap; }
 .rank-podium-metric b { color:#141F1B; font-size:15px; font-weight:700; }
 .rank-podium-metric small { margin-left:3px; color:#9A9A9A; font-size:10px; }
+.rank-podium-metric .rank-metric-note, .rank-list-metric .rank-metric-note { display:block; margin-left:0; margin-top:1px; color:#B0B2B1; font-size:9px; font-weight:500; }
 
 /* 两列密集列表 */
 .rank-list { margin-top:12px; }
@@ -249,7 +329,7 @@ button { font:inherit; }
 .rank-compact-metric b { display:block; color:#141F1B; font-size:14px; font-weight:700; }
 .rank-compact-metric small { display:block; margin-top:2px; color:#9A9A9A; font-size:9px; }
 
-@media (max-width:980px) { .rank-list-2col { grid-template-columns:minmax(0,1fr); } .rank-list-2col > .rank-list-row:nth-child(2) { border-top:1px solid #F1F1F1; } }
-@media (max-width:900px) { .rank-podium { grid-template-columns:1fr; } .rank-remix { grid-template-columns:1fr; } }
+@media (max-width:980px) { .rank-list-2col { grid-template-columns:minmax(0,1fr); } .rank-list-2col > .rank-list-row:nth-child(2) { border-top:1px solid #F1F1F1; } .rank-chart-2col { grid-template-columns:minmax(0,1fr); } .rank-chart-2col > .rank-chart-row:nth-child(2) { border-top:1px solid #F1F1F1; } }
+@media (max-width:900px) { .rank-podium { grid-template-columns:1fr; } .rank-remix { grid-template-columns:1fr; } .rank-creator-grid { grid-template-columns:1fr; } }
 @media (max-width:720px) { .rank-board { padding:16px; } .rank-list-chip { display:none; } .rank-list-cite { display:none; } }
 </style>

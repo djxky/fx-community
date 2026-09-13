@@ -77,10 +77,18 @@ function focusInput(kind) {
   })
 }
 function meInitial() { return String(store.currentUser.name || '我').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').slice(0, 1) || '我' }
+function speaker() {
+  if (isAuthorView()) {
+    const a = currentResource.value.author
+    return { name: a.name, initial: a.avatar || String(a.name).slice(0, 1), isAuthor: true, mine: true }
+  }
+  return { name: store.currentUser.name, initial: meInitial(), isAuthor: false, mine: true }
+}
 function submitComment() {
   const text = readInput('comment')
   if (!text) { interactions.composerOpen = false; return }
-  interactions.comments.push({ id: nextId(), name: store.currentUser.name, initial: meInitial(), tone: 'is-warm', text, likes: 0, liked: false, pinned: false, time: '刚刚', mine: true, replies: [] })
+  const who = speaker()
+  interactions.comments.push({ id: nextId(), name: who.name, initial: who.initial, tone: 'is-warm', text, likes: 0, liked: false, pinned: false, time: '刚刚', mine: who.mine, isAuthor: who.isAuthor, replies: [] })
   interactions.count += 1
   interactions.composerOpen = false
 }
@@ -89,7 +97,8 @@ function submitReply(id) {
   const found = findComment(id)
   const target = found ? (found.parent || found.node) : null
   if (!text || !target) { interactions.replyingTo = null; return }
-  target.replies.push({ id: nextId(), name: store.currentUser.name, initial: meInitial(), tone: 'is-muted', text, likes: 0, liked: false, time: '刚刚', mine: true })
+  const who = speaker()
+  target.replies.push({ id: nextId(), name: who.name, initial: who.initial, tone: 'is-muted', text, likes: 0, liked: false, time: '刚刚', mine: who.mine, isAuthor: who.isAuthor })
   interactions.count += 1
   interactions.replyingTo = null
 }
@@ -140,15 +149,15 @@ function renderCmtActions(node, isReply) {
 }
 function renderReplyInput(id) {
   if (interactions.replyingTo !== id) return ''
-  return `<div class="fg-live-composer fg-cmt-reply-box"><input class="fg-live-input" data-act-input="reply" type="text" placeholder="回复…" maxlength="200"><button class="fg-live-send" data-act="reply-submit" data-id="${id}" type="button">发布</button><button class="fg-live-cancel" data-act="reply-cancel" type="button">取消</button></div>`
+  return `<div class="fg-cmt-reply-box">${renderComposerPanel('reply', 'reply-submit', 'reply-cancel', id)}</div>`
 }
 function renderReply(r) {
-  return `<div class="fg-cmt-reply"><div class="fg-v2-comment-avatar ${r.tone || 'is-muted'}">${escapeHtml(r.initial)}</div><div class="fg-cmt-body"><div class="fg-v2-comment-meta"><strong>${escapeHtml(r.name)}</strong>${r.mine ? '<span class="fg-cmt-me">我</span>' : ''}</div><p>${escapeHtml(r.text)}</p><small>${escapeHtml(r.time)}</small>${renderCmtActions(r, true)}${renderReplyInput(r.id)}</div></div>`
+  return `<div class="fg-cmt-reply"><div class="fg-v2-comment-avatar ${r.tone || 'is-muted'}">${escapeHtml(r.initial)}</div><div class="fg-cmt-body"><div class="fg-v2-comment-meta"><strong>${escapeHtml(r.name)}</strong>${r.isAuthor ? '<span class="fg-cmt-author-badge">作者</span>' : (r.mine ? '<span class="fg-cmt-me">我</span>' : '')}</div><p>${escapeHtml(r.text)}</p><small>${escapeHtml(r.time)}</small>${renderCmtActions(r, true)}${renderReplyInput(r.id)}</div></div>`
 }
 function renderComment(c) {
   const replies = c.replies.map(renderReply).join('')
   const authorReply = c.authorReply ? `<div class="fg-v2-author-reply"><strong>作者回复</strong><span>${escapeHtml(c.authorReply)}</span></div>` : ''
-  return `<article class="fg-v2-comment${c.pinned ? ' is-pinned' : ''}"><div class="fg-v2-comment-avatar ${c.tone}">${escapeHtml(c.initial)}</div><div class="fg-cmt-body"><div class="fg-v2-comment-meta"><strong>${escapeHtml(c.name)}</strong>${c.mine ? '<span class="fg-cmt-me">我</span>' : ''}${c.pinned ? '<span class="fg-v2-pinned-badge">置顶</span>' : ''}</div><p>${escapeHtml(c.text)}</p><small>${escapeHtml(c.time)}</small>${authorReply}${renderCmtActions(c, false)}${renderReplyInput(c.id)}${replies ? `<div class="fg-cmt-replies">${replies}</div>` : ''}</div></article>`
+  return `<article class="fg-v2-comment${c.pinned ? ' is-pinned' : ''}"><div class="fg-v2-comment-avatar ${c.tone}">${escapeHtml(c.initial)}</div><div class="fg-cmt-body"><div class="fg-v2-comment-meta"><strong>${escapeHtml(c.name)}</strong>${c.isAuthor ? '<span class="fg-cmt-author-badge">作者</span>' : (c.mine ? '<span class="fg-cmt-me">我</span>' : '')}${c.pinned ? '<span class="fg-v2-pinned-badge">置顶</span>' : ''}</div><p>${escapeHtml(c.text)}</p><small>${escapeHtml(c.time)}</small>${authorReply}${renderCmtActions(c, false)}${renderReplyInput(c.id)}${replies ? `<div class="fg-cmt-replies">${replies}</div>` : ''}</div></article>`
 }
 
 function escapeHtml(value) {
@@ -230,7 +239,7 @@ function renderTopicMembership(resource) {
   const membership = getResourceTopicMembership(resource)
   if (!membership) return ''
 
-  return `<div class="rd-topic-strip" aria-label="${escapeHtml(membership.label)}">
+  return `<div class="rd-topic-strip" data-doc="sec3-topic" data-prd="所属专题胶囊：仅当资源有 topicMembership 时显示，点击进入该策展专题合集页" data-track="/click/resourceDetailPage/topic | 进入所属专题 | topicId" aria-label="${escapeHtml(membership.label)}">
     <span>${escapeHtml(membership.label)}</span>
     <span class="rd-topic-dot" aria-hidden="true">·</span>
     <strong>${escapeHtml(membership.title)}</strong>
@@ -274,7 +283,7 @@ function renderResourcePrimaryActions(actions) {
 
 function renderDiscussionActionBar(actions, favoriteCount) {
   const share = actions.find((action) => action.key === 'share')
-  const comment = '<button class="fg-action-link fg-comment-action" type="button" aria-label="评论"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6.5A3.5 3.5 0 018.5 3h7A3.5 3.5 0 0119 6.5v5a3.5 3.5 0 01-3.5 3.5H11l-4.5 4v-4.3A3.5 3.5 0 015 11.5z"></path></svg><span class="fg-action-label">评论</span><span class="fg-action-count">86</span></button>'
+  const comment = '<button class="fg-action-link fg-comment-action" data-act="comment-open" type="button" aria-label="评论"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6.5A3.5 3.5 0 018.5 3h7A3.5 3.5 0 0119 6.5v5a3.5 3.5 0 01-3.5 3.5H11l-4.5 4v-4.3A3.5 3.5 0 015 11.5z"></path></svg><span class="fg-action-label">评论</span><span class="fg-action-count">86</span></button>'
   return `${comment}${share ? renderShareAction(share) : ''}`
 }
 
@@ -295,7 +304,7 @@ function renderResourceStats(resource) {
   const starIcon = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 21l-4.9-2.6.9-5.5-4-3.9 5.5-.8z"></path></svg>'
   const items = []
   if (s.use != null) items.push(`<span class="fg-res-metric" aria-label="使用人数">${useIcon}<b>${formatNumber(s.use)}</b><i>使用</i></span>`)
-  if (s.star != null) items.push(`<button class="fg-res-metric fg-res-metric-fav${interactions.favorited ? ' is-on' : ''}" data-act="favorite" type="button" aria-label="收藏" aria-pressed="${interactions.favorited}">${starIcon}<b>${formatNumber((s.star || 0) + interactions.starDelta)}</b><i>${interactions.favorited ? '已收藏' : '收藏'}</i></button>`)
+  if (s.star != null) items.push(`<button class="fg-res-metric fg-res-metric-fav${interactions.favorited ? ' is-on' : ''}" data-act="favorite" data-doc="sec2-fav" data-prd="点击收藏：星标变金、收藏数 +1、文案「收藏」→「已收藏」，再点取消" data-track="/click/resourceDetailPage/favorite | 收藏资源 | resourceId,state" type="button" aria-label="收藏" aria-pressed="${interactions.favorited}">${starIcon}<b>${formatNumber((s.star || 0) + interactions.starDelta)}</b><i>${interactions.favorited ? '已收藏' : '收藏'}</i></button>`)
   if (!items.length) return ''
   return `<div class="fg-res-metrics">${items.join('')}</div>`
 }
@@ -343,18 +352,31 @@ function renderRecentActivities(resource, limit = 2, withHeader = true) {
   </section>`
 }
 
+function renderComposerPanel(kind, submitAct, cancelAct, id) {
+  const idAttr = id ? ` data-id="${id}"` : ''
+  return `<div class="fg-live-panel">
+    <input class="fg-live-input" data-act-input="${kind}" type="text" placeholder="${kind === 'reply' ? '回复…' : '说点什么…'}" maxlength="200">
+    <div class="fg-live-bar">
+      <div class="fg-live-send-group">
+        <button class="fg-live-cancel-btn" data-act="${cancelAct}" type="button">取消</button>
+        <button class="fg-live-send" data-act="${submitAct}"${idAttr} type="button">发送</button>
+      </div>
+    </div>
+  </div>`
+}
+
 function renderComposerFooter(resource) {
+  if (interactions.composerOpen) {
+    return `<div class="fg-composer-footer is-composing">${renderComposerPanel('comment', 'comment-submit', 'comment-cancel')}</div>`
+  }
   const actions = getResourceActions({
     contentType: resource.contentType,
     isOwner: isResourceOwner(resource, store.currentUser),
     isAdapted: Boolean(resource.forkedFrom),
   })
   const discussionActions = renderDiscussionActionBar(actions, resource.stats.star)
-  const entry = interactions.composerOpen
-    ? `<div class="fg-live-composer"><input class="fg-live-input" data-act-input="comment" type="text" placeholder="说点什么…" maxlength="200"><button class="fg-live-send" data-act="comment-submit" type="button">发布</button><button class="fg-live-cancel" data-act="comment-cancel" type="button">取消</button></div>`
-    : `<button class="fg-v2-comment-input" data-act="comment-open" type="button">说点什么…</button>`
   return `<div class="fg-composer-footer"><div class="fg-v2-discussion-composer" aria-label="参与讨论">
-    ${entry}
+    <button class="fg-v2-comment-input" data-act="comment-open" data-doc="sec7-comment" data-prd="点击展开小红书式输入面板（大输入框+取消/发送）；发送后评论进列表、讨论数 +1、带「我」标；空输入直接收起" data-track="/click/resourceDetailPage/comment | 发表评论 | resourceId" type="button">说点什么…</button>
     <div class="fg-v2-discussion-actions">${discussionActions}</div>
   </div></div>`
 }
@@ -371,7 +393,7 @@ function renderResourceDiscussionPanel(resource) {
 function renderFooterAuthor(resource) {
   return `<div class="fg-author nav-studio">
     <div class="av">${escapeHtml(resource.author.avatar || resource.author.name.slice(0, 1))}</div>
-    <span class="nm">${escapeHtml(resource.author.name)} <span class="vf" aria-label="认证教师"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span></span>
+    <span class="nm">${escapeHtml(resource.author.name)}</span>
   </div>`
 }
 
@@ -387,7 +409,7 @@ function renderResourceAboutPanel(resource) {
 }
 
 function renderResourceVersionsPanel(resource) {
-  const forkCards = resource.forks.map((id) => RESOURCES_BY_ID[id]).filter(Boolean).map((fork) => `<div class="fg-v2-fork-row" data-resource-id="${escapeHtml(fork.id)}" role="link" tabindex="0" aria-label="查看改编作品：${escapeHtml(fork.title)}"><img class="fg-v2-fork-cover" src="${fork.cover || COVERS[0]}" alt="" loading="lazy"><div class="fg-v2-fork-copy"><strong>${escapeHtml(fork.title)}</strong><p>${escapeHtml(fork.author.name)} · ${formatNumber(fork.stats.use)} 位老师使用</p></div><span class="fg-v2-fork-go" aria-hidden="true">查看</span></div>`).join('')
+  const forkCards = resource.forks.map((id) => RESOURCES_BY_ID[id]).filter(Boolean).map((fork) => `<div class="fg-v2-fork-row" data-resource-id="${escapeHtml(fork.id)}" data-doc="sec5-fork" data-prd="优质改编卡：hover 出现「查看」，整行点击跳转该改编资源详情" data-track="/click/resourceDetailPage/viewFork | 查看改编作品 | resourceId,forkId" role="link" tabindex="0" aria-label="查看改编作品：${escapeHtml(fork.title)}"><img class="fg-v2-fork-cover" src="${fork.cover || COVERS[0]}" alt="" loading="lazy"><div class="fg-v2-fork-copy"><strong>${escapeHtml(fork.title)}</strong><p>${escapeHtml(fork.author.name)} · ${formatNumber(fork.stats.use)} 位老师使用</p></div><span class="fg-v2-fork-go" aria-hidden="true">查看</span></div>`).join('')
   const body = forkCards || '<p class="fg-v2-forks-empty">还没有人改编这个作品，来做第一个改编版本吧。</p>'
   return `<section class="fg-v2-versions-panel" aria-labelledby="fg-v2-versions-title"><div class="fg-v2-version-head"><h2 id="fg-v2-versions-title">优质改编</h2><span>${formatNumber(resource.stats.adapt)} 个改编</span></div><div class="fg-v2-fork-list">${body}</div></section>`
 }
@@ -531,7 +553,7 @@ function renderMotherResourceHtml(template, resource) {
 function renderAdaptedAuthorLine(resource, attribution) {
   return `<div class="fg-author fg-adapted-author nav-studio">
     <div class="av">${escapeHtml(resource.author.avatar || resource.author.name.slice(0, 1))}</div>
-    <span class="nm">${escapeHtml(resource.author.name)} <span class="vf" aria-label="认证教师"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span></span>
+    <span class="nm">${escapeHtml(resource.author.name)}</span>
     <span class="fg-adapted-inline"><span aria-hidden="true">·</span><span>改编作品</span></span>
   </div>`
 }
@@ -594,6 +616,27 @@ function replacePreviewUrl(url) {
 }
 
 function handlePreviewClick(event) {
+  // 左上角品牌 logo → 返回排行榜(灵感)
+  if (event.target.closest('.fg-brand')) {
+    store.view = 'rank'
+    store.primaryNav = 'home'
+    return
+  }
+
+  // 交互动作：收藏 / 评论 / 回复 / 点赞 / 置顶 / 删除
+  const act = event.target.closest('[data-act]')
+  if (act) {
+    event.preventDefault()
+    event.stopPropagation()
+    handleAction(act.dataset.act, act.dataset.id)
+    return
+  }
+
+  // 主操作反馈
+  if (event.target.closest('.nav-adapt')) { event.stopPropagation(); showToast('已为你创建改编副本，正在进入改编…'); return }
+  if (event.target.closest('.fg-save-copy')) { event.stopPropagation(); showToast('已复制副本到「我的空间」'); return }
+  if (event.target.closest('.fg-action-download')) { event.stopPropagation(); showToast('开始下载资源包…'); return }
+
   const panel = event.target.closest('[data-panel]')
   if (panel) {
     const nextPanel = getResourcePanelState(panel.dataset.panel).activePanel
@@ -627,7 +670,10 @@ watch(() => store.resourceId, () => {
   panelState.value = 'detail'
   previewEnabled.value = false
   Object.assign(previewState, getResourcePreviewState(actualResource.value, store.currentUser))
+  seedInteractions(actualResource.value)
 })
+
+seedInteractions(actualResource.value)
 
 const renderedRaw = computed(() => {
   const resource = currentResource.value
@@ -642,5 +688,8 @@ const renderedRaw = computed(() => {
     <div class="page" @click="handlePreviewClick">
       <div style="display:contents" v-html="renderedRaw"></div>
     </div>
+    <transition name="fg-toast">
+      <div v-if="interactions.toast" class="fg-toast" role="status">{{ interactions.toast }}</div>
+    </transition>
   </div>
 </template>

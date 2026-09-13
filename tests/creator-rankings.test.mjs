@@ -39,7 +39,7 @@ test('创作达人榜和新锐创作者榜每个名次都有可打开的代表�
   }
 })
 
-test('课堂使用榜和创作达人榜的两列列表都保留 6 项，不产生悬空卡片', async () => {
+test('课堂使用榜为三卡加 6 行；创作达人榜为 6 张创作者大卡，数字按万展示', async () => {
   const [{ default: RankBoardCard }, { BOARDS }] = await Promise.all([
     loadModule('/src/components/RankBoardCard.vue'),
     loadModule('/src/data/rank.js'),
@@ -48,30 +48,37 @@ test('课堂使用榜和创作达人榜的两列列表都保留 6 项，不产�
   const recognized = BOARDS.find((item) => item.key === 'recognized')
 
   const classroomHtml = await renderToString(createSSRApp(RankBoardCard, { board: classroom, variant: 'main' }))
-  const recognizedHtml = await renderToString(createSSRApp(RankBoardCard, { board: recognized, variant: 'main' }))
+  const recognizedHtml = await renderToString(createSSRApp(RankBoardCard, { board: recognized, variant: 'creator-card' }))
 
   assert.equal((classroomHtml.match(/rank-podium-card/g) || []).length, 3)
   assert.equal((classroomHtml.match(/rank-list-row/g) || []).length, 6)
-  assert.equal((recognizedHtml.match(/rank-podium-card/g) || []).length, 3)
-  assert.equal((recognizedHtml.match(/rank-list-row/g) || []).length, 6)
+  assert.equal((recognizedHtml.match(/rank-creator-card nav-res/g) || []).length, 6)
+  assert.doesNotMatch(recognizedHtml, /rank-list-row|rank-chart-row/)
+  // 只标记前三名，且不再有「代表作」角标
+  assert.equal((recognizedHtml.match(/\brank-place\b/g) || []).length, 3)
+  assert.doesNotMatch(recognizedHtml, /代表作/)
   assert.match(recognizedHtml, /立体几何·生活建模/)
   assert.match(recognizedHtml, /沈知微/)
-  assert.doesNotMatch(recognizedHtml, /creator-work-card/)
+  assert.match(recognizedHtml, /4\.6万/)
+  assert.doesNotMatch(recognizedHtml, /46,200/)
   assert.doesNotMatch(recognizedHtml, /nav-studio/)
 })
 
-test('新锐创作者榜复用每周热门网格并展示 8 项', async () => {
+test('新锐创作者榜采用前三大卡加紧凑榜单，紧凑行不标序号', async () => {
   const [{ default: RankBoardCard }, { BOARDS }] = await Promise.all([
     loadModule('/src/components/RankBoardCard.vue'),
     loadModule('/src/data/rank.js'),
   ])
   const rising = BOARDS.find((item) => item.key === 'rising')
-  const risingHtml = await renderToString(createSSRApp(RankBoardCard, { board: rising, variant: 'grid' }))
+  const risingHtml = await renderToString(createSSRApp(RankBoardCard, { board: rising, variant: 'creator-main' }))
 
-  assert.equal((risingHtml.match(/rank-grid-card/g) || []).length, 8)
+  assert.equal((risingHtml.match(/rank-creator-card nav-res/g) || []).length, 3)
+  assert.equal((risingHtml.match(/rank-chart-row/g) || []).length, 6)
+  // 前三名已在大卡里标记，紧凑行整列不出序号
+  assert.doesNotMatch(risingHtml, /rank-chart-num/)
+  assert.doesNotMatch(risingHtml, /代表作/)
   assert.match(risingHtml, /祥林嫂 · 县中简化版/)
   assert.match(risingHtml, /周涛/)
-  assert.doesNotMatch(risingHtml, /creator-work-rail/)
   assert.doesNotMatch(risingHtml, /nav-studio/)
 })
 

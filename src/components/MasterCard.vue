@@ -34,9 +34,6 @@ const handleLogoError = () => {
       <div class="mc-head">
         <div class="mc-name" :title="m.name">
           <span class="mc-name-text">{{ m.name }}</span>
-          <span v-if="m.kind === 'expert'" class="mc-ck" title="认证名师">
-            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>
-          </span>
         </div>
         <div class="mc-cred" :title="m.cred">{{ m.cred }}</div>
       </div>
@@ -67,7 +64,6 @@ const handleLogoError = () => {
 .mc-head { min-width:0; padding-top:1px; min-height:56px; }
 .mc-name { min-width:0; font-size:16px; font-weight:600; color:#141F1B; line-height:22px; display:flex; align-items:center; gap:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .mc-name-text { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.mc-ck { display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px; border-radius:50%; background:#D9AF3C; margin-top:2px; }
 .mc-cred { min-width:0; font-size:12px; color:#7A7C7C; margin-top:5px; line-height:18px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .mc-bio { min-width:0; font-size:13px; color:#7A7C7C; line-height:21px; margin-top:8px; min-height:42px; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; text-overflow:ellipsis; }
 /* 数字+关注锁到卡片底部,跨卡对齐 */
