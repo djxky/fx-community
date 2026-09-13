@@ -26,6 +26,7 @@ const interactions = reactive({
   favorited: false,
   starDelta: 0,
   toast: '',
+  toastAction: '',
   composerOpen: false,
   replyingTo: null,
   comments: [],
@@ -57,10 +58,18 @@ function findComment(id) {
   }
   return null
 }
-function showToast(msg) {
+function showToast(msg, action = '') {
   interactions.toast = msg
+  interactions.toastAction = action
   clearTimeout(showToast._t)
-  showToast._t = setTimeout(() => { interactions.toast = '' }, 2200)
+  showToast._t = setTimeout(() => { interactions.toast = ''; interactions.toastAction = '' }, 2600)
+}
+function onToastClick() {
+  if (!interactions.toastAction) return
+  const target = interactions.toastAction
+  clearTimeout(showToast._t)
+  interactions.toast = ''; interactions.toastAction = ''
+  store.view = target
 }
 function sortedComments() {
   return [...interactions.comments].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0))
@@ -102,12 +111,6 @@ function submitReply(id) {
   interactions.count += 1
   interactions.replyingTo = null
 }
-function toggleLike(id) {
-  const found = findComment(id)
-  if (!found) return
-  found.node.liked = !found.node.liked
-  found.node.likes += found.node.liked ? 1 : -1
-}
 function togglePin(id) {
   const found = findComment(id)
   if (!found || found.parent) return
@@ -122,27 +125,26 @@ function removeNode(id) {
 }
 function handleAction(act, id) {
   switch (act) {
-    case 'favorite': interactions.favorited = !interactions.favorited; interactions.starDelta = interactions.favorited ? 1 : 0; break
+    case 'favorite':
+      interactions.favorited = !interactions.favorited
+      interactions.starDelta = interactions.favorited ? 1 : 0
+      if (interactions.favorited) showToast('收藏成功，可前往「我的知识库」查看', 'mylib')
+      break
     case 'comment-open': interactions.composerOpen = true; focusInput('comment'); break
     case 'comment-cancel': interactions.composerOpen = false; break
     case 'comment-submit': submitComment(); break
     case 'reply-open': interactions.replyingTo = id; focusInput('reply'); break
     case 'reply-cancel': interactions.replyingTo = null; break
     case 'reply-submit': submitReply(id); break
-    case 'like': toggleLike(id); break
     case 'pin': togglePin(id); break
     case 'delete': removeNode(id); break
     default: break
   }
 }
 
-const LIVE_ICONS = { like: '👍' }
-function renderLikeBtn(node) {
-  return `<button class="fg-cmt-like${node.liked ? ' is-on' : ''}" data-act="like" data-id="${node.id}" type="button">${LIVE_ICONS.like} ${node.likes}</button>`
-}
 function renderCmtActions(node, isReply) {
   const author = isAuthorView()
-  const parts = [renderLikeBtn(node), `<button class="fg-cmt-act" data-act="reply-open" data-id="${node.id}" type="button">回复</button>`]
+  const parts = [`<button class="fg-cmt-act" data-act="reply-open" data-id="${node.id}" type="button">回复</button>`]
   if (!isReply && author) parts.push(`<button class="fg-cmt-act" data-act="pin" data-id="${node.id}" type="button">${node.pinned ? '取消置顶' : '置顶'}</button>`)
   if (author || node.mine) parts.push(`<button class="fg-cmt-act fg-cmt-del" data-act="delete" data-id="${node.id}" type="button">删除</button>`)
   return `<div class="fg-cmt-actions">${parts.join('')}</div>`
@@ -239,7 +241,7 @@ function renderTopicMembership(resource) {
   const membership = getResourceTopicMembership(resource)
   if (!membership) return ''
 
-  return `<div class="rd-topic-strip" data-doc="sec3-topic" data-prd="所属专题胶囊：仅当资源有 topicMembership 时显示，点击进入该策展专题合集页" data-track="/click/resourceDetailPage/topic | 进入所属专题 | topicId" aria-label="${escapeHtml(membership.label)}">
+  return `<div class="rd-topic-strip" data-track="/click/resourceDetailPage/topic | 进入所属专题 | 无" aria-label="${escapeHtml(membership.label)}">
     <span>${escapeHtml(membership.label)}</span>
     <span class="rd-topic-dot" aria-hidden="true">·</span>
     <strong>${escapeHtml(membership.title)}</strong>
@@ -247,7 +249,7 @@ function renderTopicMembership(resource) {
 }
 
 const ACTION_ICONS = {
-  favorite: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4 4.1.6-3 3 .7 4.4L12 17l-3.7 2 .7-4.4-3-3 4.1-.6z"></path></svg>',
+  favorite: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>',
   share: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4"></path><path d="M7 9l5-5 5 5"></path><path d="M5 13v6h14v-6"></path></svg>',
   adapt: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4 4.1.6-3 3 .7 4.4L12 17l-3.7 2 .7-4.4-3-3 4.1-.6z"></path></svg>',
 }
@@ -301,10 +303,14 @@ function renderResourceFit(resource) {
 function renderResourceStats(resource) {
   const s = resource.stats || {}
   const useIcon = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"></path><circle cx="9.5" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>'
-  const starIcon = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 21l-4.9-2.6.9-5.5-4-3.9 5.5-.8z"></path></svg>'
+  const starIcon = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>'
   const items = []
   if (s.use != null) items.push(`<span class="fg-res-metric" aria-label="使用人数">${useIcon}<b>${formatNumber(s.use)}</b><i>使用</i></span>`)
-  if (s.star != null) items.push(`<button class="fg-res-metric fg-res-metric-fav${interactions.favorited ? ' is-on' : ''}" data-act="favorite" data-doc="sec2-fav" data-prd="点击收藏：星标变金、收藏数 +1、文案「收藏」→「已收藏」，再点取消" data-track="/click/resourceDetailPage/favorite | 收藏资源 | resourceId,state" type="button" aria-label="收藏" aria-pressed="${interactions.favorited}">${starIcon}<b>${formatNumber((s.star || 0) + interactions.starDelta)}</b><i>${interactions.favorited ? '已收藏' : '收藏'}</i></button>`)
+  if (s.star != null) {
+    const starCount = (s.star || 0) + interactions.starDelta
+    const favBody = starCount > 0 ? `<b>${formatNumber(starCount)}</b>` : '<i>收藏</i>'
+    items.push(`<button class="fg-res-metric fg-res-metric-fav${interactions.favorited ? ' is-on' : ''}" data-act="favorite" data-track="/click/resourceDetailPage/favorite | 收藏资源 | 无" type="button" aria-label="收藏" aria-pressed="${interactions.favorited}">${starIcon}${favBody}</button>`)
+  }
   if (!items.length) return ''
   return `<div class="fg-res-metrics">${items.join('')}</div>`
 }
@@ -317,7 +323,7 @@ function renderResourceIcon(resource) {
 
 const ACTIVITY_ICONS = {
   adapt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"></path><path d="M17 7L7 17"></path><path d="M7 11V7h4"></path></svg>',
-  favorite: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4-3.9-3.8 5.4-.8z"></path></svg>',
+  favorite: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>',
   download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="M7.5 10.5L12 15l4.5-4.5"></path><path d="M5 20h14"></path></svg>',
 }
 
@@ -341,10 +347,9 @@ function renderRecentActivities(resource, limit = 2, withHeader = true) {
   const rows = activities.map((activity) => renderActivityRow(activity)).join('')
   const duplicateRows = activities.map((activity) => renderActivityRow(activity, true)).join('')
 
-  return `<section class="fg-activity-card${withHeader ? '' : ' is-compact'}" aria-labelledby="fg-activity-title">
+  return `<section class="fg-activity-card${withHeader ? '' : ' is-compact'}"${withHeader ? ' data-sec="5"' : ''} aria-labelledby="fg-activity-title">
     ${withHeader ? `<div class="fg-activity-head">
       <h3 id="fg-activity-title">最近动态</h3>
-      <span class="fg-activity-live"><i aria-hidden="true"></i>持续更新</span>
     </div>` : ''}
     <div class="fg-activity-viewport" role="list" aria-label="关于这个资源的最近动态">
       <div class="fg-activity-track">${rows}${duplicateRows}</div>
@@ -376,14 +381,14 @@ function renderComposerFooter(resource) {
   })
   const discussionActions = renderDiscussionActionBar(actions, resource.stats.star)
   return `<div class="fg-composer-footer"><div class="fg-v2-discussion-composer" aria-label="参与讨论">
-    <button class="fg-v2-comment-input" data-act="comment-open" data-doc="sec7-comment" data-prd="点击展开小红书式输入面板（大输入框+取消/发送）；发送后评论进列表、讨论数 +1、带「我」标；空输入直接收起" data-track="/click/resourceDetailPage/comment | 发表评论 | resourceId" type="button">说点什么…</button>
+    <button class="fg-v2-comment-input" data-act="comment-open" data-track="/click/resourceDetailPage/comment | 发表评论 | 无" type="button">说点什么…</button>
     <div class="fg-v2-discussion-actions">${discussionActions}</div>
   </div></div>`
 }
 
 function renderResourceDiscussionPanel(resource) {
   const list = sortedComments().map(renderComment).join('')
-  return `<section class="fg-v2-discussion-panel" aria-labelledby="fg-v2-discussion-title">
+  return `<section class="fg-v2-discussion-panel" data-sec="6" aria-labelledby="fg-v2-discussion-title">
     <div class="fg-v2-discussion-head"><h3 id="fg-v2-discussion-title">讨论 <span>${formatNumber(interactions.count)}</span></h3><button type="button" class="fg-v2-follow-link" data-act="comment-open">参与讨论</button></div>
     <div class="fg-v2-comment-list" aria-label="精选评论">${list}</div>
     <button type="button" class="fg-v2-more-comments" data-loadmore>加载更多讨论</button>
@@ -409,9 +414,9 @@ function renderResourceAboutPanel(resource) {
 }
 
 function renderResourceVersionsPanel(resource) {
-  const forkCards = resource.forks.map((id) => RESOURCES_BY_ID[id]).filter(Boolean).map((fork) => `<div class="fg-v2-fork-row" data-resource-id="${escapeHtml(fork.id)}" data-doc="sec5-fork" data-prd="优质改编卡：hover 出现「查看」，整行点击跳转该改编资源详情" data-track="/click/resourceDetailPage/viewFork | 查看改编作品 | resourceId,forkId" role="link" tabindex="0" aria-label="查看改编作品：${escapeHtml(fork.title)}"><img class="fg-v2-fork-cover" src="${fork.cover || COVERS[0]}" alt="" loading="lazy"><div class="fg-v2-fork-copy"><strong>${escapeHtml(fork.title)}</strong><p>${escapeHtml(fork.author.name)} · ${formatNumber(fork.stats.use)} 位老师使用</p></div><span class="fg-v2-fork-go" aria-hidden="true">查看</span></div>`).join('')
+  const forkCards = resource.forks.map((id) => RESOURCES_BY_ID[id]).filter(Boolean).map((fork) => `<div class="fg-v2-fork-row" data-resource-id="${escapeHtml(fork.id)}" data-track="/click/resourceDetailPage/viewFork | 查看改编作品 | 无" role="link" tabindex="0" aria-label="查看改编作品：${escapeHtml(fork.title)}"><img class="fg-v2-fork-cover" src="${fork.cover || COVERS[0]}" alt="" loading="lazy"><div class="fg-v2-fork-copy"><strong>${escapeHtml(fork.title)}</strong><p>${escapeHtml(fork.author.name)} · ${formatNumber(fork.stats.use)} 位老师使用</p></div><span class="fg-v2-fork-go" aria-hidden="true">查看</span></div>`).join('')
   const body = forkCards || '<p class="fg-v2-forks-empty">还没有人改编这个作品，来做第一个改编版本吧。</p>'
-  return `<section class="fg-v2-versions-panel" aria-labelledby="fg-v2-versions-title"><div class="fg-v2-version-head"><h2 id="fg-v2-versions-title">优质改编</h2><span>${formatNumber(resource.stats.adapt)} 个改编</span></div><div class="fg-v2-fork-list">${body}</div></section>`
+  return `<section class="fg-v2-versions-panel" data-sec="4" aria-labelledby="fg-v2-versions-title"><div class="fg-v2-version-head"><h2 id="fg-v2-versions-title">优质改编</h2><span>${formatNumber(resource.stats.adapt)} 个改编</span></div><div class="fg-v2-fork-list">${body}</div></section>`
 }
 
 function renderResourceDetailPanel(resource) {
@@ -689,7 +694,9 @@ const renderedRaw = computed(() => {
       <div style="display:contents" v-html="renderedRaw"></div>
     </div>
     <transition name="fg-toast">
-      <div v-if="interactions.toast" class="fg-toast" role="status">{{ interactions.toast }}</div>
+      <div v-if="interactions.toast" class="fg-toast" :class="{ 'is-link': interactions.toastAction }" role="status" @click="onToastClick">
+        {{ interactions.toast }}<span v-if="interactions.toastAction" class="fg-toast-go">前往 →</span>
+      </div>
     </transition>
   </div>
 </template>

@@ -4,44 +4,55 @@ import { readFile } from 'node:fs/promises'
 
 const studioHtml = await readFile(new URL('../src/views/raw/studio.html', import.meta.url), 'utf8')
 
-function ownerHero() {
+function hero(mode) {
+  const guestStart = studioHtml.indexOf('<div class="mode-guest">')
   const ownerStart = studioHtml.indexOf('<div class="mode-owner">')
   const tabsStart = studioHtml.indexOf('<!-- tabs(真切换) -->')
 
+  assert.notEqual(guestStart, -1)
   assert.notEqual(ownerStart, -1)
   assert.notEqual(tabsStart, -1)
-  return studioHtml.slice(ownerStart, tabsStart)
+  return mode === 'guest' ? studioHtml.slice(guestStart, ownerStart) : studioHtml.slice(ownerStart, tabsStart)
 }
 
-test('我的主页把身份标签、关注和粉丝合并为同一行', () => {
-  const hero = ownerHero()
-  const metaLine = hero.match(/<div class="st-owner-meta-line"[^>]*>([\s\S]*?)<\/div>/)?.[1]
+function statLabels(html) {
+  const stats = html.slice(html.indexOf('class="st-stats"'))
+  return [...stats.matchAll(/margin-left:6px;">([^<]+)<\/span>/g)].map((m) => m[1])
+}
 
-  assert.ok(metaLine)
-  assert.match(metaLine, /语文[\s\S]*小学[\s\S]*爱做沉浸式互动课[\s\S]*5[\s\S]*关注[\s\S]*860\+[\s\S]*粉丝/)
-  assert.doesNotMatch(metaLine, /被使用|被收藏|被改编/)
-  assert.doesNotMatch(hero, /欢迎大家收藏和下载我的作品/)
-  assert.doesNotMatch(hero, /class="st-owner-relations"/)
+function tabs(mode) {
+  const pattern = mode === 'guest'
+    ? /<div class="mode-guest" style="display:flex; gap:28px;">([\s\S]*?)<\/div>/
+    : /<div class="mode-owner st-owner-tabs">([\s\S]*?)<\/div>/
+  return studioHtml.match(pattern)?.[1]
+}
+
+test('客态数据行只有被使用、被收藏；主态多关注、关注者且样式一致', () => {
+  assert.deepEqual(statLabels(hero('guest')), ['被使用', '被收藏'])
+  assert.deepEqual(statLabels(hero('owner')), ['被使用', '被收藏', '关注', '关注者'])
+  for (const mode of ['guest', 'owner']) {
+    assert.doesNotMatch(hero(mode), /获赞|粉丝|创作影响力|被改编|st-relations/, mode)
+  }
+  assert.doesNotMatch(hero('guest'), /关注者/)
 })
 
-test('我的主页把使用、改编和收藏归入创作影响力', () => {
-  const hero = ownerHero()
-  const impact = hero.match(/<div class="st-owner-impact"[^>]*>([\s\S]*?)<\/div>\s*<\/div>/)?.[1]
-
-  assert.ok(impact)
-  assert.equal((impact.match(/class="st-owner-impact-metric/g) || []).length, 3)
-  assert.match(impact, /1,240[\s\S]*被使用[\s\S]*86[\s\S]*被改编[\s\S]*633[\s\S]*被收藏/)
-  assert.doesNotMatch(impact, /关注|粉丝/)
+test('主态、客态页签都带数字且都有技能页签', () => {
+  for (const mode of ['guest', 'owner']) {
+    const html = tabs(mode)
+    assert.ok(html, mode)
+    assert.match(html, /data-stab="s-wk">作品 \d+<\/span>/, mode)
+    assert.match(html, /data-stab="s-sk">技能 \d+<\/span>/, mode)
+    assert.match(html, /data-stab="s-tp">专题 (<span data-album-count>)?\d+/, mode)
+    assert.match(html, /data-stab="s-ab">关于<\/span>/, mode)
+  }
 })
 
-test('我的主页标签只展示内容类型并提供技能入口', () => {
-  const ownerTabs = studioHtml.match(/<div class="mode-owner st-owner-tabs">([\s\S]*?)<\/div>/)?.[1]
+test('技能卡只出现在技能页签，作品卡底栏展示收藏数', () => {
+  const works = studioHtml.slice(studioHtml.indexOf('id="s-wk"'), studioHtml.indexOf('id="s-sk"'))
+  const skills = studioHtml.slice(studioHtml.indexOf('id="s-sk"'), studioHtml.indexOf('id="s-tp"'))
 
-  assert.ok(ownerTabs)
-  assert.match(ownerTabs, /data-stab="s-wk">作品<\/span>/)
-  assert.match(ownerTabs, /data-stab="s-sk">技能<\/span>/)
-  assert.match(ownerTabs, /data-stab="s-tp">专题<\/span>/)
-  assert.match(ownerTabs, /data-stab="s-ab">关于<\/span>/)
-  assert.doesNotMatch(ownerTabs, /\d/)
-  assert.match(studioHtml, /class="spanel" id="s-sk"/)
+  assert.doesNotMatch(works, /nav-skill/)
+  assert.equal((skills.match(/class="stcard mode-guest nav-skill"/g) || []).length, 2)
+  assert.match(skills, /class="stcard mode-owner/)
+  assert.doesNotMatch(studioHtml, /♥/)
 })

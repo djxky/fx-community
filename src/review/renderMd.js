@@ -41,7 +41,8 @@ export function renderMd(md) {
       flushList(); let t = line.replace(/^##\s+/, ''); let badge = ''
       const bm = t.match(/\s*\[(NEW|UPDATED)\]\s*$/i)
       if (bm) { badge = ' <span class="rp-badge ' + bm[1].toLowerCase() + '">' + bm[1].toUpperCase() + '</span>'; t = t.replace(/\s*\[(NEW|UPDATED)\]\s*$/i, '') }
-      out.push('<h2>' + inline(t) + badge + '</h2>'); return
+      const nm = t.match(/^(\d+)[.．]/); const id = nm ? ' id="rp-sec-' + nm[1] + '"' : '' // N 供页面角标定位
+      out.push('<h2' + id + '>' + inline(t) + badge + '</h2>'); return
     }
     if (/^###\s/.test(line)) { flushList(); out.push('<h3>' + inline(line.replace(/^###\s+/, '')) + '</h3>'); return }
     if (/^####\s/.test(line)) { flushList(); out.push('<h4>' + inline(line.replace(/^####\s+/, '')) + '</h4>'); return }

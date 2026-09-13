@@ -9,7 +9,6 @@ const props = defineProps({
   variant: { type: String, default: 'compact' },
 })
 
-const medals = ['金', '银', '铜']
 const showAll = ref(false)
 const compactExpanded = ref(false)
 
@@ -40,10 +39,6 @@ const chartItems = computed(() => {
   return []
 })
 
-function placeClass(index) {
-  return index === 0 ? 'rank-gold' : index === 1 ? 'rank-silver' : index === 2 ? 'rank-bronze' : 'rank-number'
-}
-
 function itemTitle(item) {
   return item.workTitle || item.name
 }
@@ -72,7 +67,7 @@ function itemKind(item) {
     <!-- A 焦点大卡（创作者版）+ C 紧凑榜单，按 variant 决定各渲染多少条 -->
     <template v-else-if="variant === 'creator-card' || variant === 'creator-main' || variant === 'chart'">
       <div v-if="cardItems.length" class="rank-creator-grid">
-        <article v-for="(it, i) in cardItems" :key="it.rankKey || it.resourceId || it.name" class="rank-creator-card nav-res" :data-resource-id="it.resourceId" tabindex="0" role="button">
+        <article v-for="(it, i) in cardItems" :key="it.rankKey || it.resourceId || it.name" class="rank-creator-card nav-res" :data-resource-id="it.resourceId" data-track="/click/rankPage/boardItem | 点击榜单条目 | boardName#STRING,resourceId#STRING,position#INT" tabindex="0" role="button">
           <div class="rank-creator-head">
             <span class="rank-avatar rank-creator-avatar"><img v-if="it.portrait" :src="it.portrait" alt="" /><b v-else>{{ it.initial }}</b></span>
             <div class="rank-creator-headtext">
@@ -82,7 +77,6 @@ function itemKind(item) {
           </div>
           <div class="rank-creator-media">
             <img :src="it.cover" :alt="itemTitle(it) + '封面'" />
-            <span v-if="i < 3" class="rank-place" :class="placeClass(i)"><b>{{ medals[i] }}</b>{{ i + 1 }}</span>
           </div>
           <h3 class="rank-creator-caption">{{ itemTitle(it) }}</h3>
         </article>
@@ -91,9 +85,7 @@ function itemKind(item) {
       <!-- C 紧凑榜单：序号 + 作品封面 + 作品名 + 创作者署名 + 数据，两列密排。
            点击目标是资源详情，故资源为视觉主体，创作者只作署名。 -->
       <div v-if="chartItems.length" class="rank-chart rank-chart-2col" :class="{ 'rank-chart-after-cards': cardItems.length }">
-        <div v-for="(it, i) in chartItems" :key="it.rankKey || it.resourceId || it.name" class="rank-chart-row nav-res" :data-resource-id="it.resourceId" tabindex="0" role="button">
-          <!-- 只标记前三名；若前三名已在上方大卡里（chartOffset > 0），整列不出 -->
-          <span v-if="chartOffset === 0" class="rank-chart-num" :class="{ on: i < 3 }">{{ i < 3 ? i + 1 : '' }}</span>
+        <div v-for="(it, i) in chartItems" :key="it.rankKey || it.resourceId || it.name" class="rank-chart-row nav-res" :data-resource-id="it.resourceId" data-track="/click/rankPage/boardItem | 点击榜单条目 | boardName#STRING,resourceId#STRING,position#INT" tabindex="0" role="button">
           <span class="rank-chart-thumb"><img :src="it.cover" :alt="itemTitle(it) + '封面'" /></span>
           <span class="rank-chart-copy">
             <strong>{{ itemTitle(it) }}</strong>
@@ -107,10 +99,9 @@ function itemKind(item) {
     <!-- 主榜：三名重点位 + 两列密集列表 -->
     <template v-else-if="variant === 'main'">
       <div class="rank-podium">
-        <article v-for="(it, i) in podiumItems" :key="it.rankKey || it.resourceId || it.name" class="rank-podium-card nav-res" :data-resource-id="it.resourceId" tabindex="0" role="button">
+        <article v-for="(it, i) in podiumItems" :key="it.rankKey || it.resourceId || it.name" class="rank-podium-card nav-res" :data-resource-id="it.resourceId" data-track="/click/rankPage/boardItem | 点击榜单条目 | boardName#STRING,resourceId#STRING,position#INT" tabindex="0" role="button">
           <div class="rank-podium-media">
             <img :src="it.cover" :alt="itemTitle(it) + '封面'" />
-            <span class="rank-place" :class="placeClass(i)"><b>{{ medals[i] }}</b>{{ i + 1 }}</span>
           </div>
           <div class="rank-podium-body">
             <h3>{{ itemTitle(it) }}</h3>
@@ -124,7 +115,7 @@ function itemKind(item) {
       </div>
 
       <div v-if="restItems.length" class="rank-list rank-list-2col">
-        <div v-for="it in restItems" :key="it.rankKey || it.resourceId || it.name" class="rank-list-row nav-res" :data-resource-id="it.resourceId" tabindex="0" role="button">
+        <div v-for="it in restItems" :key="it.rankKey || it.resourceId || it.name" class="rank-list-row nav-res" :data-resource-id="it.resourceId" data-track="/click/rankPage/boardItem | 点击榜单条目 | boardName#STRING,resourceId#STRING,position#INT" tabindex="0" role="button">
           <span class="rank-list-thumb"><img :src="it.cover" :alt="itemTitle(it) + '封面'" /></span>
           <span class="rank-list-copy">
             <strong>{{ itemTitle(it) }}</strong>
@@ -141,10 +132,9 @@ function itemKind(item) {
     <!-- 资源网格（每周热门）：web 端自然换行，无横滑 -->
     <template v-else-if="variant === 'grid'">
       <div class="rank-grid">
-        <article v-for="(it, i) in filteredItems.slice(0, 6)" :key="it.rankKey || it.resourceId || it.name" class="rank-grid-card nav-res" :data-resource-id="it.resourceId" tabindex="0" role="button">
+        <article v-for="(it, i) in filteredItems.slice(0, 6)" :key="it.rankKey || it.resourceId || it.name" class="rank-grid-card nav-res" :data-resource-id="it.resourceId" data-track="/click/rankPage/boardItem | 点击榜单条目 | boardName#STRING,resourceId#STRING,position#INT" tabindex="0" role="button">
           <div class="rank-grid-media">
             <img :src="it.cover" :alt="itemTitle(it) + '封面'" />
-            <span v-if="i < 3" class="rank-place" :class="placeClass(i)"><b>{{ medals[i] }}</b>{{ i + 1 }}</span>
           </div>
           <div class="rank-grid-body">
             <h3>{{ itemTitle(it) }}</h3>
@@ -160,7 +150,7 @@ function itemKind(item) {
     <!-- 改编卡（优质改编）：3 列，突出改编脉络 -->
     <template v-else-if="variant === 'remix'">
       <div class="rank-remix">
-        <article v-for="it in filteredItems.slice(0, 3)" :key="it.rankKey || it.resourceId || it.name" class="rank-remix-card nav-res" :data-resource-id="it.resourceId" tabindex="0" role="button">
+        <article v-for="it in filteredItems.slice(0, 3)" :key="it.rankKey || it.resourceId || it.name" class="rank-remix-card nav-res" :data-resource-id="it.resourceId" data-track="/click/rankPage/boardItem | 点击榜单条目 | boardName#STRING,resourceId#STRING,position#INT" tabindex="0" role="button">
           <div class="rank-remix-media">
             <img :src="it.cover" :alt="it.name + '封面'" />
             <span class="rank-remix-eyebrow">改编脉络</span>
@@ -179,8 +169,7 @@ function itemKind(item) {
     <!-- 创作者 compact -->
     <template v-else>
       <div class="rank-compact-list">
-        <div v-for="(it, i) in compactItems" :key="it.rankKey || it.name" class="rank-compact-row" :class="it.target === 'resource' ? 'nav-res' : 'nav-studio'" :data-resource-id="it.resourceId" tabindex="0" role="button">
-          <span class="rank-place" :class="placeClass(i)"><b v-if="i < 3">{{ medals[i] }}</b>{{ i + 1 }}</span>
+        <div v-for="(it, i) in compactItems" :key="it.rankKey || it.name" class="rank-compact-row" :class="it.target === 'resource' ? 'nav-res' : 'nav-studio'" :data-resource-id="it.resourceId" data-track="/click/rankPage/boardItem | 点击榜单条目 | boardName#STRING,resourceId#STRING,position#INT" tabindex="0" role="button">
           <span class="rank-avatar rank-compact-avatar"><img v-if="it.portrait" :src="it.portrait" alt="" /><img v-else-if="it.logo" :src="it.logo" alt="" /><b v-else>{{ it.initial }}</b></span>
           <span class="rank-compact-copy"><strong>{{ it.name }}</strong><small>{{ it.sub }}</small></span>
           <span class="rank-compact-metric"><b>{{ formatCount(it.metric) }}</b><small>{{ it.unit }}</small></span>
@@ -227,15 +216,13 @@ button { font:inherit; }
 .rank-creator-name { overflow:hidden; color:#141F1B; font-size:15px; font-weight:650; line-height:20px; text-overflow:ellipsis; white-space:nowrap; }
 .rank-creator-stats { overflow:hidden; color:#9A9A9A; font-size:12px; line-height:17px; text-overflow:ellipsis; white-space:nowrap; }
 .rank-creator-stats b { color:#141F1B; font-weight:700; font-variant-numeric:tabular-nums; }
-/* C 紧凑榜单：序号 + 小图 + 名称 + 数据 */
+/* C 紧凑榜单：小图 + 名称 + 数据（缩略图放大到 96×60） */
 .rank-chart-2col { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 22px; }
 .rank-chart-after-cards { margin-top:18px; }
-.rank-chart-row { display:flex; align-items:center; gap:11px; padding:10px 8px; border-top:1px solid #F1F1F1; border-radius:11px; cursor:pointer; transition:background .15s ease; }
+.rank-chart-row { display:flex; align-items:center; gap:14px; padding:10px 8px; border-top:1px solid #F1F1F1; border-radius:11px; cursor:pointer; transition:background .15s ease; }
 .rank-chart-2col > .rank-chart-row:nth-child(-n+2) { border-top:0; }
 .rank-chart-row:hover { background:#F7F7F7; }
-.rank-chart-num { flex:0 0 18px; text-align:center; color:#C4C7C6; font-size:13px; font-weight:700; font-variant-numeric:tabular-nums; }
-.rank-chart-num.on { color:#D9AF3C; }
-.rank-chart-thumb { flex:0 0 52px; width:52px; height:38px; overflow:hidden; border-radius:9px; background:#F7F7F7; }
+.rank-chart-thumb { flex:0 0 96px; width:96px; height:60px; overflow:hidden; border-radius:10px; background:#F7F7F7; }
 .rank-chart-thumb img { width:100%; height:100%; display:block; object-fit:cover; }
 .rank-chart-copy { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:4px; }
 .rank-chart-copy strong { overflow:hidden; color:#141F1B; font-size:14px; font-weight:650; text-overflow:ellipsis; white-space:nowrap; }
@@ -252,14 +239,14 @@ button { font:inherit; }
 .rank-podium-metric small { margin-left:3px; color:#9A9A9A; font-size:10px; }
 .rank-podium-metric .rank-metric-note, .rank-list-metric .rank-metric-note { display:block; margin-left:0; margin-top:1px; color:#B0B2B1; font-size:9px; font-weight:500; }
 
-/* 两列密集列表 */
+/* 两列密集列表（缩略图放大到 96×60） */
 .rank-list { margin-top:12px; }
 .rank-list-2col { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 22px; }
-.rank-list-row { display:flex; align-items:center; gap:13px; padding:11px 8px; border-radius:11px; cursor:pointer; border-top:1px solid #F1F1F1; transition:background .15s ease; }
+.rank-list-row { display:flex; align-items:center; gap:14px; padding:11px 8px; border-radius:11px; cursor:pointer; border-top:1px solid #F1F1F1; transition:background .15s ease; }
 .rank-list-2col > .rank-list-row:nth-child(-n+2) { border-top:0; }
 .rank-list-row:hover { background:#F7F7F7; }
 .rank-list-num { flex:0 0 20px; text-align:center; color:#C4C7C6; font-size:13px; font-weight:600; font-variant-numeric:tabular-nums; }
-.rank-list-thumb { flex:0 0 56px; width:56px; height:46px; overflow:hidden; border-radius:10px; background:#F7F7F7; }
+.rank-list-thumb { flex:0 0 96px; width:96px; height:60px; overflow:hidden; border-radius:10px; background:#F7F7F7; }
 .rank-list-thumb img { width:100%; height:100%; display:block; object-fit:cover; }
 .rank-list-copy { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:5px; }
 .rank-list-copy strong { overflow:hidden; color:#141F1B; font-size:14px; font-weight:650; text-overflow:ellipsis; white-space:nowrap; }
@@ -309,18 +296,11 @@ button { font:inherit; }
 .rank-avatar img { width:100%; height:100%; object-fit:cover; }
 .rank-avatar b { font-weight:700; }
 .rank-avatar-xs { width:18px; height:18px; font-size:8px; }
-.rank-place { position:absolute; z-index:1; top:8px; left:8px; display:inline-flex; align-items:center; justify-content:center; gap:3px; min-width:22px; height:22px; padding:0 5px; box-sizing:border-box; border-radius:8px; font-size:12px; font-weight:700; line-height:1; }
-.rank-place b { font-size:9px; font-weight:700; }
-.rank-place.rank-gold { background:#D9AF3C; color:#141F1B; box-shadow:0 1px 4px rgba(20,31,27,.08); }
-.rank-place.rank-silver { background:#ECECEC; color:#141F1B; box-shadow:0 1px 4px rgba(20,31,27,.05); }
-.rank-place.rank-bronze { background:#F7F7F7; color:#141F1B; border:1px solid #ECECEC; box-shadow:0 1px 4px rgba(20,31,27,.04); }
-.rank-place.rank-number { background:rgba(20,31,27,.75); color:#FFFFFF; }
 
 /* 创作者 compact */
 .rank-compact-list { margin-top:0; }
 .rank-compact-row { display:flex; align-items:center; gap:11px; min-height:52px; padding:9px 0; border-top:1px solid #ECECEC; cursor:pointer; }
 .rank-compact-row:first-child { border-top:0; }
-.rank-compact-row > .rank-place { position:static; flex:0 0 28px; }
 .rank-compact-avatar { width:36px; height:36px; flex-basis:36px; font-size:13px; }
 .rank-compact-copy { display:flex; flex-direction:column; min-width:0; flex:1; gap:3px; }
 .rank-compact-copy strong { overflow:hidden; color:#141F1B; font-size:13px; font-weight:650; text-overflow:ellipsis; white-space:nowrap; }
@@ -331,5 +311,5 @@ button { font:inherit; }
 
 @media (max-width:980px) { .rank-list-2col { grid-template-columns:minmax(0,1fr); } .rank-list-2col > .rank-list-row:nth-child(2) { border-top:1px solid #F1F1F1; } .rank-chart-2col { grid-template-columns:minmax(0,1fr); } .rank-chart-2col > .rank-chart-row:nth-child(2) { border-top:1px solid #F1F1F1; } }
 @media (max-width:900px) { .rank-podium { grid-template-columns:1fr; } .rank-remix { grid-template-columns:1fr; } .rank-creator-grid { grid-template-columns:1fr; } }
-@media (max-width:720px) { .rank-board { padding:16px; } .rank-list-chip { display:none; } .rank-list-cite { display:none; } }
+@media (max-width:720px) { .rank-board { padding:16px; } .rank-list-chip { display:none; } .rank-list-cite { display:none; } .rank-chart-thumb, .rank-list-thumb { flex-basis:80px; width:80px; height:50px; } }
 </style>

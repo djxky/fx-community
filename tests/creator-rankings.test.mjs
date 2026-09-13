@@ -54,8 +54,8 @@ test('课堂使用榜为三卡加 6 行；创作达人榜为 6 张创作者大�
   assert.equal((classroomHtml.match(/rank-list-row/g) || []).length, 6)
   assert.equal((recognizedHtml.match(/rank-creator-card nav-res/g) || []).length, 6)
   assert.doesNotMatch(recognizedHtml, /rank-list-row|rank-chart-row/)
-  // 只标记前三名，且不再有「代表作」角标
-  assert.equal((recognizedHtml.match(/\brank-place\b/g) || []).length, 3)
+  // 封面左上角不压任何名次角标，也不再有「代表作」角标
+  assert.doesNotMatch(recognizedHtml, /\brank-place\b/)
   assert.doesNotMatch(recognizedHtml, /代表作/)
   assert.match(recognizedHtml, /立体几何·生活建模/)
   assert.match(recognizedHtml, /沈知微/)

@@ -23,11 +23,11 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
   <div id="view-rank">
     <div class="page">
       <main class="rank-main community-main">
-        <div class="tbar">
+        <div class="tbar" data-sec="1">
           <div class="tbar-in">
             <div class="tbar-tabs">
               <span class="tbtab on nav-rank">排行榜</span>
-              <span class="tbtab nav-discover">发现</span>
+              <span class="tbtab nav-discover" data-track="/click/rankPage/tabDiscover | 切换到发现 | 无">发现</span>
             </div>
             <div class="tbar-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3-3"></path></svg>搜知识点、课型、课件、教案…</div>
           </div>
@@ -35,17 +35,16 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
 
         <div class="rank-shell community-body">
           <!-- 1. 编辑推荐（运营混合精选，不挂榜单筛选） -->
-          <section class="rank-block" aria-label="编辑推荐">
+          <section class="rank-block" aria-label="编辑推荐" data-sec="2">
             <div class="rank-heading">
               <div class="rank-heading-title">
                 <h2>编辑推荐</h2>
               </div>
             </div>
             <div class="rank-editorial-grid">
-              <article v-for="feature in EDITORIAL_FEATURES" :key="feature.key" class="rank-editorial-card" :class="feature.target === 'studio' ? 'nav-studio' : 'nav-res'" :data-resource-id="feature.resourceId" :data-studio-name="feature.target === 'studio' ? feature.author : undefined" tabindex="0" role="button">
+              <article v-for="feature in EDITORIAL_FEATURES" :key="feature.key" class="rank-editorial-card" :class="feature.target === 'studio' ? 'nav-studio' : 'nav-res'" :data-resource-id="feature.resourceId" :data-studio-name="feature.target === 'studio' ? feature.author : undefined" data-track="/click/rankPage/editorialCard | 点击编辑推荐卡 | resourceId#STRING,position#INT" tabindex="0" role="button">
                 <div class="rank-editorial-cover">
                   <img :src="feature.cover" :alt="feature.title + '主视觉'" />
-                  <span class="rank-editorial-eyebrow">{{ feature.eyebrow }}</span>
                 </div>
                 <div class="rank-editorial-copy">
                   <h3>{{ feature.title }}</h3>
@@ -64,19 +63,19 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
           </section>
 
           <!-- 2. 课堂使用榜（主榜，周期筛选归属这里） -->
-          <section class="rank-block" aria-label="课堂使用榜">
+          <section class="rank-block" aria-label="课堂使用榜" data-sec="3">
             <div class="rank-heading rank-heading-with-actions">
               <div class="rank-heading-title">
                 <h2>课堂使用榜</h2>
               </div>
               <div class="rank-heading-actions">
                 <label class="rank-subject-select">
-                  <select v-model="classroomSubject" aria-label="课堂使用榜学科选择">
+                  <select v-model="classroomSubject" aria-label="课堂使用榜学科选择" data-track="/event/rankPage/subjectChange | 切换榜单学科 | boardName#STRING,subject#STRING">
                     <option v-for="subject in subjects" :key="subject" :value="subject">{{ subject === '全部' ? '全部学科' : subject }}</option>
                   </select>
                 </label>
                 <div class="seg" role="tablist" aria-label="周期">
-                  <button v-for="period in periods" :key="period" type="button" class="seg-btn" :class="{ on: activePeriod === period }" @click="activePeriod = period">{{ period }}</button>
+                  <button v-for="period in periods" :key="period" type="button" class="seg-btn" :class="{ on: activePeriod === period }" data-track="/click/rankPage/periodSwitch | 切换统计周期 | period#STRING" @click="activePeriod = period">{{ period }}</button>
                 </div>
               </div>
             </div>
@@ -84,13 +83,13 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
           </section>
 
           <!-- 3. 每周热门（无周期切换——它本就是"每周"） -->
-          <section class="rank-block" aria-label="每周热门">
+          <section class="rank-block" aria-label="每周热门" data-sec="4">
             <div class="rank-heading rank-heading-with-actions">
               <div class="rank-heading-title">
                 <h2>每周热门</h2>
               </div>
               <label class="rank-subject-select">
-                <select v-model="hotSubject" aria-label="每周热门学科选择">
+                <select v-model="hotSubject" aria-label="每周热门学科选择" data-track="/event/rankPage/subjectChange | 切换榜单学科 | boardName#STRING,subject#STRING">
                   <option v-for="subject in subjects" :key="subject" :value="subject">{{ subject === '全部' ? '全部学科' : subject }}</option>
                 </select>
               </label>
@@ -99,13 +98,13 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
           </section>
 
           <!-- 4. 优质改编 -->
-          <section class="rank-block" aria-label="优质改编">
+          <section class="rank-block" aria-label="优质改编" data-sec="5">
             <div class="rank-heading rank-heading-with-actions">
               <div class="rank-heading-title">
                 <h2>优质改编</h2>
               </div>
               <label class="rank-subject-select">
-                <select v-model="remixSubject" aria-label="优质改编学科选择">
+                <select v-model="remixSubject" aria-label="优质改编学科选择" data-track="/event/rankPage/subjectChange | 切换榜单学科 | boardName#STRING,subject#STRING">
                   <option v-for="subject in subjects" :key="subject" :value="subject">{{ subject === '全部' ? '全部学科' : subject }}</option>
                 </select>
               </label>
@@ -114,7 +113,7 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
           </section>
 
           <!-- 5. 创作达人榜：复用课堂主榜结构，按代表作呈现创作者 -->
-          <section class="rank-block" aria-label="创作达人榜">
+          <section class="rank-block" aria-label="创作达人榜" data-sec="6">
             <div class="rank-heading">
               <div class="rank-heading-title">
                 <h2>创作达人榜</h2>
@@ -124,7 +123,7 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
           </section>
 
           <!-- 6. 新锐创作者榜：复用每周热门作品网格 -->
-          <section class="rank-block" aria-label="新锐创作者榜">
+          <section class="rank-block" aria-label="新锐创作者榜" data-sec="7">
             <div class="rank-heading">
               <div class="rank-heading-title">
                 <h2>新锐创作者榜</h2>
@@ -166,7 +165,6 @@ button { font:inherit; }
 .rank-editorial-card:hover { transform:translateY(-2px); border-color:#D4D4D4; box-shadow:var(--fx-shadow-float); }
 .rank-editorial-cover { position:relative; min-height:172px; overflow:hidden; background:#F7F7F7; }
 .rank-editorial-cover img { width:100%; height:100%; display:block; object-fit:cover; }
-.rank-editorial-eyebrow { position:absolute; left:10px; top:10px; padding:5px 8px; border-radius:8px; background:#141F1B; color:#FFFFFF; font-size:9px; font-weight:700; }
 .rank-editorial-copy { display:flex; flex-direction:column; justify-content:center; min-width:0; padding:18px 18px; }
 .rank-editorial-copy h3 { margin:0; color:#141F1B; font-size:16px; line-height:1.4; }
 .rank-editorial-copy p { margin:8px 0 18px; color:#7A7C7C; font-size:12px; line-height:1.6; }

@@ -233,21 +233,7 @@ export function installDelegation() {
     var sp = e.target.closest('[data-stab]'); if (sp) { switchSPanel(sp.getAttribute('data-stab')); return }
     var myp = e.target.closest('.nav-mypage'); if (myp) { store.studioMode = 'owner'; go('studio'); return }
     var nstu = e.target.closest('.nav-studio'); if (nstu) { store.studioMode = 'guest'; go('studio'); return }
-    function albumStep(md, n) {
-      md.querySelectorAll('.album-step').forEach(function (s) { s.style.display = (s.getAttribute('data-step') === String(n)) ? '' : 'none' })
-      md.querySelectorAll('.album-stepdot').forEach(function (d) { d.classList.toggle('on', d.getAttribute('data-sd') === String(n)) })
-      var pv = md.querySelector('.album-prev'), nx = md.querySelector('.album-next'), sb = md.querySelector('.album-modal-submit')
-      if (pv) pv.style.display = (n === 2) ? '' : 'none'
-      if (nx) nx.style.display = (n === 1) ? '' : 'none'
-      if (sb) sb.style.display = (n === 2) ? '' : 'none'
-    }
-    var caOpen = e.target.closest('.st-create-album'); if (caOpen) { var vst = document.getElementById('view-studio'); var amd = vst && vst.querySelector('.album-modal'); if (amd) { amd.style.display = 'flex'; albumStep(amd, 1) } return }
-    var caNext = e.target.closest('.album-next'); if (caNext) { albumStep(caNext.closest('.album-modal'), 2); return }
-    var caPrev = e.target.closest('.album-prev'); if (caPrev) { albumStep(caPrev.closest('.album-modal'), 1); return }
-    var caClose = e.target.closest('.album-modal-close, .album-modal-cancel'); if (caClose) { document.querySelectorAll('.album-modal').forEach(function (m) { m.style.display = 'none' }); return }
-    var caPick = e.target.closest('.album-pick, .album-wk'); if (caPick) { caPick.classList.toggle('sel'); var mm = caPick.closest('.album-modal'); if (mm) { var cb = mm.querySelector('.album-count b'); if (cb) cb.textContent = mm.querySelectorAll('.album-wk.sel').length } return }
-    var caSubmit = e.target.closest('.album-modal-submit'); if (caSubmit) { document.querySelectorAll('.album-modal').forEach(function (m) { m.style.display = 'none' }); showToast('专辑已创建 · 已加入你的主页'); return }
-    if (e.target.classList && e.target.classList.contains('album-modal')) { e.target.style.display = 'none'; return }
+    // 教师主页专辑管理（新建 / 编辑 / 排序 / 删除）见 composables/studio-albums.js
     for (const item of PRIMARY_NAV_ITEMS) {
       if (e.target.closest(item.selector)) {
         if (item.externalUrl) return

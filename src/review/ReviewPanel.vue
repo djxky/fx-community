@@ -4,15 +4,16 @@ import { store } from '../store'
 import { renderMd } from './renderMd'
 import './review.css'
 import resPrd from './prd/res.md?raw'
+import discoverPrd from './prd/discover.md?raw'
+import rankPrd from './prd/rank.md?raw'
+import studioPrd from './prd/studio.md?raw'
 
-// 各视图对应的产品稿。目前只做透了「资源详情页」，其余视图给占位。
+// 各视图对应的产品稿。未登记的视图暂无。
 const PRD_BY_VIEW = {
   res: { title: '资源详情页', md: resPrd },
-}
-// 元素标注按 data-doc 前缀分组，对应产品文档模块（skill §823：前缀呼应模块编号）
-const SECTION_NAMES = {
-  sec1: '1 · 资源预览区', sec2: '2 · 资源标识区', sec3: '3 · 所属专题',
-  sec4: '4 · 简介', sec5: '5 · 优质改编', sec6: '6 · 最近动态', sec7: '7 · 讨论',
+  discover: { title: '发现页', md: discoverPrd },
+  rank: { title: '排行榜', md: rankPrd },
+  studio: { title: '教师主页', md: studioPrd },
 }
 const current = computed(() => PRD_BY_VIEW[store.view] || null)
 const defaultMd = computed(() => current.value?.md || '')
@@ -30,22 +31,16 @@ function setMode(r) {
 }
 watch(review, (r) => { document.body.classList.toggle('review-mode', r) }, { immediate: true })
 
-// —— 面板正文（本地可编辑 + 持久化）——
-const tab = ref('doc')
+// —— 产品文档正文（本地可编辑 + 持久化）——
 const md = ref('')
 const editing = ref(false)
 const draft = ref('')
-const els = ref([])
-const markers = ref([])
-const activeSeq = ref('')
-
 function loadMd() {
   try { md.value = localStorage.getItem(storageKey.value) ?? defaultMd.value }
   catch { md.value = defaultMd.value }
   editing.value = false
 }
 watch(() => store.view, loadMd, { immediate: true })
-
 const edited = computed(() => md.value !== defaultMd.value && defaultMd.value !== '')
 const rendered = computed(() => renderMd(md.value))
 
@@ -63,50 +58,56 @@ function resetDefault() {
 }
 function copyMd() { try { navigator.clipboard?.writeText(draft.value) } catch {} }
 
-// —— 元素标注 + 页面 ①②③ 序号角标 ——
-// 扫描当前资源页 data-doc/data-prd/data-track，按 DOM 顺序编号；角标浮在元素左上角，随滚动/缩放刷新。
+// —— 页面序号角标 + 当前模块高亮框：号码 = 产品文档模块号（data-sec="N" ↔ ## N.）——
+// 角标与高亮框都画在顶层 overlay，不用元素 outline，避免被页面元素遮挡。
+const markers = ref([])
+const activeSec = ref('')
+const hlBox = ref(null)
 let rafId = 0
-function refreshMarkers() {
-  if (!review.value) { markers.value = []; return }
-  const nodes = Array.from(document.querySelectorAll('#view-res [data-doc]'))
-    .filter(el => el.dataset.prd || el.dataset.track)
-  const list = [], marks = []
-  nodes.forEach((el, i) => {
-    const seq = String(i + 1)
-    list.push({ seq, doc: el.dataset.doc || '', prd: el.dataset.prd || '', track: el.dataset.track || '' })
-    const r = el.getBoundingClientRect()
-    if (r.width || r.height) marks.push({ seq, left: r.left, top: r.top })
-  })
-  els.value = list
-  markers.value = marks
+function computeMarkers() {
+  if (!review.value) { markers.value = []; hlBox.value = null; return }
+  const secs = Array.from(document.querySelectorAll(`#view-${store.view} [data-sec]`))
+  markers.value = secs
+    .map((el) => {
+      const r = el.getBoundingClientRect()
+      return { sec: el.dataset.sec || '', left: r.left, top: r.top, hidden: r.width === 0 && r.height === 0 }
+    })
+    .filter((m) => !m.hidden)
+    .map(({ sec, left, top }) => ({ sec, left, top }))
+  const active = secs.find((el) => el.dataset.sec === activeSec.value)
+  const r = active?.getBoundingClientRect()
+  hlBox.value = r && (r.width || r.height) ? { left: r.left, top: r.top, width: r.width, height: r.height } : null
 }
-function scheduleRefresh() {
+function scheduleMarkers() {
   if (rafId) return
-  rafId = requestAnimationFrame(() => { rafId = 0; refreshMarkers() })
+  rafId = requestAnimationFrame(() => { rafId = 0; computeMarkers() })
 }
-// 按模块分组（前缀 secN），组内保留页面序号；空组不显示
-const elGroups = computed(() => {
-  const map = new Map()
-  for (const it of els.value) {
-    const sec = it.doc.split('-')[0]
-    if (!map.has(sec)) map.set(sec, [])
-    map.get(sec).push(it)
-  }
-  return [...map.entries()]
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([sec, items]) => ({ sec, name: SECTION_NAMES[sec] || sec, items }))
-})
-watch([review, () => store.view], () => nextTick(refreshMarkers))
+watch([review, () => store.view], () => { activeSec.value = ''; nextTick(computeMarkers) })
 
-function focusItem(seq) {
-  tab.value = 'els'
-  activeSeq.value = seq
-  const item = els.value.find(a => a.seq === seq)
-  if (!item) return
-  document.querySelectorAll('.review-highlight').forEach(n => n.classList.remove('review-highlight'))
-  const el = document.querySelector(`#view-res [data-doc="${item.doc}"]`)
-  if (el) { el.classList.add('review-highlight'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }) }
-  nextTick(() => document.getElementById('rpCard-' + seq)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }))
+// 点角标 → 产品文档滚到 ## N.（闪一下），页面用粉框高亮该区域
+const docRef = ref(null)
+function focusSection(sec) {
+  if (editing.value) editing.value = false
+  activeSec.value = sec
+  computeMarkers()
+  nextTick(() => {
+    const h = docRef.value?.querySelector('#rp-sec-' + sec)
+    if (h) {
+      h.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      h.classList.add('rp-sec-flash')
+      setTimeout(() => h.classList.remove('rp-sec-flash'), 1600)
+    }
+  })
+}
+// 点文档模块标题 → 反向定位并高亮页面区域（事件委托，兼容 v-html 重渲染）
+function onDocClick(e) {
+  const h = e.target.closest('h2[id^="rp-sec-"]')
+  if (!h) return
+  const sec = h.id.replace('rp-sec-', '')
+  activeSec.value = sec
+  const el = document.querySelector(`#view-${store.view} [data-sec="${sec}"]`)
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  nextTick(computeMarkers)
 }
 
 // —— 演示/过稿开关可拖动（阈值区分点击与拖拽，位置持久化）——
@@ -138,24 +139,11 @@ function onToggleDown(e) {
   }
   document.addEventListener('mousemove', move); document.addEventListener('mouseup', up)
 }
-// 拖拽结束后的那次 click 要拦掉，避免误切模式
 function onToggleClickCapture(e) {
   if (toggleMoved) { e.stopPropagation(); e.preventDefault(); toggleMoved = false }
 }
-onMounted(() => {
-  // 角标随任意滚动容器 / 窗口缩放刷新位置（capture 捕获内层滚动）
-  window.addEventListener('scroll', scheduleRefresh, true)
-  window.addEventListener('resize', scheduleRefresh)
-  nextTick(refreshMarkers)
-  const el = toggleRef.value
-  if (!el) return
-  try {
-    const p = JSON.parse(localStorage.getItem('rp:togglePos') || 'null')
-    if (p && p.left && p.top) { el.style.left = p.left; el.style.top = p.top; el.style.right = 'auto' }
-  } catch {}
-})
 
-// —— 拖拽（按住标题栏移动）——
+// —— 面板拖拽（按住标题栏）——
 const panelRef = ref(null)
 let dragCleanup = null
 function onHeaderDown(e) {
@@ -174,10 +162,22 @@ function onHeaderDown(e) {
   dragCleanup = up
   e.preventDefault()
 }
+
+onMounted(() => {
+  window.addEventListener('scroll', scheduleMarkers, true)
+  window.addEventListener('resize', scheduleMarkers)
+  nextTick(computeMarkers)
+  const el = toggleRef.value
+  if (!el) return
+  try {
+    const p = JSON.parse(localStorage.getItem('rp:togglePos') || 'null')
+    if (p && p.left && p.top) { el.style.left = p.left; el.style.top = p.top; el.style.right = 'auto' }
+  } catch {}
+})
 onBeforeUnmount(() => {
   dragCleanup && dragCleanup()
-  window.removeEventListener('scroll', scheduleRefresh, true)
-  window.removeEventListener('resize', scheduleRefresh)
+  window.removeEventListener('scroll', scheduleMarkers, true)
+  window.removeEventListener('resize', scheduleMarkers)
   if (rafId) cancelAnimationFrame(rafId)
   document.body.classList.remove('review-mode')
 })
@@ -190,56 +190,35 @@ onBeforeUnmount(() => {
     <button :class="{ active: review }" @click="setMode(true)">过稿</button>
   </div>
 
+  <!-- 页面序号角标层 + 当前模块高亮框（顶层 overlay）-->
+  <div v-if="review" class="rp-markers">
+    <div v-if="hlBox" class="rp-hl" :style="{ left: hlBox.left + 'px', top: hlBox.top + 'px', width: hlBox.width + 'px', height: hlBox.height + 'px' }"></div>
+    <button v-for="m in markers" :key="m.sec" class="rp-marker"
+            :style="{ left: m.left + 'px', top: m.top + 'px' }"
+            :title="'定位到产品文档 ' + m.sec" @click="focusSection(m.sec)">{{ m.sec }}</button>
+  </div>
+
   <div v-if="review" class="review-panel" ref="panelRef">
     <div class="rp-header" @mousedown="onHeaderDown">
       <h2>📋 产品稿 · {{ title }}</h2>
       <button class="rp-close" @click="setMode(false)">✕</button>
     </div>
-    <div class="rp-tabs">
-      <button class="rp-tab" :class="{ active: tab === 'doc' }" @click="tab = 'doc'">📄 产品文档</button>
-      <button class="rp-tab" :class="{ active: tab === 'els' }" @click="tab = 'els'">📌 元素标注</button>
-    </div>
-
     <div class="rp-body">
-      <template v-if="tab === 'doc'">
-        <div v-if="!current" class="rp-els-empty">本页（{{ store.view }}）暂无产品稿。<br>资源详情页已完成，切到任一资源查看。</div>
-        <div v-else class="rp-doc-wrap">
-          <div class="rp-edit-bar">
-            <template v-if="!editing">
-              <button @click="startEdit">✏️ 编辑</button>
-              <span v-if="edited" class="rp-edited">已本地编辑</span>
-              <button v-if="edited" @click="resetDefault">恢复默认</button>
-            </template>
-            <template v-else>
-              <button class="primary" @click="save">保存</button>
-              <button @click="cancelEdit">取消</button>
-              <button @click="copyMd">复制 Markdown</button>
-              <span class="rp-hint">保存即本地生效；复制后可贴回 src/review/prd/{{ store.view }}.md 永久保留</span>
-            </template>
-          </div>
-          <textarea v-if="editing" class="rp-edit" v-model="draft" spellcheck="false"></textarea>
-          <div v-else class="rp-mdoc" v-html="rendered"></div>
-        </div>
-      </template>
-
-      <div v-else class="rp-els">
-        <div v-if="!els.length" class="rp-els-empty">本页暂无带标注的元素。</div>
-        <template v-for="g in elGroups" :key="g.sec">
-          <div class="rp-els-group">{{ g.name }}</div>
-          <div v-for="it in g.items" :key="it.seq" class="rp-item" :class="{ 'rp-active': activeSeq === it.seq }"
-               :id="'rpCard-' + it.seq" @click="focusItem(it.seq)">
-            <div class="rp-item-id"><span class="rp-marker rp-marker-inline">{{ it.seq }}</span>{{ it.doc }}</div>
-            <div v-if="it.prd" class="rp-item-prd">{{ it.prd }}</div>
-            <div v-if="it.track" class="rp-item-track">📊 {{ it.track }}</div>
-          </div>
+      <div class="rp-edit-bar">
+        <template v-if="!editing">
+          <button @click="startEdit">✏️ 编辑</button>
+          <span v-if="edited" class="rp-edited">已本地编辑</span>
+          <button v-if="edited" @click="resetDefault">恢复默认</button>
+        </template>
+        <template v-else>
+          <button class="primary" @click="save">保存</button>
+          <button @click="cancelEdit">取消</button>
+          <button @click="copyMd">复制 Markdown</button>
+          <span class="rp-hint">保存即本地生效；复制后可贴回 src/review/prd/{{ store.view }}.md 永久保留</span>
         </template>
       </div>
+      <textarea v-if="editing" class="rp-edit" v-model="draft" spellcheck="false"></textarea>
+      <div v-else class="rp-mdoc" ref="docRef" v-html="rendered" @click="onDocClick"></div>
     </div>
-  </div>
-
-  <!-- 页面上的 ①②③ 序号角标（过稿态浮在被标注元素左上角，点角标联动到列表卡片） -->
-  <div v-if="review" class="rp-markers">
-    <button v-for="m in markers" :key="m.seq" class="rp-marker" :class="{ 'is-active': activeSeq === m.seq }"
-            :style="{ left: m.left + 'px', top: m.top + 'px' }" @click="focusItem(m.seq)">{{ m.seq }}</button>
   </div>
 </template>
