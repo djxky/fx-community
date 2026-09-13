@@ -1,5 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 
 import {
   bindForkCardResourceIds,
@@ -12,6 +13,14 @@ import {
 import * as resourceDetails from '../src/resource-attribution.mjs'
 
 const { getAdaptedAttribution, getResourceCredits } = resourceDetails
+
+test('资源详情页标签按关于、讨论、版本与改编排列', () => {
+  const html = readFileSync(new URL('../src/views/raw/res.html', import.meta.url), 'utf8')
+  const tabs = [...html.matchAll(/<button class="fg-tab[^"]*"[^>]*>([\s\S]*?)<\/button>/g)]
+    .map((match) => match[1].replace(/<[^>]+>/g, '').trim().replace(/\s+/g, ' '))
+
+  assert.deepEqual(tabs, ['关于', '讨论 86', '版本与改编'])
+})
 
 test('改编卡片会保留各自的资源 ID，点击后能识别目标版本', () => {
   const html = [

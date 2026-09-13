@@ -1,5 +1,4 @@
 <script setup>
-import Sidebar from '../components/Sidebar.vue'
 import { RESOURCES_BY_ID } from '../data/resources'
 
 const MOTHER_ID = 'res-xianglin'
@@ -70,7 +69,6 @@ function edgePath(node) {
 <template>
   <div id="view-lineage">
     <div class="page">
-      <Sidebar active="community" />
       <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#F7F7F7;">
         <div class="lg-wrap">
           <div class="lg-back nav-res">

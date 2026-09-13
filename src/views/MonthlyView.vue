@@ -1,5 +1,4 @@
 <script setup>
-import Sidebar from '../components/Sidebar.vue'
 // 教学月志 —— 月度镜子:值得 / 链接 / 自己。"数据不是监控,是镜子。"
 const KW = ['大单元教学', '沉浸式课堂', '整本书阅读', '分层作业', '课堂追问']
 </script>
@@ -7,7 +6,6 @@ const KW = ['大单元教学', '沉浸式课堂', '整本书阅读', '分层作�
 <template>
   <div id="view-monthly">
     <div class="page">
-      <Sidebar active="" />
       <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#F7F7F7;">
       <div class="mz-wrap">
         <div class="mz-back nav-creator">

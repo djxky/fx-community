@@ -49,8 +49,13 @@ function itemKind(item) {
       <span class="rank-board-period">{{ period }} · {{ variant === 'creator' ? board.metricLabel : board.period }}</span>
     </header>
 
+    <div v-if="filteredItems.length === 0" class="rank-empty" role="status">
+      <strong>{{ subject }}学科暂未上榜</strong>
+      <span>换个学科看看本期内容</span>
+    </div>
+
     <!-- 主榜：三名重点位 + 两列密集列表 -->
-    <template v-if="variant === 'main'">
+    <template v-else-if="variant === 'main'">
       <div class="rank-podium">
         <article v-for="(it, i) in podiumItems" :key="it.rankKey || it.resourceId || it.name" class="rank-podium-card nav-res" :data-resource-id="it.resourceId" tabindex="0" role="button">
           <div class="rank-podium-media">
@@ -148,6 +153,9 @@ button { font:inherit; }
 .rank-board-title { font-size:16px; font-weight:700; letter-spacing:-.02em; }
 .rank-board-period { color:#9A9A9A; font-size:11px; white-space:nowrap; }
 .rank-board-mark { display:inline-block; margin-right:7px; color:#D9AF3C; font-size:11px; vertical-align:1px; }
+.rank-empty { min-height:156px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:6px; box-sizing:border-box; border:1px dashed #DADBDA; border-radius:var(--community-card-radius, 20px); background:#FAFAF9; text-align:center; }
+.rank-empty strong { color:#141F1B; font-size:14px; font-weight:650; }
+.rank-empty span { color:#9A9A9A; font-size:12px; }
 
 /* 三名重点位 */
 .rank-podium { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--community-gap, 24px); margin-bottom:6px; }

@@ -1,4 +1,4 @@
-/* Adapted from the official 2026 fall opening-class page and scoped to AI 教学工坊. */
+/* Adapted from the official 2026 fall opening-class page and scoped to 飞象学院. */
 #app #view-academy .hero {
   height: 236px;
 }
@@ -17,7 +17,11 @@
 #app #view-academy .hero .hero-live .hc-t {
   max-width: 720px;
   margin: 8px 0 4px;
-  font-family: Georgia, "Songti SC", "STSong", serif;
+  /*
+   * 两张 Banner 属于同一轮播层级，标题统一继承工坊的无衬线字体栈，
+   * 避免切换到直播 Banner 时因宋体字形变化产生明显的视觉跳动。
+   */
+  font-family: inherit;
   font-size: 30px;
   font-weight: 600;
   line-height: 1.16;

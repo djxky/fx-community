@@ -1,5 +1,4 @@
 <script setup>
-import Sidebar from '../components/Sidebar.vue'
 
 const NOTIFY_TODAY = [
   { kind: 'flip', pinned: true, gold: true, unread: true, time: '12 分钟前', text: '名师 <b>刘彭芝</b> 翻牌了你的《谁杀了祥林嫂》', action: '查看名师点评', to: 'creator' },
@@ -18,7 +17,6 @@ const EMO = { flip: '🏅', comment: '💬', collect: '🔖', adapt: '🔁', ado
 <template>
   <div id="view-notify">
     <div class="page">
-      <Sidebar active="me" />
       <main style="flex-grow:1;min-width:0;overflow-y:auto;height:100vh;background:#F7F7F7;">
       <div class="nt-wrap">
         <div class="nt-head">

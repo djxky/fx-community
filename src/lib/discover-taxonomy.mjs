@@ -1,10 +1,10 @@
 export const SCENES = [
   { key: 'all', label: '全部' },
-  { key: 'prep', label: '备课' },
-  { key: 'classroom', label: '上课' },
+  { key: 'prep', label: '教学与备课' },
+  { key: 'classroom', label: '课堂与学情' },
   { key: 'assessment', label: '作业与评价' },
-  { key: 'classcare', label: '班级管理' },
-  { key: 'research', label: '教研成长' },
+  { key: 'classcare', label: '班级与家校' },
+  { key: 'research', label: '教研与成长' },
 ]
 
 export const TASKS_BY_SCENE = {
@@ -20,6 +20,7 @@ export const TASKS_BY_SCENE = {
     { key: 'organize', label: '课堂组织' },
   ],
   assessment: [
+    { key: 'homework-design', label: '作业设计' },
     { key: 'compose', label: '出题组卷' },
     { key: 'homework', label: '作业练习' },
     { key: 'feedback', label: '批改讲评' },
@@ -76,6 +77,5 @@ export function availableFacetOptions(posts, scene = 'all', task = 'all') {
   return {
     subjects: unique(scopedPosts.map((post) => post.subject)),
     stages: unique(scopedPosts.map((post) => post.stage)),
-    forms: unique(scopedPosts.map((post) => post.form)),
   }
 }

@@ -35,11 +35,24 @@ test('v2 面板状态切换只改变右栏内容，不创建弹窗或抽屉', ()
   assert.doesNotMatch(v2.renderPanelState('discussion'), /modal|drawer|dialog/)
 })
 
-test('v2 操作区沿用线上布局，位于左侧预览底部', () => {
+test('v2 标题/作者/主操作随预览置于左列底部，右列从简介开始并让评论吸底', () => {
   const raw = readFileSync(new URL('../src/views/raw/res.html', import.meta.url), 'utf8')
-  assert.match(raw, /fg-v2-resource-footer/)
-  assert.match(raw, /__RES_FOOTER_ACTIVITY__/)
+  const view = readFileSync(new URL('../src/views/ResView.vue', import.meta.url), 'utf8')
+  // 预览底部的旧操作/动态通栏已移除
+  assert.doesNotMatch(raw, /fg-v2-resource-footer/)
+  assert.doesNotMatch(raw, /__RES_FOOTER_ACTIVITY__/)
+  // 标题+作者+主操作进入左列(hero-r)预览下方的资源标识区
+  assert.match(raw, /fg-res-identity/)
   assert.match(raw, /__RES_PRIMARY_ACTIONS__/)
+  assert.match(raw, /__RES_FOOTER_AUTHOR__/)
+  assert.ok(raw.indexOf('fg-preview-shell') < raw.indexOf('fg-res-identity'))
+  assert.ok(raw.indexOf('fg-res-identity') < raw.indexOf('__RES_PRIMARY_ACTIONS__'))
+  // 右列(hero-l)从简介开始，评论输入吸底
+  assert.ok(raw.indexOf('__RES_INTRO__') < raw.indexOf('__RES_DETAIL_PANEL__'))
+  assert.match(raw, /__RES_COMPOSER_FOOTER__/)
+  assert.ok(raw.indexOf('__RES_COMPOSER_FOOTER__') < raw.indexOf('fg-hero-r'))
+  // 最近动态并入右列讨论区之上
+  assert.match(view, /renderRecentActivities\(resource, 3, true\)/)
 })
 
 test('v2 详情页不再显示面包屑或详情 Tab，讨论区保留输入入口', () => {

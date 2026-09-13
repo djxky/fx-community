@@ -87,16 +87,69 @@ test('创作达人榜与新锐创作者榜在排行榜中同时平铺展示', as
   assert.doesNotMatch(html, /aria-label="创作者榜单"/)
 })
 
-test('排行榜不再显示全局学科筛选，周期筛选仍保留', async () => {
+test('只有三个内容榜各自提供学科下拉，不在页面顶部或创作者榜重复出现', async () => {
   const { default: RankView } = await loadModule('/src/views/RankView.vue')
   const html = await renderToString(createSSRApp(RankView))
 
-  assert.doesNotMatch(html, /aria-label="学科"/)
-  assert.doesNotMatch(html, /rank-subbar/)
-  assert.match(html, /aria-label="周期"/)
-  assert.match(html, />本周<\/button>/)
-  assert.match(html, />本月<\/button>/)
-  assert.match(html, />年度<\/button>/)
+  const editorialIndex = html.indexOf('aria-label="编辑推荐"')
+  const classroomIndex = html.indexOf('aria-label="课堂使用榜"')
+  const hotIndex = html.indexOf('aria-label="每周热门"')
+  const remixIndex = html.indexOf('aria-label="优质改编"')
+  const recognizedIndex = html.indexOf('aria-label="创作达人榜"')
+  const risingIndex = html.indexOf('aria-label="新锐创作者榜"')
+
+  const editorialSection = html.slice(editorialIndex, classroomIndex)
+  const classroomSection = html.slice(classroomIndex, hotIndex)
+  const hotSection = html.slice(hotIndex, remixIndex)
+  const remixSection = html.slice(remixIndex, recognizedIndex)
+  const recognizedSection = html.slice(recognizedIndex, risingIndex)
+  const risingSection = html.slice(risingIndex)
+
+  assert.ok(editorialIndex >= 0)
+  assert.equal((html.match(/<select\b/g) || []).length, 3)
+  assert.match(classroomSection, /aria-label="课堂使用榜学科选择"/)
+  assert.match(hotSection, /aria-label="每周热门学科选择"/)
+  assert.match(remixSection, /aria-label="优质改编学科选择"/)
+  assert.doesNotMatch(editorialSection, /<select\b|榜单学科/)
+  assert.doesNotMatch(recognizedSection, /<select\b/)
+  assert.doesNotMatch(risingSection, /<select\b/)
+  assert.match(classroomSection, /aria-label="周期"/)
+})
+
+test('编辑推荐保持固定精选，不跟随内容榜学科变化', async () => {
+  const [{ default: RankView }, { EDITORIAL_FEATURES }] = await Promise.all([
+    loadModule('/src/views/RankView.vue'),
+    loadModule('/src/data/rank.js'),
+  ])
+  const html = await renderToString(createSSRApp(RankView))
+  const editorialSection = html.slice(
+    html.indexOf('aria-label="编辑推荐"'),
+    html.indexOf('aria-label="课堂使用榜"'),
+  )
+
+  assert.equal(EDITORIAL_FEATURES.length, 2)
+  assert.match(editorialSection, /《出师表》行军决策图/)
+  assert.match(editorialSection, /古诗词证据卡 · 课堂版/)
+  assert.doesNotMatch(editorialSection, /<select\b/)
+})
+
+test('榜单卡按各自学科选择收敛内容，没有该学科条目时给出明确空状态', async () => {
+  const [{ default: RankBoardCard }, { BOARDS }] = await Promise.all([
+    loadModule('/src/components/RankBoardCard.vue'),
+    loadModule('/src/data/rank.js'),
+  ])
+  const latest = BOARDS.find((item) => item.key === 'latest')
+  const classroom = BOARDS.find((item) => item.key === 'classroom')
+
+  const chineseHtml = await renderToString(createSSRApp(RankBoardCard, { board: latest, variant: 'grid', subject: '语文' }))
+  const emptyHtml = await renderToString(createSSRApp(RankBoardCard, { board: classroom, variant: 'main', subject: '英语' }))
+
+  assert.equal((chineseHtml.match(/rank-grid-card/g) || []).length, 2)
+  assert.match(chineseHtml, /古诗词证据卡 · 课堂版/)
+  assert.match(chineseHtml, /祥林嫂剧本杀/)
+  assert.doesNotMatch(chineseHtml, /英语听说·全班开口课/)
+  assert.match(emptyHtml, /英语学科暂未上榜/)
+  assert.doesNotMatch(emptyHtml, /rank-podium-card|rank-list-row/)
 })
 
 test('编辑推荐只展示作品卡，不再把创作者本人作为推荐对象', async () => {

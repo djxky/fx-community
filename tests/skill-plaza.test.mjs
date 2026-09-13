@@ -10,42 +10,50 @@ let vite
 before(async () => {
   process.env.VITE_CJS_IGNORE_WARNING = 'true'
   const { createServer } = await import('vite')
-  vite = await createServer({ appType: 'custom', logLevel: 'silent', server: { middlewareMode: true } })
+  vite = await createServer({
+    appType: 'custom',
+    logLevel: 'silent',
+    optimizeDeps: { noDiscovery: true },
+    server: { middlewareMode: true },
+  })
 })
 
 after(async () => {
   await vite.close()
 })
 
-test('技能广场保留专家入口，并把推荐与探索技能组织成可筛选列表', async () => {
-  const { SKILL_CATALOG, filterSkills } = await vite.ssrLoadModule('/src/data/skills.js')
+test('技能广场用教育智库串起多元主体、代表能力和教师成果', async () => {
+  const { KNOWLEDGE_PARTNERS, SKILL_CATALOG, filterSkills } = await vite.ssrLoadModule('/src/data/skills.js')
   const { default: SkillPlazaView } = await vite.ssrLoadModule('/src/views/SkillPlazaView.vue')
   const html = await renderToString(createSSRApp(SkillPlazaView))
 
+  // 数据契约
   assert.ok(SKILL_CATALOG.length >= 8)
-  assert.ok(SKILL_CATALOG.every((item) => item.kind === '技能'))
-  assert.equal(filterSkills(SKILL_CATALOG, '语文', '').length, 2)
-  assert.deepEqual(filterSkills(SKILL_CATALOG, '全部', '沈砚').map((item) => item.id), ['res-skill-zuowen'])
+  assert.ok(KNOWLEDGE_PARTNERS.length >= 4)
+  assert.ok(KNOWLEDGE_PARTNERS.every((item) => item.featuredAbility?.title))
+  assert.ok(KNOWLEDGE_PARTNERS.every((item) => Array.isArray(item.outcomes) && item.outcomes.length >= 2))
+  assert.ok(KNOWLEDGE_PARTNERS.some((item) => item.entityName.includes('海淀')))
+  assert.ok(KNOWLEDGE_PARTNERS.some((item) => item.entityName.includes('人民教育出版社')))
+  assert.deepEqual([...new Set(SKILL_CATALOG.map((item) => item.kind))].sort(), ['Agent', 'Skill'])
+  assert.ok(filterSkills(SKILL_CATALOG, '全部', '', 'Agent').every((item) => item.kind === 'Agent'))
+  assert.ok(filterSkills(SKILL_CATALOG, '全部', '', 'Skill').every((item) => item.kind === 'Skill'))
+  assert.ok(filterSkills(SKILL_CATALOG, '全部', '沈砚').some((item) => item.id === 'res-skill-zuowen'))
+
+  // 页面结构
+  assert.match(html, /教育智库/)
+  assert.match(html, /中国百校 · 教育智慧共创计划/)
   assert.match(html, /专家入驻/)
-  assert.match(html, /刘彭芝/)
-  assert.match(html, /苏窈/)
-  assert.match(html, /沈知微/)
-  assert.match(html, /拔尖创新人才早期培养/)
-  assert.match(html, /深耕中学英语听说教学/)
-  assert.match(html, /北京市数学学科带头人/)
-  assert.match(html, /人使用/)
-  assert.doesNotMatch(html, /人关注/)
-  assert.doesNotMatch(html, /把好老师的方法|装进你的课堂|选择经过验证的教学技能/)
   assert.match(html, /编辑精选/)
-  assert.match(html, /探索技能/)
-  assert.match(html, /搜技能名称、学科或作者/)
-  assert.equal((html.match(/class="skill-author-avatar"/g) || []).length, 12)
-  assert.match(html, /作文批改 Skill/)
-  assert.match(html, /分层作业 Skill/)
-  assert.match(html, /查看详情/)
-  assert.match(html, /即将开放/)
-  assert.doesNotMatch(html, /互动课件|教案|题单/)
-  assert.doesNotMatch(html, /精选文章|创作者激励计划|活动 banner/)
+  assert.match(html, /搜 Skill、Agent、教学任务或作者/)
+  // 探索区为顶部两个 tab
+  assert.match(html, /技能广场/)
+  assert.match(html, /专家团/)
+
+  // 默认展示「一所学校 + 一位专家」，且代表能力与教师成果前后对应
+  assert.match(html, /北京十一学校 · 学科课程基地/)
+  assert.match(html, /刘彭芝/)
+  assert.match(html, /跨学科项目设计 Agent/)
+  assert.match(html, /课堂提问设计 Agent/)
 })
 
 test('技能广场与灵感页共用内容边界，并按侧栏后的可用宽度切换卡片列数', async () => {
@@ -57,8 +65,10 @@ test('技能广场与灵感页共用内容边界，并按侧栏后的可用宽�
   assert.match(html, /class="[^"]*community-main/)
   assert.match(html, /class="[^"]*community-body/)
   assert.match(source, /import '\.\.\/styles\/community\.css'/)
-  assert.match(source, /\.featured-grid\s*\{[^}]*grid-template-columns:repeat\(var\(--community-columns\),minmax\(0,1fr\)\)[^}]*gap:var\(--community-gap\)/)
   assert.match(shared, /:is\(#view-discover, #view-rank, #view-skills\)/)
+  // 探索区网格随宽度切换列数（3 → 2 → 1）
+  assert.match(source, /\.ex-grid\{[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/)
+  assert.match(source, /@media\(max-width:860px\)\{\.ex-grid\{grid-template-columns:repeat\(2/)
+  assert.match(source, /@media\(max-width:520px\)\{\.ex-grid\{grid-template-columns:1fr\}/)
   assert.doesNotMatch(source, /\.skills-shell\s*\{[^}]*width:min\(/)
-  assert.doesNotMatch(source, /@media\(max-width:1100px\)\s*\{[^}]*\.featured-grid/)
 })

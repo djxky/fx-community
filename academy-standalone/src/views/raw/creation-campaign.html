@@ -1,7 +1,8 @@
 <div class="creation-campaign">
-      <header class="modal-header"><button class="text-btn cc-back" id="cc-returnAcademy" aria-label="返回 AI 教学工坊"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="m16 7-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="cc-backLabel">返回</span></button>
+      <!-- 返回按钮的辅助名称使用新品牌，活动内部视图切换仍由原有状态机处理。 -->
+      <header class="modal-header"><button class="text-btn cc-back" id="cc-returnAcademy" aria-label="返回飞象学院"><svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="m16 7-7 7 7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="cc-backLabel">返回</span></button>
         <div class="header-actions">
-          <button class="text-btn" id="cc-mySubmissionsBtn">我的投稿（<span id="cc-submissionCount">2</span>）</button>
+          <button class="text-btn" id="cc-mySubmissionsBtn">我的投稿</button>
         </div>
       </header>
 
@@ -169,7 +170,7 @@
               <div class="success-mark">✓</div>
               <h2>投稿成功！</h2>
               <p>你的作品已经进入「2026 教师 AI 教育创作征集」。11 月 30 日前仍可继续完善作品和修改投稿信息，评审以征集截止时作品链接对应的最终版本为准。</p>
-              <div class="success-meta" id="cc-successMeta"></div>
+              <!-- 新投稿与修改保存都只显示上方确认信息，详情不在成功页重复展示。 -->
               <div class="submit-row"><button class="secondary-btn" id="cc-viewMineAfterSuccess">查看我的投稿</button><button class="primary-btn chooseDirection">继续提交新作品</button></div>
             </div>
           </div>
@@ -178,12 +179,15 @@
         <section class="view" id="cc-submissionsView">
           <div class="subview-shell">
             <h2 class="subview-title">我的投稿</h2>
-            <p class="subview-desc">征集截止前，你可以修改投稿信息或撤回作品。</p>
+            <p class="subview-desc">征集截止前，你可以修改投稿信息。同一作品链接再次提交将更新原投稿，包括创作方向。</p>
             <div class="submission-list" id="cc-submissionList"></div>
-            <div class="submit-row" style="margin-top:18px"><button class="primary-btn chooseDirection">继续提交新作品</button></div>
+            <!-- 投稿页只管理已有记录；提示与重试放在同一区域，不再提供新建作品入口。 -->
+            <div id="cc-listStatus" class="empty-note">
+              <p id="cc-listStatusMessage" role="status"></p>
+              <button type="button" class="secondary-btn" id="cc-loadMore" hidden>加载更多</button>
+            </div>
           </div>
         </section>
 </div>
 <div class="toast" id="cc-toast" role="status"></div>
-<dialog id="cc-withdrawDialog" class="withdraw-dialog" aria-labelledby="cc-withdrawTitle"><h2 id="cc-withdrawTitle">撤回这件作品？</h2><p>确认后将从本次活动的投稿记录中移除。</p><div class="submit-row"><button type="button" class="secondary-btn" id="cc-cancelWithdraw">暂不撤回</button><button type="button" class="primary-btn" id="cc-confirmWithdraw">确认撤回</button></div></dialog>
 </div>

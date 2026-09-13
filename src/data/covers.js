@@ -1,13 +1,13 @@
 // 资源封面映射：0–8 使用正式素材，9–10 保留原型封面
-import cover00 from '../assets/resource-covers/01-literature-trial.jpg'
-import cover01 from '../assets/resource-covers/02-english-speaking-live.jpg'
-import cover02 from '../assets/resource-covers/03-ai-writing-feedback.jpg'
-import cover03 from '../assets/resource-covers/04-cylinder-volume-lab.jpg'
-import cover04 from '../assets/resource-covers/05-english-ordering-game.jpg'
-import cover05 from '../assets/resource-covers/06-differentiated-homework.jpg'
-import cover06 from '../assets/resource-covers/07-math-gold-miner.jpg'
-import cover07 from '../assets/resource-covers/09-ai-corridor-counter.jpg'
-import cover08 from '../assets/resource-covers/08-academic-abstract.jpg'
+const cover00 = new URL('../assets/resource-covers/01-literature-trial.jpg', import.meta.url).href
+const cover01 = new URL('../assets/resource-covers/02-english-speaking-live.jpg', import.meta.url).href
+const cover02 = new URL('../assets/resource-covers/03-ai-writing-feedback.jpg', import.meta.url).href
+const cover03 = new URL('../assets/resource-covers/04-cylinder-volume-lab.jpg', import.meta.url).href
+const cover04 = new URL('../assets/resource-covers/05-english-ordering-game.jpg', import.meta.url).href
+const cover05 = new URL('../assets/resource-covers/06-differentiated-homework.jpg', import.meta.url).href
+const cover06 = new URL('../assets/resource-covers/07-math-gold-miner.jpg', import.meta.url).href
+const cover07 = new URL('../assets/resource-covers/09-ai-corridor-counter.jpg', import.meta.url).href
+const cover08 = new URL('../assets/resource-covers/08-academic-abstract.jpg', import.meta.url).href
 
 export const COVERS = [
   cover00,

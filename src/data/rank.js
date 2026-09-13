@@ -234,7 +234,7 @@ export const EDITORIAL_FEATURES = [
     initial: WORKS.historyRoute.initial,
     metric: '4,200',
     metricLabel: '位老师使用',
-    resourceId: WORKS.historyRoute.resourceId,
+    resourceId: 'res-chushibiao',
     target: 'resource',
   },
   {
@@ -248,7 +248,7 @@ export const EDITORIAL_FEATURES = [
     role: latestBoard.items[0].role,
     metric: latestBoard.items[0].metric,
     metricLabel: '位老师使用',
-    resourceId: latestBoard.items[0].resourceId,
+    resourceId: 'res-poetry-card',
     target: 'resource',
   },
 ]

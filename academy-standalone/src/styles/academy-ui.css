@@ -1,4 +1,4 @@
-/* UI specification supplied on 2026-09-04. Scoped to AI 教学工坊 only.
+/* UI specification supplied on 2026-09-04. Scoped to 飞象学院 only.
    #app increases specificity above legacy v-html styles without affecting peers. */
 #app #view-academy {
   --academy-gutter: 24px;
@@ -93,13 +93,15 @@
 }
 #app #view-academy .course-empty[hidden] { display: none; }
 #app #view-academy .course-empty-icon {
-  display: grid;
-  width: 56px;
-  height: 56px;
-  place-items: center;
-  border-radius: 18px;
-  background: #EFF2F0;
-  color: #68716D;
+  /* 保留设计原始 120×90 画板，不再叠加旧播放图标的背景容器样式。 */
+  display: block;
+  width: 120px;
+  height: 90px;
+}
+#app #view-academy .course-empty-icon svg {
+  display: block;
+  width: 120px;
+  height: 90px;
 }
 #app #view-academy .course-empty strong {
   margin-top: 16px;
@@ -238,12 +240,12 @@
   backdrop-filter: blur(3px);
 }
 #app #view-academy :is(.ov, .academy-submission-modal) { padding: 24px; }
-#app #view-academy :is(.ov-card, .academy-submission-dialog, .withdraw-dialog) {
+#app #view-academy :is(.ov-card, .academy-submission-dialog) {
   border-radius: var(--academy-modal-radius);
   box-shadow: var(--academy-modal-shadow);
   max-height: calc(100dvh - 48px);
 }
-#app #view-academy :is(.ov-card, .withdraw-dialog) { padding: var(--academy-modal-padding); }
+#app #view-academy :is(.ov-card) { padding: var(--academy-modal-padding); }
 #app #view-academy .ov-h {
   margin: 0 44px 24px 0;
   color: var(--ink);
@@ -278,8 +280,11 @@
 #app #view-academy .academy-submission-grid :is(input, select) { border-radius: var(--academy-control-radius); font-size: 14px; }
 #app #view-academy .ov-contact .apply { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 #app #view-academy .ov-contact .acard { flex-direction: column; align-items: stretch; }
+/* 同排卡片由网格拉成等高，让顶部说明区吸收文案行数差异，二维码与底部提示
+   因而对齐；单列时自然随内容增长，不固定文字高度，避免长文案被截断。 */
+#app #view-academy .ov-contact .acard > .txt:first-child { flex: 1 0 auto; }
+#app #view-academy .ov-contact .acard > .txt:last-child { text-align: center; }
 #app #view-academy .ov-contact .qrbox { align-self: center; width: 180px; height: 180px; flex-basis: 180px; }
-#app #view-academy .withdraw-dialog::backdrop { background: var(--academy-overlay); backdrop-filter: blur(3px); }
 
 @container academy-main (min-width: 648px) {
   #app #view-academy :is(.grid4, .lgrid) {
@@ -303,9 +308,102 @@
 @media (max-width: 767px) {
   #app #view-academy { --academy-gutter: 20px; --academy-modal-padding: 20px; }
   #app #view-academy :is(.ov, .academy-submission-modal) { padding: 12px; }
-  #app #view-academy :is(.ov-card, .academy-submission-dialog, .withdraw-dialog) { max-height: calc(100dvh - 24px); }
+  #app #view-academy :is(.ov-card, .academy-submission-dialog) { max-height: calc(100dvh - 24px); }
   #app #view-academy .academy-submission-dialog { height: calc(100dvh - 24px); flex-direction: column; }
   #app #view-academy .academy-submission-aside { display: none; }
   #app #view-academy .ov-contact .apply { grid-template-columns: 1fr; }
   #app #view-academy .creation-campaign .event-hero .content-width { padding-inline: 20px; }
+}
+#view-academy .academy-submission-toast {
+  /* 提示固定在弹窗上层，复用既有控件颜色，不影响表单尺寸和滚动位置。 */
+  position: fixed;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  max-width: 80%;
+  text-align: center;
+  pointer-events: none;
+  cursor: default;
+}
+
+/* hidden 必须优先于旧表单的 flex 布局，否则成功内容会被拼接在原表单下方。
+   只约束投稿弹窗内的互斥面板，不改变首页、表单填写态或其他弹窗的间距。 */
+#app #view-academy .academy-submission-form[hidden],
+#app #view-academy .academy-submission-success[hidden] { display: none; }
+
+/* 成功后替换整个双栏内容，复用已有背景、按钮及图标颜色，不新增颜色。
+   使用 Chrome 86 支持的尺寸/选择器；小屏仍保留安全边距，短视口可滚动查看确认按钮。 */
+#app #view-academy .academy-submission-modal[data-state="success"] .academy-submission-aside { display: none; }
+#app #view-academy .academy-submission-modal[data-state="success"] .academy-submission-dialog {
+  width: 440px;
+  max-width: 100%;
+  height: auto;
+  max-height: calc(100vh - 48px);
+  border-radius: 20px;
+}
+#app #view-academy .academy-submission-modal[data-state="success"] .academy-submission-main { overflow-y: auto; }
+#app #view-academy .academy-submission-modal[data-state="success"] .academy-submission-success {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 48px 28px 32px;
+}
+
+/* 9.9 验收只调整轮播指示器的视觉层级，仍沿用既有 radio 与自动轮播逻辑。
+   未选中态通过整体透明度保留设计中的半透明填充和白色细描边；选中态需再显式声明填充和描边，
+   否则原页更具体的选中规则会继续提供黄色背景。不新增脚本状态，0.5px 描边可由 Chrome 86 原生渲染。 */
+#app #view-academy .hero .dots label {
+  width: 6px;
+  height: 6px;
+  border: 0.5px solid var(--musk-v3-semantic-page-bg, var(--surface));
+  border-radius: 50%;
+  background: var(--musk-v3-semantic-text-secondary, var(--muted));
+  opacity: 0.5;
+}
+#app #view-academy .hero #hs1:checked ~ .hero-controls .dots label[for="hs1"],
+#app #view-academy .hero #hs2:checked ~ .hero-controls .dots label[for="hs2"] {
+  width: 20px;
+  height: 6px;
+  border: 0.5px solid var(--musk-v3-semantic-page-bg, var(--surface));
+  border-radius: 23px;
+  background: var(--musk-v3-semantic-text-secondary, var(--muted));
+  opacity: 1;
+}
+
+/* 首页回放、课程列表和详情侧栏共用同一时长胶囊规格。
+   宽度保持由文本自然撑开，避免把设计中的“2:23”示例宽度错误套到长时长内容。 */
+#app #view-academy .vthumb .dur,
+#app #view-academy .lthumb .dur,
+#app #view-academy .pl-dur {
+  width: auto;
+  padding: 0 5px;
+  border-radius: 8.5px;
+  background: var(--musk-v3-semantic-overlay-control-bg);
+  color: var(--musk-v3-semantic-text-inverse, var(--surface));
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+  white-space: nowrap;
+}
+
+/* 分类标签的 14px 行高与上下各 3px 内边距共同形成设计确认的 20px 总高。
+   固定高度只约束垂直规格，横向仍由不同分类文案和 5px 内边距自然适配。 */
+#app #view-academy .course-tags span {
+  box-sizing: border-box;
+  height: 20px;
+  padding: 3px 5px;
+  border-radius: 6px;
+  background: var(--musk-v3-semantic-page-subtle-bg);
+  color: var(--musk-v3-semantic-text-secondary, var(--muted));
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 14px;
+}
+
+/* 课程目标圆点从活动警示黄收口为设计指定的通用主题色 #141F1B。
+   使用 main v3 主文字语义 token；旧 --ink 只在独立源码未由宿主注入主题时提供同值兼容。 */
+#app #view-academy .lp-goals li::before {
+  background: var(--musk-v3-semantic-text-primary, var(--ink));
 }

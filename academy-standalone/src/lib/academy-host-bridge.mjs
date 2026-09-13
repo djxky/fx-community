@@ -1,7 +1,6 @@
 import {
   closeAcademySubmission,
-  handleAcademySubmissionClick,
-  submitAcademyWork,
+  createAcademySubmissionController,
 } from './academy-submission.mjs'
 
 const navigationTargets = [
@@ -22,18 +21,14 @@ function dispatchHostEvent(name, detail) {
   window.dispatchEvent(new CustomEvent(name, { detail }))
 }
 
-function requestLogin(integration) {
-  if (typeof integration?.openLogin === 'function') integration.openLogin()
-  else dispatchHostEvent('academy:request-login', { source: 'work-submission' })
-}
-
 function navigate(integration, view) {
   if (view === 'academy') return
   if (typeof integration?.navigate === 'function') integration.navigate(view)
   else dispatchHostEvent('academy:navigate', { view })
 }
 
-export function installAcademyHostBridge(root = document, integration = {}) {
+export function installAcademyHostBridge(root = document, integration = {}, api) {
+  const submission = createAcademySubmissionController(root, api)
   const closeMenus = () => {
     root.querySelectorAll('.avatar-menu').forEach((menu) => { menu.style.display = 'none' })
     root.querySelectorAll('.avatar-trigger').forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'))
@@ -41,26 +36,12 @@ export function installAcademyHostBridge(root = document, integration = {}) {
 
   const onSubmit = (event) => {
     if (!event.target?.matches?.('.academy-submission-form')) return
-    if (shouldRequireLogin(integration)) {
-      event.preventDefault()
-      event.stopImmediatePropagation()
-      requestLogin(integration)
-      return
-    }
-    submitAcademyWork(event, root)
+    void submission.submit(event)
   }
 
   const onClick = (event) => {
-    const submissionButton = event.target?.closest?.('.academy-submission-submit[type="submit"]')
-    if (submissionButton && shouldRequireLogin(integration)) {
-      event.preventDefault()
-      event.stopImmediatePropagation()
-      requestLogin(integration)
-      return
-    }
-
     if (closeAcademySubmission(event, root)) return
-    if (handleAcademySubmissionClick(event, root) === 'open') return
+    if (submission.open(event)) return
 
     const avatarTrigger = event.target?.closest?.('.avatar-trigger')
     if (avatarTrigger) {
@@ -102,6 +83,7 @@ export function installAcademyHostBridge(root = document, integration = {}) {
   root.addEventListener('keydown', onKeydown)
 
   return () => {
+    submission.destroy()
     root.removeEventListener('submit', onSubmit)
     root.removeEventListener('click', onClick)
     root.removeEventListener('keydown', onKeydown)

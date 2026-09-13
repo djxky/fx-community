@@ -1,12 +1,11 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import raw from './raw/academy.html?raw'
-import Sidebar from '../components/Sidebar.vue'
-import newSemesterCampaign from '../assets/academy/new-semester-ai-campaign.png'
+import newSemesterCampaign from '../assets/academy/new-semester-ai-campaign.jpg'
 import workshopHeroBoard from '../assets/academy/workshop-hero-board.jpg'
 import workshopLivePoster from '../assets/academy/workshop-live-poster.jpg'
-import workshopCertificate from '../assets/academy/workshop-certificate.png'
-import workshopMentors from '../assets/academy/workshop-mentors.png'
+import workshopCertificate from '../assets/academy/workshop-certificate.jpg'
+import workshopMentors from '../assets/academy/workshop-mentors.jpg'
 import liveWechatQr from '../assets/academy/qr-wechat-video.jpg'
 import liveDouyinQr from '../assets/academy/qr-douyin-official.png'
 import liveXiaohongshuQr from '../assets/academy/qr-xiaohongshu-official.png'
@@ -27,7 +26,7 @@ import { setupAcademyCarousel } from '../lib/academy-carousel.mjs'
 import { setupAcademyCourseEmptyState } from '../lib/academy-course-empty-state.mjs'
 import { setupAcademyVideoPause } from '../lib/academy-video-playback.mjs'
 import creationCampaign from './raw/creation-campaign.html?raw'
-import creationArt from '../assets/academy/teacher-ai-creation.png'
+import creationArt from '../assets/academy/teacher-ai-creation.jpg'
 import { setupCreationCampaign } from '../lib/creation-campaign.mjs'
 import '../styles/creation-campaign.css'
 import '../styles/academy-ui.css'
@@ -135,7 +134,6 @@ const academyImages = {
 <template>
   <div id="view-academy" ref="academyRoot" :style="academyImages">
     <div class="page">
-      <Sidebar active="academy" />
       <div style="display:contents" @keydown="handleCourseNavigationKeydown" v-html="renderedRaw"></div>
     </div>
   </div>

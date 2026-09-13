@@ -1,5 +1,4 @@
 <script setup>
-import Sidebar from '../components/Sidebar.vue'
 import PostCard from '../components/PostCard.vue'
 import { LOCAL_MASTERS, LOCAL_POSTS } from '../data/local'
 
@@ -24,7 +23,6 @@ const LOCAL_CARD_POSTS = LOCAL_POSTS.map((post) => ({
 <template>
   <div id="view-local">
     <div class="page">
-      <Sidebar active="community" />
       <main class="local-main">
         <div class="tbar">
           <div class="tbar-in">

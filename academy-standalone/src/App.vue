@@ -1,22 +1,26 @@
 <script setup>
 import { defineAsyncComponent, onBeforeUnmount, onMounted } from 'vue'
-import { installAcademyHostBridge } from './lib/academy-host-bridge.mjs'
+import { installActivitySession } from './lib/activity-login.mjs'
 
 const AcademyView = defineAsyncComponent(() => import('./views/AcademyView.vue'))
-let cleanupBridge = () => {}
+let cleanupSession = () => {}
 
 onMounted(() => {
-  cleanupBridge = installAcademyHostBridge(document, window.FEIXIANG_ACADEMY_INTEGRATION)
+  // 全局只监听安全的父窗口通知；表单桥接等待异步 AcademyView 真正挂载后安装。
+  cleanupSession = installActivitySession()
 })
 
-onBeforeUnmount(() => cleanupBridge())
+onBeforeUnmount(() => {
+  cleanupSession()
+})
 </script>
 
 <template>
   <Suspense>
     <AcademyView />
     <template #fallback>
-      <div class="academy-loading" role="status" aria-live="polite">正在加载 AI 教学工坊…</div>
+      <!-- 异步加载提示同步页面品牌，避免慢网速下短暂露出旧名称。 -->
+      <div class="academy-loading" role="status" aria-live="polite">正在加载飞象学院…</div>
     </template>
   </Suspense>
 </template>

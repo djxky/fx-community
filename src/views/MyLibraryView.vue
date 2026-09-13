@@ -1,6 +1,5 @@
 <script setup>
 import { computed, reactive, ref } from 'vue'
-import Sidebar from '../components/Sidebar.vue'
 import PublishFlow from '../components/PublishFlow.vue'
 import ImportFlow from '../components/ImportFlow.vue'
 import { COVERS } from '../data/covers'
@@ -175,7 +174,6 @@ function placeholderAction(label) {
 <template>
   <div id="view-mylib">
     <div class="page">
-      <Sidebar active="mylib" />
       <main class="ml-main">
         <div class="ml-wrap">
           <div class="ml-kicker">我的空间 · 社区升级</div>

@@ -22,15 +22,16 @@ test('发现页使用多学科真实内容与学院丰富素材，不再只复�
   const text = POSTS.map((post) => `${post.badge} ${post.meta} ${post.title}`).join(' ')
   const editorialCoverCount = POSTS.filter((post) => post.cover.includes('/assets/community-editorial/')).length
 
-  assert.equal(POSTS.length, 9)
+  assert.equal(POSTS.length, 10)
   assert.equal(new Set(POSTS.map((post) => post.cover)).size, POSTS.length)
   assert.ok(editorialCoverCount >= 8, `社区丰富素材仅 ${editorialCoverCount} 张`)
   for (const subject of ['语文', '数学', '英语', '物理', '化学', '信息科技']) {
     assert.match(text, new RegExp(subject), subject)
   }
-  for (const type of ['互动课件', '教学游戏', '应用', '教案', '题单']) {
+  for (const type of ['互动课件', '教学游戏', '工具', '教案', '题单']) {
     assert.match(text, new RegExp(type), type)
   }
+  assert.doesNotMatch(text, /应用/)
   assert.doesNotMatch(text, /技能/)
   assert.ok(POSTS.every((post) => post.to !== 'skill'))
 })

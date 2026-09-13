@@ -1,7 +1,6 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import raw from './raw/skill.html?raw'
-import Sidebar from '../components/Sidebar.vue'
 
 const viewRoot = ref(null)
 let cleanupSkillActions = null
@@ -109,7 +108,6 @@ onBeforeUnmount(() => {
 <template>
   <div id="view-skill" ref="viewRoot">
     <div class="page">
-      <Sidebar active="skills" />
       <div style="display:contents" v-html="raw"></div>
     </div>
   </div>

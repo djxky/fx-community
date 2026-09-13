@@ -42,8 +42,9 @@ const history = [
       <button type="button" class="nav nav-skills" :class="{ on: skOn }" :aria-current="skOn ? 'page' : undefined">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="4"></rect><path d="m9 9-2 3 2 3M15 9l2 3-2 3M11.5 16l1-8"></path></svg>技能广场
       </button>
+      <!-- 独立壳层保留给脱离宿主运行的场景，入口名称也必须与正式宿主一致。 -->
       <button type="button" class="nav nav-academy" :class="{ on: acOn }" :aria-current="acOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"></path><path d="M6 12v4.5c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5V12"></path></svg>AI 教学工坊
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"></path><path d="M6 12v4.5c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5V12"></path></svg>飞象学院
       </button>
       <button type="button" class="nav nav-mylib" :class="{ on: mlOn }" :aria-current="mlOn ? 'page' : undefined">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 19h9.7a4.3 4.3 0 0 0 .7-8.5A6.2 6.2 0 0 0 6 8.8 5.1 5.1 0 0 0 7.5 19Z"></path></svg>我的知识库
@@ -108,7 +109,7 @@ const history = [
       <button type="button" class="sm-ic nav-skills" :class="{ on: skOn }" title="技能广场" :aria-current="skOn ? 'page' : undefined">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="4"></rect><path d="m9 9-2 3 2 3M15 9l2 3-2 3M11.5 16l1-8"></path></svg>
       </button>
-      <button type="button" class="sm-ic nav-academy" :class="{ on: acOn }" title="AI 教学工坊" :aria-current="acOn ? 'page' : undefined">
+      <button type="button" class="sm-ic nav-academy" :class="{ on: acOn }" title="飞象学院" :aria-current="acOn ? 'page' : undefined">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"></path><path d="M6 12v4.5c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5V12"></path></svg>
       </button>
       <button type="button" class="sm-ic nav-mylib" :class="{ on: mlOn }" title="我的知识库" :aria-current="mlOn ? 'page' : undefined">

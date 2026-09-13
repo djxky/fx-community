@@ -2,6 +2,7 @@
 import { computed, reactive, ref, watch } from 'vue'
 import raw from './raw/res.html?raw'
 import { RESOURCES_BY_ID } from '../data/resources'
+import { COVERS } from '../data/covers'
 import { store } from '../store'
 import { bindForkCardResourceIds, isSlideResourceKind } from '../resource-navigation.mjs'
 import { getAdaptedAttribution, getResourceCredits, getResourceTopicMembership } from '../resource-attribution.mjs'
@@ -18,6 +19,137 @@ import {
 
 const DEFAULT_RESOURCE_ID = 'res-xianglin'
 const panelState = ref('detail')
+
+// —— 交互状态（收藏 / 评论 / 回复 / toast）——
+const interactions = reactive({
+  resourceId: null,
+  favorited: false,
+  starDelta: 0,
+  toast: '',
+  composerOpen: false,
+  replyingTo: null,
+  comments: [],
+  seq: 900,
+  count: 86,
+})
+
+function seedInteractions(resource) {
+  interactions.resourceId = resource.id
+  interactions.favorited = false
+  interactions.starDelta = 0
+  interactions.composerOpen = false
+  interactions.replyingTo = null
+  interactions.seq = 900
+  interactions.count = 86
+  interactions.comments = [
+    { id: 'c1', name: '王慧老师', initial: '王', tone: '', text: '“先发人物关系卡”特别适合基础弱的班，学生进入状态快多了。', likes: 62, liked: false, pinned: true, time: '3 天前', authorReply: '谢谢你的反馈，我也把这套卡片放进了最新版本。', mine: false, replies: [] },
+    { id: 'c2', name: '李敏老师', initial: '李', tone: 'is-warm', text: '学生为了当“首席检察官”，提前把课文读了三遍。', likes: 41, liked: false, pinned: false, time: '5 天前', mine: false, replies: [] },
+    { id: 'c3', name: '周涛老师', initial: '周', tone: 'is-muted', text: '我做了一个 1 课时简化版，已经发布到改编版本区。', likes: 28, liked: false, pinned: false, time: '1 周前', mine: false, replies: [] },
+  ]
+}
+
+function isAuthorView() { return previewEnabled.value && previewState.viewer === 'owner' }
+function nextId() { return `c${++interactions.seq}` }
+function findComment(id) {
+  for (const c of interactions.comments) {
+    if (c.id === id) return { node: c, parent: null }
+    for (const r of c.replies) if (r.id === id) return { node: r, parent: c }
+  }
+  return null
+}
+function showToast(msg) {
+  interactions.toast = msg
+  clearTimeout(showToast._t)
+  showToast._t = setTimeout(() => { interactions.toast = '' }, 2200)
+}
+function sortedComments() {
+  return [...interactions.comments].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0))
+}
+
+function readInput(kind) {
+  const el = document.querySelector(`#view-res [data-act-input="${kind}"]`)
+  return el ? el.value.trim() : ''
+}
+function focusInput(kind) {
+  requestAnimationFrame(() => {
+    const el = document.querySelector(`#view-res [data-act-input="${kind}"]`)
+    if (el) { el.focus() }
+  })
+}
+function meInitial() { return String(store.currentUser.name || '我').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').slice(0, 1) || '我' }
+function submitComment() {
+  const text = readInput('comment')
+  if (!text) { interactions.composerOpen = false; return }
+  interactions.comments.push({ id: nextId(), name: store.currentUser.name, initial: meInitial(), tone: 'is-warm', text, likes: 0, liked: false, pinned: false, time: '刚刚', mine: true, replies: [] })
+  interactions.count += 1
+  interactions.composerOpen = false
+}
+function submitReply(id) {
+  const text = readInput('reply')
+  const found = findComment(id)
+  const target = found ? (found.parent || found.node) : null
+  if (!text || !target) { interactions.replyingTo = null; return }
+  target.replies.push({ id: nextId(), name: store.currentUser.name, initial: meInitial(), tone: 'is-muted', text, likes: 0, liked: false, time: '刚刚', mine: true })
+  interactions.count += 1
+  interactions.replyingTo = null
+}
+function toggleLike(id) {
+  const found = findComment(id)
+  if (!found) return
+  found.node.liked = !found.node.liked
+  found.node.likes += found.node.liked ? 1 : -1
+}
+function togglePin(id) {
+  const found = findComment(id)
+  if (!found || found.parent) return
+  found.node.pinned = !found.node.pinned
+}
+function removeNode(id) {
+  const found = findComment(id)
+  if (!found) return
+  if (found.parent) found.parent.replies = found.parent.replies.filter((r) => r.id !== id)
+  else interactions.comments = interactions.comments.filter((c) => c.id !== id)
+  interactions.count = Math.max(0, interactions.count - 1)
+}
+function handleAction(act, id) {
+  switch (act) {
+    case 'favorite': interactions.favorited = !interactions.favorited; interactions.starDelta = interactions.favorited ? 1 : 0; break
+    case 'comment-open': interactions.composerOpen = true; focusInput('comment'); break
+    case 'comment-cancel': interactions.composerOpen = false; break
+    case 'comment-submit': submitComment(); break
+    case 'reply-open': interactions.replyingTo = id; focusInput('reply'); break
+    case 'reply-cancel': interactions.replyingTo = null; break
+    case 'reply-submit': submitReply(id); break
+    case 'like': toggleLike(id); break
+    case 'pin': togglePin(id); break
+    case 'delete': removeNode(id); break
+    default: break
+  }
+}
+
+const LIVE_ICONS = { like: '👍' }
+function renderLikeBtn(node) {
+  return `<button class="fg-cmt-like${node.liked ? ' is-on' : ''}" data-act="like" data-id="${node.id}" type="button">${LIVE_ICONS.like} ${node.likes}</button>`
+}
+function renderCmtActions(node, isReply) {
+  const author = isAuthorView()
+  const parts = [renderLikeBtn(node), `<button class="fg-cmt-act" data-act="reply-open" data-id="${node.id}" type="button">回复</button>`]
+  if (!isReply && author) parts.push(`<button class="fg-cmt-act" data-act="pin" data-id="${node.id}" type="button">${node.pinned ? '取消置顶' : '置顶'}</button>`)
+  if (author || node.mine) parts.push(`<button class="fg-cmt-act fg-cmt-del" data-act="delete" data-id="${node.id}" type="button">删除</button>`)
+  return `<div class="fg-cmt-actions">${parts.join('')}</div>`
+}
+function renderReplyInput(id) {
+  if (interactions.replyingTo !== id) return ''
+  return `<div class="fg-live-composer fg-cmt-reply-box"><input class="fg-live-input" data-act-input="reply" type="text" placeholder="回复…" maxlength="200"><button class="fg-live-send" data-act="reply-submit" data-id="${id}" type="button">发布</button><button class="fg-live-cancel" data-act="reply-cancel" type="button">取消</button></div>`
+}
+function renderReply(r) {
+  return `<div class="fg-cmt-reply"><div class="fg-v2-comment-avatar ${r.tone || 'is-muted'}">${escapeHtml(r.initial)}</div><div class="fg-cmt-body"><div class="fg-v2-comment-meta"><strong>${escapeHtml(r.name)}</strong>${r.mine ? '<span class="fg-cmt-me">我</span>' : ''}</div><p>${escapeHtml(r.text)}</p><small>${escapeHtml(r.time)}</small>${renderCmtActions(r, true)}${renderReplyInput(r.id)}</div></div>`
+}
+function renderComment(c) {
+  const replies = c.replies.map(renderReply).join('')
+  const authorReply = c.authorReply ? `<div class="fg-v2-author-reply"><strong>作者回复</strong><span>${escapeHtml(c.authorReply)}</span></div>` : ''
+  return `<article class="fg-v2-comment${c.pinned ? ' is-pinned' : ''}"><div class="fg-v2-comment-avatar ${c.tone}">${escapeHtml(c.initial)}</div><div class="fg-cmt-body"><div class="fg-v2-comment-meta"><strong>${escapeHtml(c.name)}</strong>${c.mine ? '<span class="fg-cmt-me">我</span>' : ''}${c.pinned ? '<span class="fg-v2-pinned-badge">置顶</span>' : ''}</div><p>${escapeHtml(c.text)}</p><small>${escapeHtml(c.time)}</small>${authorReply}${renderCmtActions(c, false)}${renderReplyInput(c.id)}${replies ? `<div class="fg-cmt-replies">${replies}</div>` : ''}</div></article>`
+}
 
 function escapeHtml(value) {
   return String(value)
@@ -141,23 +273,37 @@ function renderResourcePrimaryActions(actions) {
 }
 
 function renderDiscussionActionBar(actions, favoriteCount) {
-  const favorite = actions.find((action) => action.key === 'favorite')
   const share = actions.find((action) => action.key === 'share')
   const comment = '<button class="fg-action-link fg-comment-action" type="button" aria-label="评论"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6.5A3.5 3.5 0 018.5 3h7A3.5 3.5 0 0119 6.5v5a3.5 3.5 0 01-3.5 3.5H11l-4.5 4v-4.3A3.5 3.5 0 015 11.5z"></path></svg><span class="fg-action-label">评论</span><span class="fg-action-count">86</span></button>'
-  return `${favorite ? renderFavoriteAction(favorite, favoriteCount) : ''}${comment}${share ? renderShareAction(share) : ''}`
+  return `${comment}${share ? renderShareAction(share) : ''}`
 }
 
 function renderResourceDetailHead(resource) {
-  if (resource.contentType !== 'app') return `<div class="fg-v2-detail-kicker">资源详情</div><h1>${escapeHtml(resource.title)}</h1>`
+  return `<h1>${escapeHtml(resource.title)}</h1>`
+}
 
+function renderResourceFit(resource) {
+  const grade = String(resource.fit.grade || '').split('·').pop()
+  const parts = [...new Set([resource.fit.subject, grade, resource.fit.textbook, resource.fit.lessonType, resource.kind].map((p) => String(p || '').trim()).filter(Boolean))]
+  if (!parts.length) return ''
+  return `<div class="fg-res-fit" aria-label="适配信息">${parts.map((p) => `<span>${escapeHtml(p)}</span>`).join('<i class="fg-res-fit-dot" aria-hidden="true">·</i>')}</div>`
+}
+
+function renderResourceStats(resource) {
+  const s = resource.stats || {}
+  const useIcon = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"></path><circle cx="9.5" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg>'
+  const starIcon = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 21l-4.9-2.6.9-5.5-4-3.9 5.5-.8z"></path></svg>'
+  const items = []
+  if (s.use != null) items.push(`<span class="fg-res-metric" aria-label="使用人数">${useIcon}<b>${formatNumber(s.use)}</b><i>使用</i></span>`)
+  if (s.star != null) items.push(`<button class="fg-res-metric fg-res-metric-fav${interactions.favorited ? ' is-on' : ''}" data-act="favorite" type="button" aria-label="收藏" aria-pressed="${interactions.favorited}">${starIcon}<b>${formatNumber((s.star || 0) + interactions.starDelta)}</b><i>${interactions.favorited ? '已收藏' : '收藏'}</i></button>`)
+  if (!items.length) return ''
+  return `<div class="fg-res-metrics">${items.join('')}</div>`
+}
+
+function renderResourceIcon(resource) {
+  if (resource.contentType !== 'app') return ''
   const icon = resource.id === 'res-order-game' ? '🍽️' : '✦'
-  return `<div class="fg-v2-detail-kicker">应用详情</div><div class="fg-v2-app-head">
-    <div class="fg-v2-app-icon" aria-hidden="true">${icon}</div>
-    <div class="fg-v2-app-head-copy">
-      <h1>${escapeHtml(resource.title)}</h1>
-      <div class="fg-v2-app-date">创建时间：2026年8月6日</div>
-    </div>
-  </div>`
+  return `<div class="fg-v2-app-icon" aria-hidden="true">${icon}</div>`
 }
 
 const ACTIVITY_ICONS = {
@@ -188,7 +334,7 @@ function renderRecentActivities(resource, limit = 2, withHeader = true) {
 
   return `<section class="fg-activity-card${withHeader ? '' : ' is-compact'}" aria-labelledby="fg-activity-title">
     ${withHeader ? `<div class="fg-activity-head">
-      <div><span class="fg-activity-kicker">资源动态</span><h3 id="fg-activity-title">最近动态</h3></div>
+      <h3 id="fg-activity-title">最近动态</h3>
       <span class="fg-activity-live"><i aria-hidden="true"></i>持续更新</span>
     </div>` : ''}
     <div class="fg-activity-viewport" role="list" aria-label="关于这个资源的最近动态">
@@ -197,32 +343,42 @@ function renderRecentActivities(resource, limit = 2, withHeader = true) {
   </section>`
 }
 
-function renderResourceDiscussionPanel(resource) {
+function renderComposerFooter(resource) {
   const actions = getResourceActions({
     contentType: resource.contentType,
     isOwner: isResourceOwner(resource, store.currentUser),
     isAdapted: Boolean(resource.forkedFrom),
   })
   const discussionActions = renderDiscussionActionBar(actions, resource.stats.star)
+  const entry = interactions.composerOpen
+    ? `<div class="fg-live-composer"><input class="fg-live-input" data-act-input="comment" type="text" placeholder="说点什么…" maxlength="200"><button class="fg-live-send" data-act="comment-submit" type="button">发布</button><button class="fg-live-cancel" data-act="comment-cancel" type="button">取消</button></div>`
+    : `<button class="fg-v2-comment-input" data-act="comment-open" type="button">说点什么…</button>`
+  return `<div class="fg-composer-footer"><div class="fg-v2-discussion-composer" aria-label="参与讨论">
+    ${entry}
+    <div class="fg-v2-discussion-actions">${discussionActions}</div>
+  </div></div>`
+}
+
+function renderResourceDiscussionPanel(resource) {
+  const list = sortedComments().map(renderComment).join('')
   return `<section class="fg-v2-discussion-panel" aria-labelledby="fg-v2-discussion-title">
-    <div class="fg-v2-discussion-head"><div><span class="fg-v2-data-kicker">社区反馈</span><h3 id="fg-v2-discussion-title">讨论 <span>86</span></h3></div><button type="button" class="fg-v2-follow-link">参与讨论</button></div>
-    <div class="fg-v2-comment-list" aria-label="精选评论">
-      <article class="fg-v2-comment is-pinned"><div class="fg-v2-comment-avatar">王</div><div><div class="fg-v2-comment-meta"><strong>王慧老师</strong><span class="fg-v2-pinned-badge">置顶</span></div><p>“先发人物关系卡”特别适合基础弱的班，学生进入状态快多了。</p><small>👍 62 · 3 天前</small><div class="fg-v2-author-reply"><strong>作者回复</strong><span>谢谢你的反馈，我也把这套卡片放进了最新版本。</span></div></div></article>
-      <article class="fg-v2-comment"><div class="fg-v2-comment-avatar is-warm">李</div><div><strong>李敏老师</strong><p>学生为了当“首席检察官”，提前把课文读了三遍。</p><small>👍 41 · 5 天前</small></div></article>
-      <article class="fg-v2-comment"><div class="fg-v2-comment-avatar is-muted">周</div><div><strong>周涛老师</strong><p>我做了一个 1 课时简化版，已经发布到改编版本区。</p><small>👍 28 · 1 周前</small></div></article>
-    </div>
-    <button type="button" class="fg-v2-more-comments">查看全部 86 条讨论 <span aria-hidden="true">→</span></button>
-    <div class="fg-v2-discussion-composer" aria-label="参与讨论">
-      <button class="fg-v2-comment-input" type="button">说点什么…</button>
-      <div class="fg-v2-discussion-actions">${discussionActions}</div>
-    </div>
+    <div class="fg-v2-discussion-head"><h3 id="fg-v2-discussion-title">讨论 <span>${formatNumber(interactions.count)}</span></h3><button type="button" class="fg-v2-follow-link" data-act="comment-open">参与讨论</button></div>
+    <div class="fg-v2-comment-list" aria-label="精选评论">${list}</div>
+    <button type="button" class="fg-v2-more-comments" data-loadmore>加载更多讨论</button>
   </section>`
+}
+
+function renderFooterAuthor(resource) {
+  return `<div class="fg-author nav-studio">
+    <div class="av">${escapeHtml(resource.author.avatar || resource.author.name.slice(0, 1))}</div>
+    <span class="nm">${escapeHtml(resource.author.name)} <span class="vf" aria-label="认证教师"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span></span>
+  </div>`
 }
 
 function renderResourceIntro(resource) {
   const extra = resource.contentType === 'app'
-    ? '面向班级、教师和家长的互动练习场景，支持多角色体验、课堂任务和结果反馈，老师可以直接使用，也可以按班级需要继续调整。'
-    : '适合直接带入课堂使用，也支持按班级基础调整环节、材料和节奏。'
+    ? '面向班级、教师和家长的互动练习场景，支持多角色体验、课堂任务和结果反馈。老师可以直接带入课堂使用，也能按班级情况自由调整环节、素材和节奏；学生在真实情境里边玩边学，课后还能继续巩固。整套流程经过一线课堂打磨，兼顾参与度与学习目标，帮助不同基础的孩子都跟得上、有收获。'
+    : '整套资源围绕核心目标设计，环节完整、材料齐备，拿到即可直接带入课堂，省去从零备课的时间。它同样支持二次改编——你可以按班级基础增删环节、替换素材、调整时长与难度，让它更贴合自己学生的实际情况。设计上兼顾了课堂参与度与学习目标的达成，既能调动学生，也能把该讲清的知识点讲透。'
   return `<p class="fg-summary">${escapeHtml(resource.goal)}</p><p class="fg-summary fg-summary-extra">${extra}</p>`
 }
 
@@ -231,18 +387,16 @@ function renderResourceAboutPanel(resource) {
 }
 
 function renderResourceVersionsPanel(resource) {
-  const versions = resource.versions.slice(-2).reverse().map((version, index) => `<div class="fg-v2-version-row"><span class="fg-v2-version-dot${index ? '' : ' is-current'}"></span><div><strong>${escapeHtml(version.v)}</strong><small>${index ? '历史版本' : '最新版本'}</small><p>${escapeHtml(version.note || '持续优化课堂使用体验。')}</p></div></div>`).join('')
-  const forks = resource.forks.map((id) => RESOURCES_BY_ID[id]).filter(Boolean).map((fork) => `<div class="fg-v2-fork-row"><div class="fg-v2-fork-avatar">${escapeHtml(fork.author.name.slice(0, 1))}</div><div><strong>${escapeHtml(fork.title)}</strong><p>${escapeHtml(fork.author.name)} · ${formatNumber(fork.stats.use)} 位老师使用</p></div><span>改编</span></div>`).join('')
-  return `<section class="fg-v2-versions-panel" aria-labelledby="fg-v2-versions-title"><div class="fg-v2-version-head"><h2 id="fg-v2-versions-title">版本与改编</h2><span>${formatNumber(resource.stats.adapt)} 个版本</span></div><div class="fg-v2-version-list">${versions}</div>${forks ? `<div class="fg-v2-fork-title">社区改编</div>${forks}` : ''}</section>`
+  const forkCards = resource.forks.map((id) => RESOURCES_BY_ID[id]).filter(Boolean).map((fork) => `<div class="fg-v2-fork-row" data-resource-id="${escapeHtml(fork.id)}" role="link" tabindex="0" aria-label="查看改编作品：${escapeHtml(fork.title)}"><img class="fg-v2-fork-cover" src="${fork.cover || COVERS[0]}" alt="" loading="lazy"><div class="fg-v2-fork-copy"><strong>${escapeHtml(fork.title)}</strong><p>${escapeHtml(fork.author.name)} · ${formatNumber(fork.stats.use)} 位老师使用</p></div><span class="fg-v2-fork-go" aria-hidden="true">查看</span></div>`).join('')
+  const body = forkCards || '<p class="fg-v2-forks-empty">还没有人改编这个作品，来做第一个改编版本吧。</p>'
+  return `<section class="fg-v2-versions-panel" aria-labelledby="fg-v2-versions-title"><div class="fg-v2-version-head"><h2 id="fg-v2-versions-title">优质改编</h2><span>${formatNumber(resource.stats.adapt)} 个改编</span></div><div class="fg-v2-fork-list">${body}</div></section>`
 }
 
 function renderResourceDetailPanel(resource) {
-  const detail = `${renderResourceAboutPanel(resource)}<section class="fg-v2-tags-panel"><div class="fg-v2-section-kicker">作品标签</div><div class="fg-v2-tags"><span>${escapeHtml(resource.topic.split('·')[0])}</span><span>${escapeHtml(resource.fit.lessonType)}</span><span>${escapeHtml(resource.kind)}</span></div></section>`
-  const discussion = renderResourceDiscussionPanel(resource)
+  const discussion = renderRecentActivities(resource, 3, true) + renderResourceDiscussionPanel(resource)
   const versions = renderResourceVersionsPanel(resource)
   return `<div class="fg-v2-panel-inner">
     <div class="fg-v2-panel-content" data-v2-panel-content>
-      <section class="fg-v2-panel-section" data-v2-panel="detail">${detail}</section>
       <section class="fg-v2-panel-section" data-v2-panel="versions">${versions}</section>
       <section class="fg-v2-panel-section" data-v2-panel="discussion">${discussion}</section>
     </div>
@@ -302,10 +456,13 @@ function renderMotherResourceHtml(template, resource) {
   const fitLabel = `${resource.fit.subject} · ${resource.fit.lessonType}`
   const topicLabel = resource.topic.split('·')[0]
   const slideResource = isSlideResource(resource)
+  const isAdapted = Boolean(resource.forkedFrom)
+  const adaptedParent = isAdapted ? (RESOURCES_BY_ID[resource.forkedFrom] || RESOURCES_BY_ID[DEFAULT_RESOURCE_ID]) : null
+  const adaptedAttribution = isAdapted ? getAdaptedAttribution(resource, adaptedParent) : null
   const actions = getResourceActions({
     contentType: resource.contentType,
     isOwner: isResourceOwner(resource, store.currentUser),
-    isAdapted: Boolean(resource.forkedFrom),
+    isAdapted,
   })
   const slots = {
     __RES_FIT__: fitLabel,
@@ -320,6 +477,9 @@ function renderMotherResourceHtml(template, resource) {
     __RES_ADAPT__: formatNumber(resource.stats.adapt),
     __RES_ACTIONS__: renderResourceActions(actions, resource.stats.star),
     __RES_DETAIL_HEAD__: renderResourceDetailHead(resource),
+    __RES_APP_ICON__: renderResourceIcon(resource),
+    __RES_FIT_LINE__: renderResourceFit(resource),
+    __RES_STATS__: renderResourceStats(resource),
     __RES_PRIMARY_ACTIONS__: renderResourcePrimaryActions(actions),
     __RES_FOOTER_ACTIVITY__: renderRecentActivities(resource, 2, false),
     __RES_RECENT_ACTIVITY__: renderRecentActivities(resource),
@@ -331,14 +491,18 @@ function renderMotherResourceHtml(template, resource) {
     __RES_CONTRIBUTORS__: renderContributors(resource.contributors),
     __RES_TOPIC_MEMBERSHIP__: renderTopicMembership(resource),
     __RES_DETAIL_PANEL__: renderResourceDetailPanel(resource),
+    __RES_FOOTER_AUTHOR__: renderFooterAuthor(resource),
+    __RES_ORIGIN__: isAdapted ? `<section class="fg-v2-origin-panel">${renderAdaptedAboutSource(adaptedAttribution)}</section>` : '',
+    __RES_COMPOSER_FOOTER__: renderComposerFooter(resource),
     __RES_TOPIC_LABEL__: topicLabel,
     __RES_TOPIC__: resource.topic.replaceAll('·', ' · '),
     __RES_PREVIEW_CLASS__: slideResource ? 'is-slides' : 'is-app',
+    __RES_PREVIEW_SRC__: resource.cover || COVERS[0],
     __RES_PREVIEW_RAIL__: slideResource ? renderSlideRail() : '',
     __RES_PREVIEW_LABEL__: slideResource ? '课件 · 1 / 6' : `${kindLabel} · 运行预览`,
   }
 
-  let html = renderSlots(template, slots, ['__RES_ACTIONS__', '__RES_FOOTER_ACTIONS__', '__RES_DETAIL_HEAD__', '__RES_INTRO__', '__RES_PRIMARY_ACTIONS__', '__RES_FOOTER_ACTIVITY__', '__RES_RECENT_ACTIVITY__', '__RES_STATE_SWITCHER__', '__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__', '__RES_DETAIL_PANEL__'])
+  let html = renderSlots(template, slots, ['__RES_ACTIONS__', '__RES_FOOTER_ACTIONS__', '__RES_DETAIL_HEAD__', '__RES_APP_ICON__', '__RES_FIT_LINE__', '__RES_STATS__', '__RES_INTRO__', '__RES_PRIMARY_ACTIONS__', '__RES_FOOTER_ACTIVITY__', '__RES_RECENT_ACTIVITY__', '__RES_STATE_SWITCHER__', '__RES_CONTRIBUTORS__', '__RES_PREVIEW_RAIL__', '__RES_PREVIEW_SRC__', '__RES_CREDIT_ROWS__', '__RES_TOPIC_MEMBERSHIP__', '__RES_DETAIL_PANEL__', '__RES_FOOTER_AUTHOR__', '__RES_ORIGIN__', '__RES_COMPOSER_FOOTER__'])
 
   html = html.replace('社区改编 · 12 个版本', `社区改编 · ${formatNumber(resource.stats.adapt)} 个版本`)
   html = html.replace('查看改编脉络 · 23 个版本', `查看改编脉络 · ${versionRange}`)
@@ -368,19 +532,17 @@ function renderAdaptedAuthorLine(resource, attribution) {
   return `<div class="fg-author fg-adapted-author nav-studio">
     <div class="av">${escapeHtml(resource.author.avatar || resource.author.name.slice(0, 1))}</div>
     <span class="nm">${escapeHtml(resource.author.name)} <span class="vf" aria-label="认证教师"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span></span>
-    <span class="fg-adapted-inline"><span aria-hidden="true">·</span><span>改编作品</span><span aria-hidden="true">·</span><span class="fg-origin-inline" data-resource-id="${escapeHtml(attribution.originalResourceId)}" role="link" tabindex="0" aria-label="查看原作：${escapeHtml(attribution.originalTitle)}">原作 ${escapeHtml(attribution.originalAuthorName)} <span aria-hidden="true">↗</span></span></span>
+    <span class="fg-adapted-inline"><span aria-hidden="true">·</span><span>改编作品</span></span>
   </div>`
 }
 
 function renderAdaptedAboutSource(attribution) {
-  return `<div class="fg-origin-about" data-resource-id="${escapeHtml(attribution.originalResourceId)}" role="link" tabindex="0" aria-label="查看原作：${escapeHtml(attribution.originalTitle)}">
-    <div class="fg-origin-about-avatar">${escapeHtml(attribution.originalAuthorInitial)}</div>
-    <div class="fg-origin-about-copy">
-      <div class="fg-origin-about-meta"><span class="fg-origin-about-label">原创来源</span><strong>${escapeHtml(attribution.originalAuthorName)}</strong><em>原创作者</em></div>
-      <div class="fg-origin-about-work">${escapeHtml(attribution.originalTitle)}</div>
-      <small>基于原作 <b>${escapeHtml(attribution.sourceVersion)}</b> 改编</small>
+  return `<div class="fg-cite" data-resource-id="${escapeHtml(attribution.originalResourceId)}" role="link" tabindex="0" aria-label="查看原作：${escapeHtml(attribution.originalTitle)}">
+    <div class="fg-cite-body">
+      <span class="fg-cite-label">创作来源</span>
+      <p class="fg-cite-ref">引用自 <b>${escapeHtml(attribution.originalAuthorName)}</b>《${escapeHtml(attribution.originalTitle)}》<span class="fg-cite-ver">· ${escapeHtml(attribution.sourceVersion)} 版本</span></p>
     </div>
-    <span class="fg-origin-about-link">查看原作 <span aria-hidden="true">→</span></span>
+    <span class="fg-cite-link">查看原作 <span aria-hidden="true">→</span></span>
   </div>`
 }
 
@@ -408,20 +570,12 @@ function renderAdaptedCover(resource, parent) {
 
 function renderAdaptedResourceHtml(template, resource) {
   const parent = RESOURCES_BY_ID[resource.forkedFrom] || RESOURCES_BY_ID[DEFAULT_RESOURCE_ID]
-  const attribution = getAdaptedAttribution(resource, parent)
   let html = renderMotherResourceHtml(template, resource)
-  const authorLine = renderAdaptedAuthorLine(resource, attribution)
-  const aboutSource = renderAdaptedAboutSource(attribution)
   const adaptedCover = renderAdaptedCover(resource, parent)
 
   html = html.replace('<main style=', '<main class="fg-adapted-detail" style=')
   html = html.replace('<div class="fg-hero fg-v2-layout">', '<div class="fg-hero fg-v2-layout fg-adapted-hero">')
   html = html.replace('<div class="fg-prev">', `<div class="fg-prev fg-adapted-prev">${adaptedCover}`)
-  html = html.replace(
-    /<div class="fg-author nav-studio">[\s\S]*?<\/div>\s*<div class="fg-v2-intro">/,
-    `${authorLine}<div class="fg-v2-intro">`,
-  )
-  html = html.replace('<div id="fg-about">', `<div id="fg-about">${aboutSource}`)
   return html
 }
 

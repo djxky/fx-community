@@ -1,7 +1,9 @@
 <script setup>
-import { onMounted } from 'vue'
-import { store } from './store'
+import { computed, onMounted } from 'vue'
+import Sidebar from './components/Sidebar.vue'
+import { store, syncPrimaryNav } from './store'
 import { installDelegation } from './composables/delegation'
+import { hasPrimarySidebar } from './navigation/primary-nav.mjs'
 import { RESOURCES_BY_ID } from './data/resources'
 import { getResourceRouteFromSearch } from './resource-navigation.mjs'
 import { getViewRouteFromSearch } from './view-navigation.mjs'
@@ -36,23 +38,31 @@ if (initialResourceRoute) {
   store.view = 'rank'
 }
 
+syncPrimaryNav(store.view)
+const sidebarVisible = computed(() => hasPrimarySidebar(store.view))
+
 onMounted(() => installDelegation())
 </script>
 
 <template>
-  <DiscoverView v-show="store.view === 'discover'" />
-  <RankView v-show="store.view === 'rank'" />
-  <AcademyView v-show="store.view === 'academy'" />
-  <CreatorView v-show="store.view === 'creator'" />
-  <StudioView v-show="store.view === 'studio'" />
-  <ResView v-show="store.view === 'res'" />
-  <SkillView v-show="store.view === 'skill'" />
-  <SkillPlazaView v-show="store.view === 'skills'" />
-  <ShareView v-show="store.view === 'share'" />
-  <ReportView v-show="store.view === 'report'" />
-  <MonthlyView v-show="store.view === 'monthly'" />
-  <ActivityView v-show="store.view === 'activity'" />
-  <LineageView v-show="store.view === 'lineage'" />
-  <NotifyView v-show="store.view === 'notify'" />
-  <MyLibraryView v-show="store.view === 'mylib'" />
+  <div class="community-app-shell">
+    <Sidebar v-show="sidebarVisible" />
+    <div class="community-view-stack">
+      <DiscoverView v-show="store.view === 'discover'" />
+      <RankView v-show="store.view === 'rank'" />
+      <AcademyView v-show="store.view === 'academy'" />
+      <CreatorView v-show="store.view === 'creator'" />
+      <StudioView v-show="store.view === 'studio'" />
+      <ResView v-show="store.view === 'res'" />
+      <SkillView v-show="store.view === 'skill'" />
+      <SkillPlazaView v-show="store.view === 'skills'" />
+      <ShareView v-show="store.view === 'share'" />
+      <ReportView v-show="store.view === 'report'" />
+      <MonthlyView v-show="store.view === 'monthly'" />
+      <ActivityView v-show="store.view === 'activity'" />
+      <LineageView v-show="store.view === 'lineage'" />
+      <NotifyView v-show="store.view === 'notify'" />
+      <MyLibraryView v-show="store.view === 'mylib'" />
+    </div>
+  </div>
 </template>

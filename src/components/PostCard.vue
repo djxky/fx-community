@@ -1,5 +1,8 @@
 <script setup>
-defineProps({ post: { type: Object, required: true } })
+defineProps({
+  post: { type: Object, required: true },
+  metricMode: { type: String, default: 'full' },
+})
 
 function showOverflowTitle(event) {
   const title = event.currentTarget
@@ -32,7 +35,10 @@ function showOverflowTitle(event) {
       <span class="pc-nm" :title="post.author">{{ post.author }}</span>
       <span v-if="post.verify === 'expert'" class="pc-ck pc-ck--expert"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>
       <span v-else-if="post.verify === 'teacher'" class="pc-ck pc-ck--teacher"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>
-      <span class="pc-metric"><b>{{ post.evi.use }}</b> 使用 <span class="pc-sep">·</span> <b>{{ post.evi.star }}</b> 收藏</span>
+      <span class="pc-metric" :class="{ 'pc-metric--use-only': metricMode === 'use-only' }">
+        <b>{{ post.evi.use }}</b><span class="pc-metric-label"> 使用</span>
+        <template v-if="metricMode !== 'use-only'"> <span class="pc-sep">·</span> <b>{{ post.evi.star }}</b> 收藏</template>
+      </span>
     </div>
   </div>
 </template>
@@ -69,6 +75,9 @@ function showOverflowTitle(event) {
 .pc-ck--teacher { background:#141F1B; }
 .pc-metric { flex-shrink:0; margin-left:auto; white-space:nowrap; font-variant-numeric:tabular-nums; }
 .pc-metric b { color:#141F1B; font-weight:600; }
+.pc-metric--use-only { display:inline-flex; align-items:baseline; gap:3px; color:#7A7C7C; }
+.pc-metric--use-only b { font-size:17px; font-weight:650; letter-spacing:-.2px; }
+.pc-metric-label { font-size:11.5px; }
 .pc-sep { color:#D4D4D4; padding:0 3px; }
 
 .pc-act { display:flex; align-items:center; gap:10px; padding:13px 14px 14px; }

@@ -1,13 +1,10 @@
 <script setup>
 import { computed } from 'vue'
+import PrimaryNavIcon from './PrimaryNavIcon.vue'
+import { PRIMARY_NAV_ITEMS } from '../navigation/primary-nav.mjs'
 import { store } from '../store'
-const props = defineProps({ active: { type: String, default: '' } }) // 'home' | 'community' | 'skills' | 'academy' | 'mylib' | 'me' | ''
-const homeOn = computed(() => props.active === 'home')
-const sqOn = computed(() => props.active === 'community')
-const skOn = computed(() => props.active === 'skills')
-const acOn = computed(() => props.active === 'academy')
-const mlOn = computed(() => props.active === 'mylib')
-const meOn = computed(() => props.active === 'me')
+const activeKey = computed(() => store.primaryNav)
+const meOn = computed(() => store.view === 'notify')
 function collapse() { store.sidebarCollapsed = true }
 function expand() { store.sidebarCollapsed = false }
 const history = [
@@ -33,21 +30,26 @@ const history = [
     </button>
 
     <nav class="side-navs" aria-label="主导航" style="display:flex; flex-direction:column; gap:3px; margin-top:16px;">
-      <button type="button" class="nav nav-home nav-rank" :class="{ on: homeOn }" :aria-current="homeOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path><path d="M9 15h6"></path></svg>首页
-      </button>
-      <button type="button" class="nav nav-discover" :class="{ on: sqOn }" :aria-current="sqOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19a5.5 5.5 0 0 1 11 0"></path><circle cx="17" cy="8" r="2.6"></circle><path d="M15.5 13.6A5 5 0 0 1 21 18.5"></path></svg>灵感
-      </button>
-      <button type="button" class="nav nav-skills" :class="{ on: skOn }" :aria-current="skOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="4"></rect><path d="m9 9-2 3 2 3M15 9l2 3-2 3M11.5 16l1-8"></path></svg>技能广场
-      </button>
-      <button type="button" class="nav nav-academy" :class="{ on: acOn }" :aria-current="acOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"></path><path d="M6 12v4.5c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5V12"></path></svg>AI 教学工坊
-      </button>
-      <button type="button" class="nav nav-mylib" :class="{ on: mlOn }" :aria-current="mlOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 19h9.7a4.3 4.3 0 0 0 .7-8.5A6.2 6.2 0 0 0 6 8.8 5.1 5.1 0 0 0 7.5 19Z"></path></svg>我的知识库
-      </button>
+      <template v-for="item in PRIMARY_NAV_ITEMS" :key="item.key">
+        <a
+          v-if="item.externalUrl"
+          :href="item.externalUrl"
+          class="nav"
+          :class="[{ on: activeKey === item.key }, item.className || `nav-${item.key}`]"
+          :aria-current="activeKey === item.key ? 'page' : undefined"
+        >
+          <PrimaryNavIcon :name="item.icon" />{{ item.label }}
+        </a>
+        <button
+          v-else
+          type="button"
+          class="nav"
+          :class="[{ on: activeKey === item.key }, item.className || `nav-${item.key}`]"
+          :aria-current="activeKey === item.key ? 'page' : undefined"
+        >
+          <PrimaryNavIcon :name="item.icon" />{{ item.label }}
+        </button>
+      </template>
     </nav>
 
     <div class="side-divider" style="height:1px; background:#EFEFEF; margin:18px 6px 16px;"></div>
@@ -99,21 +101,28 @@ const history = [
       <div class="sm-ic sm-new" title="新建任务">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
       </div>
-      <button type="button" class="sm-ic nav-home nav-rank" :class="{ on: homeOn }" title="首页" :aria-current="homeOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"></path><path d="M9 15h6"></path></svg>
-      </button>
-      <button type="button" class="sm-ic nav-discover" :class="{ on: sqOn }" title="灵感" :aria-current="sqOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"></circle><path d="M3.5 19a5.5 5.5 0 0 1 11 0"></path><circle cx="17" cy="8" r="2.6"></circle><path d="M15.5 13.6A5 5 0 0 1 21 18.5"></path></svg>
-      </button>
-      <button type="button" class="sm-ic nav-skills" :class="{ on: skOn }" title="技能广场" :aria-current="skOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="4"></rect><path d="m9 9-2 3 2 3M15 9l2 3-2 3M11.5 16l1-8"></path></svg>
-      </button>
-      <button type="button" class="sm-ic nav-academy" :class="{ on: acOn }" title="AI 教学工坊" :aria-current="acOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"></path><path d="M6 12v4.5c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5V12"></path></svg>
-      </button>
-      <button type="button" class="sm-ic nav-mylib" :class="{ on: mlOn }" title="我的知识库" :aria-current="mlOn ? 'page' : undefined">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 19h9.7a4.3 4.3 0 0 0 .7-8.5A6.2 6.2 0 0 0 6 8.8 5.1 5.1 0 0 0 7.5 19Z"></path></svg>
-      </button>
+      <template v-for="item in PRIMARY_NAV_ITEMS" :key="item.key">
+        <a
+          v-if="item.externalUrl"
+          :href="item.externalUrl"
+          class="sm-ic"
+          :class="[{ on: activeKey === item.key }, item.className || `nav-${item.key}`]"
+          :title="item.label"
+          :aria-current="activeKey === item.key ? 'page' : undefined"
+        >
+          <PrimaryNavIcon :name="item.icon" />
+        </a>
+        <button
+          v-else
+          type="button"
+          class="sm-ic"
+          :class="[{ on: activeKey === item.key }, item.className || `nav-${item.key}`]"
+          :title="item.label"
+          :aria-current="activeKey === item.key ? 'page' : undefined"
+        >
+          <PrimaryNavIcon :name="item.icon" />
+        </button>
+      </template>
     </div>
     <div class="sm-bot">
       <div class="avatar-wrap" style="position:relative;">

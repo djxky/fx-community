@@ -1,12 +1,15 @@
 <script setup>
 import { ref } from 'vue'
-import Sidebar from '../components/Sidebar.vue'
 import '../styles/community.css'
 import RankBoardCard from '../components/RankBoardCard.vue'
 import { BOARDS, EDITORIAL_FEATURES } from '../data/rank'
 
 const periods = ['本周', '本月', '年度']
+const subjects = ['全部', '语文', '数学', '英语', '物理', '化学', '信息科技', '音乐', '体育']
 const activePeriod = ref('本周')
+const classroomSubject = ref('全部')
+const hotSubject = ref('全部')
+const remixSubject = ref('全部')
 
 const mainBoard = BOARDS.find(board => board.key === 'classroom')
 const hotBoard = BOARDS.find(board => board.key === 'latest')
@@ -18,7 +21,6 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
 <template>
   <div id="view-rank">
     <div class="page">
-      <Sidebar active="community" />
       <main class="rank-main community-main">
         <div class="tbar">
           <div class="tbar-in">
@@ -31,7 +33,7 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
         </div>
 
         <div class="rank-shell community-body">
-          <!-- 1. 编辑推荐（运营精选，固定不挂筛选） -->
+          <!-- 1. 编辑推荐（运营混合精选，不挂榜单筛选） -->
           <section class="rank-block" aria-label="编辑推荐">
             <div class="rank-heading">
               <div class="rank-heading-title">
@@ -63,38 +65,55 @@ const risingBoard = BOARDS.find(board => board.key === 'rising')
 
           <!-- 2. 课堂使用榜（主榜，周期筛选归属这里） -->
           <section class="rank-block" aria-label="课堂使用榜">
-            <div class="rank-heading rank-heading-filter">
+            <div class="rank-heading rank-heading-with-actions">
               <div class="rank-heading-title">
                 <h2>课堂使用榜</h2>
                 <span class="rank-heading-note">真的被带进课堂的，不是刷出来的</span>
               </div>
-              <div class="seg" role="tablist" aria-label="周期">
-                <button v-for="period in periods" :key="period" type="button" class="seg-btn" :class="{ on: activePeriod === period }" @click="activePeriod = period">{{ period }}</button>
+              <div class="rank-heading-actions">
+                <label class="rank-subject-select">
+                  <select v-model="classroomSubject" aria-label="课堂使用榜学科选择">
+                    <option v-for="subject in subjects" :key="subject" :value="subject">{{ subject === '全部' ? '全部学科' : subject }}</option>
+                  </select>
+                </label>
+                <div class="seg" role="tablist" aria-label="周期">
+                  <button v-for="period in periods" :key="period" type="button" class="seg-btn" :class="{ on: activePeriod === period }" @click="activePeriod = period">{{ period }}</button>
+                </div>
               </div>
             </div>
-            <RankBoardCard :board="mainBoard" variant="main" :period="activePeriod" />
+            <RankBoardCard :board="mainBoard" variant="main" :period="activePeriod" :subject="classroomSubject" />
           </section>
 
           <!-- 3. 每周热门（无周期切换——它本就是"每周"） -->
           <section class="rank-block" aria-label="每周热门">
-            <div class="rank-heading">
+            <div class="rank-heading rank-heading-with-actions">
               <div class="rank-heading-title">
                 <h2>每周热门</h2>
                 <span class="rank-heading-note">本周老师用得最多的资源</span>
               </div>
+              <label class="rank-subject-select">
+                <select v-model="hotSubject" aria-label="每周热门学科选择">
+                  <option v-for="subject in subjects" :key="subject" :value="subject">{{ subject === '全部' ? '全部学科' : subject }}</option>
+                </select>
+              </label>
             </div>
-            <RankBoardCard :board="hotBoard" variant="grid" />
+            <RankBoardCard :board="hotBoard" variant="grid" :subject="hotSubject" />
           </section>
 
           <!-- 4. 优质改编 -->
           <section class="rank-block" aria-label="优质改编">
-            <div class="rank-heading">
+            <div class="rank-heading rank-heading-with-actions">
               <div class="rank-heading-title">
                 <h2>优质改编</h2>
                 <span class="rank-heading-note">沿着真实课堂继续长出的新版本</span>
               </div>
+              <label class="rank-subject-select">
+                <select v-model="remixSubject" aria-label="优质改编学科选择">
+                  <option v-for="subject in subjects" :key="subject" :value="subject">{{ subject === '全部' ? '全部学科' : subject }}</option>
+                </select>
+              </label>
             </div>
-            <RankBoardCard :board="remixBoard" variant="remix" />
+            <RankBoardCard :board="remixBoard" variant="remix" :subject="remixSubject" />
           </section>
 
           <!-- 5. 创作达人榜：复用课堂主榜结构，按代表作呈现创作者 -->
@@ -133,6 +152,12 @@ button { font:inherit; }
 .rank-heading-title h2 { margin:0; color:#141F1B; font-size:19px; letter-spacing:-.03em; }
 .rank-heading-note { display:block; margin-top:5px; color:#9A9A9A; font-size:12px; }
 
+.rank-heading-actions { display:flex; align-items:center; justify-content:flex-end; gap:10px; flex:0 0 auto; }
+.rank-subject-select { position:relative; display:inline-flex; flex:0 0 auto; }
+.rank-subject-select select { min-width:112px; min-height:36px; padding:0 32px 0 12px; border:1px solid #DADBDA; border-radius:9px; background:#FFFFFF; color:#4D504F; font:inherit; font-size:12px; cursor:pointer; }
+.rank-subject-select select:hover { border-color:#BFC2C0; color:#141F1B; }
+.rank-subject-select select:focus-visible { outline:2px solid #141F1B; outline-offset:2px; }
+
 /* 分段控件 */
 .seg { display:inline-flex; gap:2px; padding:3px; border-radius:10px; background:#EDEDED; flex:0 0 auto; }
 .seg-btn { border:0; border-radius:7px; padding:6px 13px; background:transparent; color:#6E706F; font-size:12px; cursor:pointer; transition:color .15s ease, background .15s ease; }
@@ -160,6 +185,7 @@ button { font:inherit; }
 .rank-editorial-metric { flex:0 0 auto; color:#7A7C7C; font-size:10px; white-space:nowrap; }
 .rank-editorial-metric b { color:#141F1B; font-size:14px; }
 
-@media (max-width:900px) { .rank-heading-filter { flex-direction:column; align-items:flex-start; gap:12px; } }
+@media (max-width:900px) { .rank-heading-with-actions { flex-direction:column; align-items:flex-start; gap:12px; } .rank-heading-actions { justify-content:flex-start; flex-wrap:wrap; } }
 @media (max-width:720px) { .rank-editorial-grid { grid-template-columns:1fr; } .rank-editorial-card { grid-template-columns:1fr; } .rank-editorial-cover { min-height:160px; aspect-ratio:16 / 9; } .seg { flex-wrap:wrap; } }
+@media (max-width:620px) { .rank-subject-select { width:100%; } .rank-subject-select select { width:100%; min-height:44px; } .rank-heading-actions { width:100%; } .rank-heading-actions .rank-subject-select { flex:1 1 140px; width:auto; } }
 </style>
