@@ -14,6 +14,9 @@ import replay31 from '../assets/academy/replay-31.png'
 import replay32 from '../assets/academy/replay-32.png'
 import replay33 from '../assets/academy/replay-33.png'
 import replay34 from '../assets/academy/replay-34.png'
+import replay35 from '../assets/academy/replay-35.png'
+import replay36 from '../assets/academy/replay-36.png'
+import replay37 from '../assets/academy/replay-37.png'
 import workshopLivePoster from '../assets/academy/workshop-live-poster.jpg'
 import workshopCertificate from '../assets/academy/workshop-certificate.jpg'
 import workshopMentors from '../assets/academy/workshop-mentors.jpg'
@@ -158,6 +161,9 @@ const academyImages = {
   '--academy-cov-32': `url(${replay32})`,
   '--academy-cov-33': `url(${replay33})`,
   '--academy-cov-34': `url(${replay34})`,
+  '--academy-cov-35': `url(${replay35})`,
+  '--academy-cov-36': `url(${replay36})`,
+  '--academy-cov-37': `url(${replay37})`,
   '--academy-img-campaign': `url(${newSemesterCampaign})`,
   '--academy-img-workshop': `url(${workshopCollaboration})`,
   '--academy-img-courseware': `url(${coursewarePractice})`,

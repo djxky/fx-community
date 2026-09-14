@@ -26,10 +26,10 @@ const topics = {
   legacy: { id: 'legacy', title: '没有发布设置的专题', author: { name: '林若水' } },
 }
 const resources = [
-  { topicMembership: { id: 'published' }, cover: 'a.jpg', fit: { subject: '语文', grade: '初中·九年级' } },
-  { topicMembership: { id: 'published' }, cover: null, fit: { subject: '语文', grade: '初中·七年级' } },
-  { topicMembership: { id: 'published' }, cover: 'c.jpg', fit: { subject: '语文', grade: '初中·八年级' } },
-  { topicMembership: { id: 'published' }, cover: 'd.jpg', fit: { subject: '语文', grade: '初中·九年级' } },
+  { topicMembership: { id: 'published' }, cover: 'a.jpg', fit: { subject: '语文', grade: '初中·九年级' }, stats: { use: 3268 } },
+  { topicMembership: { id: 'published' }, cover: null, fit: { subject: '语文', grade: '初中·七年级' }, stats: { use: 1200 } },
+  { topicMembership: { id: 'published' }, cover: 'c.jpg', fit: { subject: '语文', grade: '初中·八年级' }, stats: { use: 1000 } },
+  { topicMembership: { id: 'published' }, cover: 'd.jpg', fit: { subject: '语文', grade: '初中·九年级' }, stats: { use: 532 } },
   { topicMembership: { id: 'draft' }, cover: 'x.jpg', fit: { subject: '数学', grade: '小学' } },
   { topicMembership: { id: 'legacy' }, cover: 'y.jpg', fit: { subject: '数学', grade: '小学' } },
 ]
@@ -39,11 +39,13 @@ test('只放发布到社区且至少有 1 个资源的专题', () => {
   assert.deepEqual(posts.map((p) => p.topicId), ['published'])
 })
 
-test('专题卡：角标写资源数，封面叠放前 3 个资源（无封面用兜底图），学科学段由资源推出', () => {
+test('专题卡：角标写资源数，封面取第一个资源（无封面用兜底图），学科学段由资源推出', () => {
   const [post] = buildTopicPosts(topics, resources, ['fallback.jpg'])
   assert.equal(post.kind, 'topic')
   assert.equal(post.badge, '专题 · 4 个资源')
-  assert.deepEqual(post.stack, ['a.jpg', 'fallback.jpg', 'c.jpg'])
+  assert.equal(post.cover, 'a.jpg')
+  const [noCover] = buildTopicPosts(topics, [{ ...resources[1] }], ['fallback.jpg'])
+  assert.equal(noCover.cover, 'fallback.jpg')
   assert.equal(post.author, '林若水')
   assert.equal(post.subject, '语文')
   assert.equal(post.stage, '初中')
@@ -56,14 +58,29 @@ test('专题卡混进推荐流：第一个放在第 3 张', () => {
   assert.deepEqual(mixTopicPosts([{ title: '1' }], [{ title: 'T' }]).map((p) => p.title), ['1', 'T'])
 })
 
-test('资源卡渲染堆叠封面与专题角标，不带资源信息行', async () => {
+test('专题卡渲染成一叠卡片（资源 ≥3 垫 2 张卡边，否则 1 张）、单张封面与专题角标，不带资源信息行', async () => {
   const { default: PostCard } = await vite.ssrLoadModule('/src/components/PostCard.vue')
   const [post] = buildTopicPosts(topics, resources, ['fallback.jpg'])
   const html = await renderToString(createSSRApp(PostCard, { post, compact: true }))
-  assert.equal((html.match(/class="pc-stack pc-stack--\d"/g) || []).length, 3)
+  assert.match(html, /class="[^"]*\bpc--deck\b[^"]*"/)
+  assert.equal((html.match(/class="pc-sheet pc-sheet--\d"/g) || []).length, 2)
+  assert.match(html, /class="pc-face"/)
+  assert.match(html, /src="a\.jpg"/)
+  assert.doesNotMatch(html, /pc-mosaic|pc-tile|pc-stack/)
+  const small = await renderToString(createSSRApp(PostCard, { post: { ...post, count: 2 }, compact: true }))
+  assert.equal((small.match(/class="pc-sheet pc-sheet--\d"/g) || []).length, 1)
+  const resourceCard = await renderToString(createSSRApp(PostCard, { post: { ...post, kind: undefined }, compact: true }))
+  assert.doesNotMatch(resourceCard, /pc--deck|pc-sheet|pc-face/)
   assert.match(html, /专题 · 4 个资源/)
   assert.match(html, /整本书阅读 · 经典重构/)
-  assert.doesNotMatch(html, /pc-meta|pc-metric/)
+  assert.doesNotMatch(html, /pc-meta/)
+  assert.match(html, />6,000<\/b><span[^>]*> 累计使用<\/span>/)
+})
+
+test('专题卡累计使用 = 专题内全部资源使用人数之和', () => {
+  const withStats = resources.map((resource, i) => ({ ...resource, stats: { use: [3268, 1200, 1000, 532, 9, 9][i] } }))
+  const [post] = buildTopicPosts(topics, withStats, ['fallback.jpg'])
+  assert.equal(post.evi.use, '6,000')
 })
 
 test('发现页点专题卡进专题详情页，返回回到发现页', () => {

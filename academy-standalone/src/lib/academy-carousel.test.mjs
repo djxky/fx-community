@@ -6,37 +6,26 @@ import { setupAcademyCarousel } from './academy-carousel.mjs'
 
 const { JSDOM } = createRequire(import.meta.url)('jsdom')
 
-// 使用真实首页模板，防止只删 Banner 却遗留第三个切换状态或圆点，导致空白轮播。
-test('首页运营位只在征集与直播之间循环，圆点对应有效 Banner', () => {
+// 使用真实首页模板。9.11 直播结束后直播预告 Banner 已下线，首页只剩征集 Banner：
+// 防止只删 Banner 却遗留 hs2 单选项、圆点或切换按钮，导致轮播切到空白页或出现无效控件。
+test('首页运营位只保留征集 Banner，不启动轮播也不渲染切换控件', () => {
   const html = readFileSync(new URL('../views/raw/academy.html', import.meta.url), 'utf8')
   const dom = new JSDOM(html)
   const doc = dom.window.document
-  let advance
+  let timerStarted = false
   const cleanup = setupAcademyCarousel(doc, {
-    windowObject: { setInterval(fn) { advance = fn; return 1 }, clearInterval() {} },
+    windowObject: { setInterval() { timerStarted = true; return 1 }, clearInterval() {} },
     documentObject: doc,
   })
   try {
-    const active = () => doc.querySelector('.hero input[name="hs"]:checked').id
-    const next = doc.querySelector('.hero-next')
-    assert.equal(active(), 'hs1')
-    next.click()
-    assert.equal(active(), 'hs2')
-    next.click()
-    assert.equal(active(), 'hs1')
-    doc.querySelector('.hero-prev').click()
-    assert.equal(active(), 'hs2')
-    advance()
-    assert.equal(active(), 'hs1')
-    const dots = [...doc.querySelectorAll('.hero .dots label')]
-    assert.equal(dots.length, 2)
-    for (const dot of dots) {
-      dot.click()
-      const radio = doc.getElementById(active())
-      assert.equal(radio.id, dot.htmlFor)
-      const slide = doc.querySelector('.hero .s' + radio.id.slice(2))
-      assert.ok(slide.querySelector('.hero-campaign, .hero-live'))
-    }
+    const radios = [...doc.querySelectorAll('.hero input[name="hs"]')]
+    assert.deepEqual(radios.map((radio) => radio.id), ['hs1'])
+    assert.ok(radios[0].checked, '征集 Banner 依赖 #hs1:checked 才会显示')
+    assert.equal(doc.querySelectorAll('.hero .hslide').length, 1)
+    assert.ok(doc.querySelector('.hero .s1 .hero-campaign'))
+    assert.equal(doc.querySelector('.hero .hero-live'), null)
+    assert.equal(doc.querySelector('.hero .hero-controls'), null)
+    assert.equal(timerStarted, false, '单张 Banner 不应启动自动轮播')
   } finally {
     cleanup()
     dom.window.close()

@@ -2,8 +2,8 @@
   "sourcePage": "https://www.feixianglaoshi.com/AIworkshop/2026-fall-opening-class/",
   "fetchedAt": "2026-09-02T04:02:25.113Z",
   "sourceLastModified": "Tue, 01 Sep 2026 02:51:21 GMT",
-  "videoCount": 34,
-  "totalBytes": 4938240334,
+  "videoCount": 37,
+  "totalBytes": 5590166610,
   "items": [
     {
       "number": 1,
@@ -752,6 +752,72 @@
       "coverUrl": "https://metis-online.fbcontent.cn/metis-lectio/rv61adz3Spq3UNNpXFco.jpg",
       "localVideo": "",
       "localCover": "封面/34-0829 直播回放 05：AI辅助思考课堂设计.jpg"
+    },
+    {
+      "number": 35,
+      "title": "0911 直播回放 01：重构学科备课与教研",
+      "teacher": "杜梦菲｜杭州市钱塘区景苑中学",
+      "audience": "各学科教师",
+      "liveDate": "2026.9.11",
+      "category": "practice",
+      "lead": "演示如何从提示词、资料库到智能体，搭建可复用的学科备课与教研流程，并围绕任务、课件和练习持续优化。",
+      "objectives": [
+        "掌握提示词与智能体的备课方法",
+        "重构备课与教研流程",
+        "提升课件与练习设计效率"
+      ],
+      "durationSeconds": 2424.171,
+      "duration": "40:24",
+      "sizeBytes": 196749443,
+      "size": "187.63 MB",
+      "videoUrl": "https://metis-online.fbcontent.cn/metis-lectio/nRZkQhhKXcDNtc1hD1xVQE.mp4",
+      "coverUrl": "https://metis-online.fbcontent.cn/metis-lectio/vNVZUMhMHRA4CreZZ0aX3.png",
+      "localVideo": "",
+      "localCover": "封面/35-0911 直播回放 01：重构学科备课与教研.jpg"
+    },
+    {
+      "number": 36,
+      "title": "0911 直播回放 02：AI课堂学生思维可视化",
+      "teacher": "卓文莉｜杭州市下沙第二小学",
+      "audience": "各学科教师",
+      "liveDate": "2026.9.11",
+      "category": "subject",
+      "lead": "演示如何用 AI 将抽象知识、学习过程和关系变化变得可观察，引导学生在课堂中解释、比较与推理。",
+      "objectives": [
+        "判断课堂中的AI教学场景",
+        "帮助学生理解知识关系",
+        "通过问题分层促进学生比较与推理"
+      ],
+      "durationSeconds": 3340.374,
+      "duration": "55:40",
+      "sizeBytes": 248253671,
+      "size": "236.75 MB",
+      "videoUrl": "https://metis-online.fbcontent.cn/metis-lectio/Qfsrz1DAdToAhUrldY7JT.mp4",
+      "coverUrl": "https://metis-online.fbcontent.cn/metis-lectio/elAsNV1JjIUrkeq9IWrGIW.png",
+      "localVideo": "",
+      "localCover": "封面/36-0911 直播回放 02：AI课堂学生思维可视化.jpg"
+    },
+    {
+      "number": 37,
+      "title": "0911 直播回放 03：AI赋能教学评一体化",
+      "teacher": "汤和霖｜杭州市文海小学",
+      "audience": "语文教师",
+      "liveDate": "2026.9.11",
+      "category": "subject",
+      "lead": "演示如何用 AI 整合批改、错题分析与学习诊断，将评价结果转化为可执行的教学反馈与改进方案。",
+      "objectives": [
+        "识别作业批改中的问题",
+        "用 AI 分析作业与学习表现",
+        "结合评价优化教学决策"
+      ],
+      "durationSeconds": 2971.904,
+      "duration": "49:32",
+      "sizeBytes": 206923162,
+      "size": "197.34 MB",
+      "videoUrl": "https://metis-online.fbcontent.cn/metis-lectio/lq4fcvfgzp1lugc6Rcw2D.mp4",
+      "coverUrl": "https://metis-online.fbcontent.cn/metis-lectio/bHMsNwLktZbvxbLVV0GEh.png",
+      "localVideo": "",
+      "localCover": "封面/37-0911 直播回放 03：AI赋能教学评一体化.jpg"
     }
   ]
 }

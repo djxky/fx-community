@@ -1,5 +1,5 @@
 // 发现页里的专题卡：只放老师创建专题时选择「发布到社区」、且至少有 1 个资源的专题。
-// 封面取专题内前 3 个资源叠放；学科 / 学段由专题内资源推出（不一致时留空，不参与该项筛选）。
+// 封面取专题内第一个资源（卡片叠放效果在卡片组件里画）；学科 / 学段由专题内资源推出（不一致时留空，不参与该项筛选）。
 
 const STAGES = ['小学', '初中', '高中']
 
@@ -25,7 +25,7 @@ export function buildTopicPosts(topics, resources, fallbackCovers = []) {
         title: topic.title,
         count: items.length,
         badge: `专题 · ${items.length} 个资源`,
-        stack: items.slice(0, 3).map((resource, i) => resource.cover || fallbackCovers[i % (fallbackCovers.length || 1)] || ''),
+        cover: items[0]?.cover || fallbackCovers[0] || '',
         author,
         avatar: author.slice(0, 1),
         verify: '',
@@ -33,7 +33,8 @@ export function buildTopicPosts(topics, resources, fallbackCovers = []) {
         task: topic.community.task,
         subject: sameValue(items.map((resource) => resource.fit?.subject)),
         stage: sameValue(items.map((resource) => stageOf(resource.fit?.grade))),
-        evi: { use: '', star: '' },
+        // 累计使用 = 专题内全部资源的使用人数相加
+        evi: { use: items.reduce((sum, resource) => sum + Number(resource.stats?.use || 0), 0).toLocaleString('en-US'), star: '' },
       }
     })
     .filter((post) => post.count > 0)

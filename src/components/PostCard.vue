@@ -8,10 +8,9 @@ const props = defineProps({
   compact: { type: Boolean, default: false },
 })
 
-// 专题卡:封面叠放专题内前几个资源,第一个在最前
-const stackLayers = computed(() => (props.post.stack || [])
-  .map((src, depth) => ({ src, depth }))
-  .reverse())
+// 专题卡:整张卡像一叠卡片,背后垫白色卡边(资源 ≥3 个垫 2 张,否则 1 张)
+const isTopic = computed(() => props.post.kind === 'topic')
+const sheetCount = computed(() => (isTopic.value ? ((props.post.count || 0) >= 3 ? 2 : 1) : 0))
 
 function showOverflowTitle(event) {
   const title = event.currentTarget
@@ -21,13 +20,16 @@ function showOverflowTitle(event) {
 </script>
 
 <template>
-  <div class="pc" :class="'nav-' + post.to">
+  <div class="pc" :class="['nav-' + post.to, { 'pc--deck': isTopic }]">
+    <!-- 专题卡:背后的卡边 + 正面卡底(内容叠在最上) -->
+    <template v-if="isTopic">
+      <span v-if="sheetCount >= 2" class="pc-sheet pc-sheet--2" aria-hidden="true"></span>
+      <span class="pc-sheet pc-sheet--1" aria-hidden="true"></span>
+      <span class="pc-face" aria-hidden="true"></span>
+    </template>
     <!-- 封面(资源为主,置顶;类型角标) -->
-    <div class="pc-cover" :class="{ 'pc-cover--stack': stackLayers.length }">
-      <template v-if="stackLayers.length">
-        <img v-for="layer in stackLayers" :key="layer.depth" :class="`pc-stack pc-stack--${layer.depth}`" :src="layer.src" :alt="layer.depth === 0 ? `${post.title}封面` : ''" loading="lazy" />
-      </template>
-      <img v-else :src="post.cover" :alt="`${post.title}封面`" loading="lazy" />
+    <div class="pc-cover">
+      <img :src="post.cover" :alt="`${post.title}封面`" loading="lazy" />
       <span v-if="post.live" class="pc-live">● 直播中</span>
       <span v-else class="pc-badge">{{ post.badge }}</span>
       <span v-if="post.region" class="pc-region">适用{{ post.region }}</span>
@@ -45,9 +47,10 @@ function showOverflowTitle(event) {
     <div class="pc-foot">
       <span class="pc-av" :class="{ ring: post.verify === 'expert' }">{{ post.avatar?.slice(0, 1) }}</span>
       <span class="pc-nm" :title="post.author">{{ post.author }}</span>
-      <span v-if="!compact" class="pc-metric" :class="{ 'pc-metric--use-only': metricMode === 'use-only' }">
-        <b>{{ post.evi.use }}</b><span class="pc-metric-label"> 使用</span>
-        <template v-if="metricMode !== 'use-only'"> <span class="pc-sep">·</span> <b>{{ post.evi.star }}</b> 收藏</template>
+      <!-- 精简卡只放使用人数;专题卡为专题内资源累计使用 -->
+      <span v-if="!compact || post.evi?.use" class="pc-metric" :class="{ 'pc-metric--use-only': compact || metricMode === 'use-only' }">
+        <b>{{ post.evi.use }}</b><span class="pc-metric-label">{{ post.kind === 'topic' ? ' 累计使用' : ' 使用' }}</span>
+        <template v-if="!compact && metricMode !== 'use-only'"> <span class="pc-sep">·</span> <b>{{ post.evi.star }}</b> 收藏</template>
       </span>
     </div>
   </div>
@@ -59,13 +62,20 @@ function showOverflowTitle(event) {
 
 .pc-cover { position:relative; width:100%; aspect-ratio:var(--community-cover-ratio, 16 / 9); background:#EFEFEF; border-radius:var(--community-card-radius, 20px); overflow:hidden; }
 .pc-cover img { width:100%; height:100%; object-fit:cover; display:block; }
-/* 专题卡堆叠封面:第一个资源在最前,其余向右错开 */
-.pc-cover--stack { background:linear-gradient(135deg, #EEF1EF, #E2E7E4); }
-.pc-cover .pc-stack { position:absolute; top:15%; left:50%; width:54%; height:70%; object-fit:cover; border:2px solid #fff; border-radius:10px; background:#E6E9E7; box-shadow:0 8px 20px -10px rgba(20,31,27,.45); }
-.pc-stack--0 { z-index:3; transform:translateX(-78%) rotate(-5deg); }
-.pc-stack--1 { z-index:2; transform:translateX(-50%) translateY(-5%); }
-.pc-stack--2 { z-index:1; transform:translateX(-22%) rotate(5deg); }
-.pc-badge { z-index:4; position:absolute; top:10px; left:10px; background:rgba(20,31,27,0.82); color:#fff; font-size:11.5px; padding:3px 9px; border-radius:var(--fx-radius-tag); }
+/* 专题卡:一叠卡片。正面卡底 .pc-face 在上,背后 .pc-sheet 微微旋转露出边角;悬停时卡边再张开一点 */
+.pc--deck { position:relative; overflow:visible; background:transparent; border-color:transparent; }
+.pc--deck:hover { border-color:transparent; box-shadow:none; }
+.pc--deck > :not(.pc-sheet):not(.pc-face) { position:relative; z-index:2; }
+.pc-sheet, .pc-face { position:absolute; inset:-1px; border-radius:inherit; background:#fff; border:1px solid #E4E6E5; }
+.pc-face { z-index:1; transition:border-color .15s ease, box-shadow .15s ease; }
+.pc--deck:hover .pc-face { border-color:#D4D4D4; box-shadow:var(--fx-shadow-float); }
+/* 页面底色是白的,卡边用浅灰 + 加深描边和阴影才分得出层次 */
+.pc-sheet { z-index:0; border-color:#D5D9D7; box-shadow:0 6px 18px -6px rgba(20,31,27,.22); transition:transform .22s ease; }
+.pc-sheet--1 { background:#F3F4F3; transform:translate(-8px, 6px) rotate(-4deg); }
+.pc-sheet--2 { background:#E9ECEA; transform:translate(10px, 8px) rotate(4.5deg); }
+.pc--deck:hover .pc-sheet--1 { transform:translate(-12px, 8px) rotate(-5.5deg); }
+.pc--deck:hover .pc-sheet--2 { transform:translate(14px, 10px) rotate(6deg); }
+.pc-badge { z-index:1; position:absolute; top:10px; left:10px; background:rgba(20,31,27,0.82); color:#fff; font-size:11.5px; padding:3px 9px; border-radius:var(--fx-radius-tag); }
 .pc-live { position:absolute; top:10px; left:10px; background:#FF4832; color:#fff; font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:var(--fx-radius-tag); }
 .pc-region { position:absolute; top:10px; right:10px; background:#FFF6DF; color:#8A6D00; font-size:11px; font-weight:600; padding:3px 9px; border-radius:var(--fx-radius-tag); border:1px solid #FBEFC6; }
 

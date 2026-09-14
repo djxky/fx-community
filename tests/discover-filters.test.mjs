@@ -82,7 +82,7 @@ test('发现卡片只放大展示使用数，其他页默认指标不受影响',
   assert.match(defaultHtml, /收藏/)
 })
 
-test('发现页精简卡片只保留标题和作者信息', async () => {
+test('发现页精简卡片保留标题、作者和使用人数，不带资源信息行', async () => {
   const { default: PostCard } = await vite.ssrLoadModule('/src/components/PostCard.vue')
   const post = {
     to: 'res', cover: '/cover.jpg', badge: '教案', title: '单元教案', meta: '小学数学',
@@ -94,7 +94,9 @@ test('发现页精简卡片只保留标题和作者信息', async () => {
   assert.match(compactHtml, /pc-title--2l[^>]*>单元教案</)
   assert.match(compactHtml, /沈知微/)
   assert.doesNotMatch(compactHtml, /pc-meta|小学数学|课堂验证/)
-  assert.doesNotMatch(compactHtml, /pc-metric|860|使用/)
+  assert.match(compactHtml, /pc-metric--use-only/)
+  assert.match(compactHtml, />860<\/b><span[^>]*> 使用<\/span>/)
+  assert.doesNotMatch(compactHtml, /2,330|收藏/)
   assert.doesNotMatch(compactHtml, /pc-ck|M20 6L9 17l-5-5/)
 
   const source = readFileSync(new URL('../src/views/DiscoverView.vue', import.meta.url), 'utf8')
