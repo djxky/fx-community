@@ -1,10 +1,17 @@
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   post: { type: Object, required: true },
   metricMode: { type: String, default: 'full' },
   // 精简卡:只保留封面、标题和作者(发现页使用)
   compact: { type: Boolean, default: false },
 })
+
+// 专题卡:封面叠放专题内前几个资源,第一个在最前
+const stackLayers = computed(() => (props.post.stack || [])
+  .map((src, depth) => ({ src, depth }))
+  .reverse())
 
 function showOverflowTitle(event) {
   const title = event.currentTarget
@@ -16,8 +23,11 @@ function showOverflowTitle(event) {
 <template>
   <div class="pc" :class="'nav-' + post.to">
     <!-- 封面(资源为主,置顶;类型角标) -->
-    <div class="pc-cover">
-      <img :src="post.cover" :alt="`${post.title}封面`" loading="lazy" />
+    <div class="pc-cover" :class="{ 'pc-cover--stack': stackLayers.length }">
+      <template v-if="stackLayers.length">
+        <img v-for="layer in stackLayers" :key="layer.depth" :class="`pc-stack pc-stack--${layer.depth}`" :src="layer.src" :alt="layer.depth === 0 ? `${post.title}封面` : ''" loading="lazy" />
+      </template>
+      <img v-else :src="post.cover" :alt="`${post.title}封面`" loading="lazy" />
       <span v-if="post.live" class="pc-live">● 直播中</span>
       <span v-else class="pc-badge">{{ post.badge }}</span>
       <span v-if="post.region" class="pc-region">适用{{ post.region }}</span>
@@ -49,7 +59,13 @@ function showOverflowTitle(event) {
 
 .pc-cover { position:relative; width:100%; aspect-ratio:var(--community-cover-ratio, 16 / 9); background:#EFEFEF; border-radius:var(--community-card-radius, 20px); overflow:hidden; }
 .pc-cover img { width:100%; height:100%; object-fit:cover; display:block; }
-.pc-badge { position:absolute; top:10px; left:10px; background:rgba(20,31,27,0.82); color:#fff; font-size:11.5px; padding:3px 9px; border-radius:var(--fx-radius-tag); }
+/* 专题卡堆叠封面:第一个资源在最前,其余向右错开 */
+.pc-cover--stack { background:linear-gradient(135deg, #EEF1EF, #E2E7E4); }
+.pc-cover .pc-stack { position:absolute; top:15%; left:50%; width:54%; height:70%; object-fit:cover; border:2px solid #fff; border-radius:10px; background:#E6E9E7; box-shadow:0 8px 20px -10px rgba(20,31,27,.45); }
+.pc-stack--0 { z-index:3; transform:translateX(-78%) rotate(-5deg); }
+.pc-stack--1 { z-index:2; transform:translateX(-50%) translateY(-5%); }
+.pc-stack--2 { z-index:1; transform:translateX(-22%) rotate(5deg); }
+.pc-badge { z-index:4; position:absolute; top:10px; left:10px; background:rgba(20,31,27,0.82); color:#fff; font-size:11.5px; padding:3px 9px; border-radius:var(--fx-radius-tag); }
 .pc-live { position:absolute; top:10px; left:10px; background:#FF4832; color:#fff; font-size:11.5px; font-weight:600; padding:3px 9px; border-radius:var(--fx-radius-tag); }
 .pc-region { position:absolute; top:10px; right:10px; background:#FFF6DF; color:#8A6D00; font-size:11px; font-weight:600; padding:3px 9px; border-radius:var(--fx-radius-tag); border:1px solid #FBEFC6; }
 

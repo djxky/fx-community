@@ -1,9 +1,11 @@
+const URL_VIEWS = ['academy', 'skills', 'studio', 'creator', 'chat']
+
 export function getViewRouteFromSearch(search) {
   const params = new URLSearchParams(search)
   const view = params.get('view')
-  return ['academy', 'skills', 'studio', 'creator'].includes(view) ? { view } : null
+  return URL_VIEWS.includes(view) ? { view } : null
 }
 
 export function buildViewUrl(pathname, view) {
-  return ['academy', 'skills', 'studio', 'creator'].includes(view) ? `${pathname}?view=${view}` : pathname
+  return URL_VIEWS.includes(view) ? `${pathname}?view=${view}` : pathname
 }

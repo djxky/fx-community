@@ -34,6 +34,7 @@ const interactions = reactive({
   count: 86,
   moreState: 'idle', // idle → loading（触底自动加载）
   visibleCount: 8, // 首屏 8 条，触底 +8
+  confirmDelete: null, // 待确认删除的评论/回复 id
 })
 
 function seedInteractions(resource) {
@@ -51,28 +52,28 @@ function seedInteractions(resource) {
 
 const SEED_TONES = ['', 'is-warm', 'is-muted']
 const SEED_TEXTS = [
-  { name: '陈见微老师', text: '证据卡这个设计太巧了，学生开始主动翻书找依据，不再等我给结论。', time: '2 小时前' },
-  { name: '沈知微老师', text: '时长有点紧，我删了一个环节正好一课时，整体节奏很顺。', time: '5 小时前' },
-  { name: '赵雪老师', text: '第一次用这种角色扮演式教学，没想到全班参与度这么高。', time: '昨天 21:36' },
-  { name: '孙宁老师', text: '任务单能不能再放一个空白模板？想按自己班的学情改一改。', time: '昨天 08:12' },
-  { name: '吴敏老师', text: '拿去上了公开课，评委反馈说思路很清晰，谢谢作者。', time: '2 天前' },
-  { name: '郑华老师', text: '小组分工那块我按人数调整了下，配套素材很齐全，省了不少备课时间。', time: '2 天前' },
-  { name: '冯磊老师', text: '建议加一份课后延伸问题清单，孩子们意犹未尽。', time: '4 天前' },
-  { name: '蒋文老师', text: '基础弱的班也能带得动，关键是前面的铺垫做足了。', time: '6 天前' },
-  { name: '韩雪老师', text: '把结论式讨论改成找证据，这个方向我很认同。', time: '09-04' },
-  { name: '杨帆老师', text: '素材清晰、环节完整，改编空间也大，已收藏。', time: '09-03' },
-  { name: '朱丽老师', text: '学生复盘的时候引用了原文好几处，效果超出预期。', time: '08-30' },
-  { name: '秦岭老师', text: '我加了一轮辩论环节，课堂气氛更足了，回头也发个改编版。', time: '08-28' },
-  { name: '许静老师', text: '第一次带整本书阅读，这套流程给了我很大信心。', time: '08-22' },
-  { name: '何伟老师', text: '难度梯度分得好，好几个层次的学生都有事做。', time: '08-20' },
-  { name: '罗敏老师', text: '课件配图很讲究，投影出来质感也在线。', time: '08-13' },
+  { name: '陈见微', text: '证据卡这个设计太巧了，学生开始主动翻书找依据，不再等我给结论。', time: '2 小时前' },
+  { name: '沈知微', text: '时长有点紧，我删了一个环节正好一课时，整体节奏很顺。', time: '5 小时前' },
+  { name: '赵雪', text: '第一次用这种角色扮演式教学，没想到全班参与度这么高。', time: '昨天 21:36' },
+  { name: '孙宁', text: '任务单能不能再放一个空白模板？想按自己班的学情改一改。', time: '昨天 08:12' },
+  { name: '吴敏', text: '拿去上了公开课，评委反馈说思路很清晰，谢谢作者。', time: '2 天前' },
+  { name: '郑华', text: '小组分工那块我按人数调整了下，配套素材很齐全，省了不少备课时间。', time: '2 天前' },
+  { name: '冯磊', text: '建议加一份课后延伸问题清单，孩子们意犹未尽。', time: '4 天前' },
+  { name: '蒋文', text: '基础弱的班也能带得动，关键是前面的铺垫做足了。', time: '6 天前' },
+  { name: '韩雪', text: '把结论式讨论改成找证据，这个方向我很认同。', time: '09-04' },
+  { name: '杨帆', text: '素材清晰、环节完整，改编空间也大，已收藏。', time: '09-03' },
+  { name: '朱丽', text: '学生复盘的时候引用了原文好几处，效果超出预期。', time: '08-30' },
+  { name: '秦岭', text: '我加了一轮辩论环节，课堂气氛更足了，回头也发个改编版。', time: '08-28' },
+  { name: '许静', text: '第一次带整本书阅读，这套流程给了我很大信心。', time: '08-22' },
+  { name: '何伟', text: '难度梯度分得好，好几个层次的学生都有事做。', time: '08-20' },
+  { name: '罗敏', text: '课件配图很讲究，投影出来质感也在线。', time: '08-13' },
 ]
 function buildSeedComments() {
   const base = [
-    { id: 'c1', name: '王慧老师', initial: '王', tone: '', text: '“先发人物关系卡”特别适合基础弱的班，学生进入状态快多了。', pinned: true, time: '3 天前', authorReply: '谢谢你的反馈，我也把这套卡片放进了最新版本。', mine: false, replies: [] },
-    { id: 'c2', name: '李敏老师', initial: '李', tone: 'is-warm', text: '学生为了当“首席检察官”，提前把课文读了三遍。', pinned: false, time: '5 天前', mine: false, replies: [] },
-    { id: 'c3', name: '周涛老师', initial: '周', tone: 'is-muted', text: '我做了一个 1 课时简化版，已经发布到改编版本区。', pinned: false, time: '09-05', mine: false, replies: [
-      { id: 'c3r1', name: '李敏老师', initial: '李', tone: 'is-warm', text: '求链接，正好想找个简化版！', replyToName: '', time: '6 天前', mine: false },
+    { id: 'c1', name: '王慧', initial: '王', tone: '', text: '“先发人物关系卡”特别适合基础弱的班，学生进入状态快多了。', pinned: true, time: '3 天前', authorReply: '谢谢你的反馈，我也把这套卡片放进了最新版本。', mine: false, replies: [] },
+    { id: 'c2', name: '李敏', initial: '李', tone: 'is-warm', text: '学生为了当“首席检察官”，提前把课文读了三遍。', pinned: false, time: '5 天前', mine: false, replies: [] },
+    { id: 'c3', name: '周涛', initial: '周', tone: 'is-muted', text: '我做了一个 1 课时简化版，已经发布到改编版本区。', pinned: false, time: '09-05', mine: false, replies: [
+      { id: 'c3r1', name: '李敏', initial: '李', tone: 'is-warm', text: '求链接，正好想找个简化版！', replyToName: '', time: '6 天前', mine: false },
     ] },
   ]
   const more = SEED_TEXTS.map((c, i) => ({
@@ -169,7 +170,24 @@ function removeNode(id) {
   else interactions.comments = interactions.comments.filter((c) => c.id !== id)
   interactions.count = Math.max(0, interactions.count - 1)
 }
+function confirmDeleteYes() {
+  const id = interactions.confirmDelete
+  interactions.confirmDelete = null
+  if (id) preserveScroll(() => removeNode(id))
+}
+function confirmDeleteNo() {
+  interactions.confirmDelete = null
+}
 function handleAction(act, id) {
+  // 点「评论 / 说点什么」→ 定位到讨论第一条并激活输入框（其余交互保持滚动位置不动）
+  if (act === 'comment-open') {
+    runAction(act, id)
+    nextTick(() => {
+      const disc = document.querySelector('#view-res .fg-v2-discussion-panel')
+      if (disc) disc.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+    return
+  }
   preserveScroll(() => runAction(act, id))
 }
 function runAction(act, id) {
@@ -186,7 +204,7 @@ function runAction(act, id) {
     case 'reply-cancel': interactions.replyingTo = null; break
     case 'reply-submit': submitReply(id); break
     case 'pin': togglePin(id); break
-    case 'delete': removeNode(id); break
+    case 'delete': interactions.confirmDelete = id; break // 二次确认，确认后才删
     default: break
   }
 }
@@ -286,7 +304,7 @@ function renderTopicMembership(resource) {
   const membership = getResourceTopicMembership(resource)
   if (!membership) return ''
 
-  return `<div class="rd-topic-strip" data-track="/click/resourceDetailPage/topic | 进入所属专题 | 无" aria-label="${escapeHtml(membership.label)}">
+  return `<div class="rd-topic-strip" data-topic-id="${escapeHtml(membership.id)}" role="link" tabindex="0" data-track="/click/resourceDetailPage/topic | 进入所属专题 | 无" aria-label="进入专题：${escapeHtml(membership.title)}">
     <span>${escapeHtml(membership.label)}</span>
     <span class="rd-topic-dot" aria-hidden="true">·</span>
     <strong>${escapeHtml(membership.title)}</strong>
@@ -373,7 +391,7 @@ const ACTIVITY_ICONS = {
 }
 
 function formatActivityActor(actor) {
-  return actor.endsWith('老师') ? actor : `${actor}老师`
+  return actor
 }
 
 function renderActivityRow(activity, duplicate = false) {
@@ -389,6 +407,7 @@ function renderActivityRow(activity, duplicate = false) {
 
 function renderRecentActivities(resource, limit = 2, withHeader = true) {
   const activities = getRecentResourceActivities(resource).slice(0, limit)
+  if (!activities.length) return '' // 空模块不展示
   const rows = activities.map((activity) => renderActivityRow(activity)).join('')
   const duplicateRows = activities.map((activity) => renderActivityRow(activity, true)).join('')
 
@@ -454,11 +473,17 @@ function renderMoreFooter(hasMore) {
 }
 function renderResourceDiscussionPanel(resource) {
   const sorted = sortedComments()
+  const head = `<div class="fg-v2-discussion-head"><h3 id="fg-v2-discussion-title">讨论 <span>${formatNumber(interactions.count)}</span></h3></div>`
+  // 讨论始终展示；没有评论时显示空态（不隐藏模块）
+  if (!sorted.length) {
+    return `<section class="fg-v2-discussion-panel" data-sec="6" aria-labelledby="fg-v2-discussion-title">${head}
+      <div class="fg-v2-comment-empty">还没有讨论，来说两句、抢个沙发～</div>
+    </section>`
+  }
   const shown = sorted.slice(0, interactions.visibleCount)
   const hasMore = interactions.visibleCount < sorted.length
   const list = shown.map(renderComment).join('')
-  return `<section class="fg-v2-discussion-panel" data-sec="6" aria-labelledby="fg-v2-discussion-title">
-    <div class="fg-v2-discussion-head"><h3 id="fg-v2-discussion-title">讨论 <span>${formatNumber(interactions.count)}</span></h3></div>
+  return `<section class="fg-v2-discussion-panel" data-sec="6" aria-labelledby="fg-v2-discussion-title">${head}
     <div class="fg-v2-comment-list" aria-label="精选评论">${list}</div>
     ${renderMoreFooter(hasMore)}
   </section>`
@@ -483,18 +508,20 @@ function renderResourceAboutPanel(resource) {
 }
 
 function renderResourceVersionsPanel(resource) {
-  const forkCards = resource.forks.map((id) => RESOURCES_BY_ID[id]).filter(Boolean).map((fork) => `<div class="fg-v2-fork-row" data-resource-id="${escapeHtml(fork.id)}" data-track="/click/resourceDetailPage/viewFork | 查看改编作品 | 无" role="link" tabindex="0" aria-label="查看改编作品：${escapeHtml(fork.title)}"><img class="fg-v2-fork-cover" src="${fork.cover || COVERS[0]}" alt="" loading="lazy"><div class="fg-v2-fork-copy"><strong>${escapeHtml(fork.title)}</strong><p>${escapeHtml(fork.author.name)} · ${formatNumber(fork.stats.use)} 位老师使用</p></div><span class="fg-v2-fork-go" aria-hidden="true">查看</span></div>`).join('')
-  const body = forkCards || '<p class="fg-v2-forks-empty">还没有人改编这个作品，来做第一个改编版本吧。</p>'
-  return `<section class="fg-v2-versions-panel" data-sec="4" aria-labelledby="fg-v2-versions-title"><div class="fg-v2-version-head"><h2 id="fg-v2-versions-title">优质改编</h2><span>${formatNumber(resource.stats.adapt)} 个改编</span></div><div class="fg-v2-fork-list">${body}</div></section>`
+  const forks = (resource.forks || []).map((id) => RESOURCES_BY_ID[id]).filter(Boolean)
+  if (!forks.length) return '' // 空模块不展示
+  const forkCards = forks.map((fork) => `<div class="fg-v2-fork-row" data-resource-id="${escapeHtml(fork.id)}" data-track="/click/resourceDetailPage/viewFork | 查看改编作品 | 无" role="link" tabindex="0" aria-label="查看改编作品：${escapeHtml(fork.title)}"><img class="fg-v2-fork-cover" src="${fork.cover || COVERS[0]}" alt="" loading="lazy"><div class="fg-v2-fork-copy"><strong>${escapeHtml(fork.title)}</strong><p>${escapeHtml(fork.author.name)} · ${formatNumber(fork.stats.use)} 位老师使用</p></div><span class="fg-v2-fork-go" aria-hidden="true">查看</span></div>`).join('')
+  return `<section class="fg-v2-versions-panel" data-sec="4" aria-labelledby="fg-v2-versions-title"><div class="fg-v2-version-head"><h2 id="fg-v2-versions-title">优质改编</h2><span>${formatNumber(resource.stats.adapt)} 个改编</span></div><div class="fg-v2-fork-list">${forkCards}</div></section>`
 }
 
 function renderResourceDetailPanel(resource) {
-  const discussion = renderRecentActivities(resource, 3, true) + renderResourceDiscussionPanel(resource)
-  const versions = renderResourceVersionsPanel(resource)
+  const versions = renderResourceVersionsPanel(resource) // 空则 ''
+  const activities = renderRecentActivities(resource, 3, true) // 空则 ''
+  const discussion = renderResourceDiscussionPanel(resource) // 始终展示（含空态）
   return `<div class="fg-v2-panel-inner">
     <div class="fg-v2-panel-content" data-v2-panel-content>
-      <section class="fg-v2-panel-section" data-v2-panel="versions">${versions}</section>
-      <section class="fg-v2-panel-section" data-v2-panel="discussion">${discussion}</section>
+      ${versions ? `<section class="fg-v2-panel-section" data-v2-panel="versions">${versions}</section>` : ''}
+      <section class="fg-v2-panel-section" data-v2-panel="discussion">${activities}${discussion}</section>
     </div>
   </div>`
 }
@@ -612,7 +639,8 @@ function renderMotherResourceHtml(template, resource) {
   html = html.replace('审讯环节拆成两轮,节奏更稳。', escapeHtml(timelineVersions[0]?.note || ''))
   html = html.replace('加入"人物关系卡",基础弱的班先发再开审。', escapeHtml(timelineVersions[1]?.note || ''))
   html = html.replace('首个完整六幕沉浸式版本发布。', escapeHtml(timelineVersions[2]?.note || ''))
-  html = html.replaceAll('V12', escapeHtml(latestVersion.v))
+  // 只换文案里的 V12，避开图片 base64 里恰好出现的 "V12"（否则封面数据被截坏）
+  html = html.replace(/(?<![A-Za-z0-9+/])V12(?![A-Za-z0-9+/=])/g, () => escapeHtml(latestVersion.v))
   html = html.replaceAll('采纳 @王慧', `采纳 @${escapeHtml(contributor.name)}`)
   html = html.replace('<div style="margin-top:26px;border-top:1px solid #ECECEC;padding-top:22px;">', '<div class="fg-version-section" style="margin-top:26px;border-top:1px solid #ECECEC;padding-top:22px;">')
   html = html.replace('<div style="font-size:13px;color:#9A9A9A;font-weight:600;margin-bottom:2px;">作者迭代</div>', '<div class="fg-author-iteration-heading" style="font-size:13px;color:#9A9A9A;font-weight:600;margin-bottom:2px;">作者迭代</div>')
@@ -694,6 +722,15 @@ function handlePreviewClick(event) {
   if (event.target.closest('.fg-brand')) {
     store.view = 'rank'
     store.primaryNav = 'home'
+    return
+  }
+
+  // 所属专题 → 进专题合集页
+  const topicEl = event.target.closest('.rd-topic-strip[data-topic-id]')
+  if (topicEl) {
+    store.topicId = topicEl.getAttribute('data-topic-id')
+    store.topicReturn = 'res'
+    store.view = 'topic'
     return
   }
 
@@ -791,5 +828,15 @@ onBeforeUnmount(() => { if (moreObserver) moreObserver.disconnect() })
         {{ interactions.toast }}<span v-if="interactions.toastAction" class="fg-toast-go">前往 →</span>
       </div>
     </transition>
+    <div v-if="interactions.confirmDelete" class="fg-dialog-mask" @click.self="confirmDeleteNo">
+      <div class="fg-dialog" role="alertdialog" aria-modal="true">
+        <div class="fg-dialog-title">删除这条评论？</div>
+        <div class="fg-dialog-text">删除后不可恢复。</div>
+        <div class="fg-dialog-actions">
+          <button type="button" class="fg-dialog-btn" @click="confirmDeleteNo">取消</button>
+          <button type="button" class="fg-dialog-btn is-danger" @click="confirmDeleteYes">删除</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>

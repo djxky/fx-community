@@ -185,9 +185,9 @@ function tileKind(item) { return item.kind === 'Agent' ? 'ag' : 'sk' }
                     <div class="mintro team-intro">
                       <div class="member-list member-list-scroll" @scroll="syncMemberPage(p, $event)">
                         <article v-for="member in p.members" :key="member.name" class="member-profile">
-                          <img class="member-avatar" :src="memberAvatar(p, member)" :alt="`${member.name}老师`" :data-member-name="member.name" loading="lazy" />
+                          <img class="member-avatar" :src="memberAvatar(p, member)" :alt="member.name" :data-member-name="member.name" loading="lazy" />
                           <div class="member-copy">
-                            <div class="member-name">{{ member.name }}老师</div>
+                            <div class="member-name">{{ member.name }}</div>
                             <p>{{ member.bio }}</p>
                           </div>
                         </article>
@@ -223,8 +223,8 @@ function tileKind(item) { return item.kind === 'Agent' ? 'ag' : 'sk' }
                     <div class="co-grid">
                       <button v-for="o in p.outcomes.slice(0, 2)" :key="o.resourceId" type="button" class="co-item nav-res" :data-resource-id="o.resourceId">
                         <div class="co-line">
-                          <img class="co-avatar" :src="getAvatar(o.creator)" :alt="`${o.creator}老师`" loading="lazy" />
-                          <span class="co-creator">{{ o.creator }}老师</span>
+                          <img class="co-avatar" :src="getAvatar(o.creator)" :alt="o.creator" loading="lazy" />
+                          <span class="co-creator">{{ o.creator }}</span>
                           <span class="co-use">使用</span>
                           <span class="co-agent">「{{ collaborationLabel(p) }}」</span>
                           <span class="co-generated">生成了</span>
@@ -306,7 +306,7 @@ function tileKind(item) { return item.kind === 'Agent' ? 'ag' : 'sk' }
       <button type="button" class="agent-backdrop" aria-label="关闭对话" @click="activeAgent = null"></button>
       <div class="agent-panel">
         <div class="agent-head"><div><span>{{ activeAgent.ownerName ? '专家邀请' : 'Agent' }}</span><h2>{{ activeAgent.ownerName ? `邀请${activeAgent.ownerName}` : shortName(activeAgent.title) }}</h2></div><button type="button" aria-label="关闭" @click="activeAgent = null">×</button></div>
-        <p>{{ activeAgent.ownerName ? `向${activeAgent.ownerName}老师发起教学协作邀请，一起完善你的课堂方案。` : activeAgent.description }}</p>
+        <p>{{ activeAgent.ownerName ? `向 ${activeAgent.ownerName} 发起教学协作邀请，一起完善你的课堂方案。` : activeAgent.description }}</p>
         <div class="agent-example"><span>你可以这样开始</span><button type="button">帮我围绕本节课目标，设计一组从理解到评价的递进问题。</button></div>
         <div class="agent-input"><span>@{{ activeAgent.ownerName || shortName(activeAgent.title) }}</span><input type="text" placeholder="说说你正在准备哪一课……" /><button type="button">{{ activeAgent.ownerName ? '发起邀请' : '发送' }}</button></div>
       </div>

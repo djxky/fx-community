@@ -3,11 +3,19 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import raw from './raw/studio.html?raw'
 import { store } from '../store'
 import { mountStudioAlbums } from '../composables/studio-albums'
+import { mountStudioFollow } from '../composables/studio-follow'
 
 const root = ref(null)
 let unmountAlbums = () => {}
-onMounted(() => { unmountAlbums = mountStudioAlbums(root.value) })
-onBeforeUnmount(() => unmountAlbums())
+let unmountFollow = () => {}
+onMounted(() => {
+  unmountAlbums = mountStudioAlbums(root.value)
+  unmountFollow = mountStudioFollow(root.value)
+})
+onBeforeUnmount(() => {
+  unmountAlbums()
+  unmountFollow()
+})
 </script>
 
 <template>

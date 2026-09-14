@@ -6,6 +6,8 @@ export const store = reactive({
   view: 'rank',
   primaryNav: 'home',
   resourceId: 'res-xianglin',
+  topicId: null,
+  topicReturn: 'res', // 专题页「返回」回到哪个视图：res | studio
   currentUser: { accountId: 'teacher-cherry', name: '樱桃小魔丸子🔥' },
   sidebarCollapsed: false,
   mastersCollapsed: false,

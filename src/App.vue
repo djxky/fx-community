@@ -13,6 +13,7 @@ import AcademyView from './views/AcademyView.vue'
 import CreatorView from './views/CreatorView.vue'
 import StudioView from './views/StudioView.vue'
 import ResView from './views/ResView.vue'
+import TopicView from './views/TopicView.vue'
 import SkillView from './views/SkillView.vue'
 import SkillPlazaView from './views/SkillPlazaView.vue'
 import ShareView from './views/ShareView.vue'
@@ -22,6 +23,7 @@ import ActivityView from './views/ActivityView.vue'
 import LineageView from './views/LineageView.vue'
 import NotifyView from './views/NotifyView.vue'
 import MyLibraryView from './views/MyLibraryView.vue'
+import ChatView from './views/ChatView.vue'
 import ReviewPanel from './review/ReviewPanel.vue'
 
 const initialResourceRoute = getResourceRouteFromSearch(
@@ -55,6 +57,7 @@ onMounted(() => installDelegation())
       <CreatorView v-show="store.view === 'creator'" />
       <StudioView v-show="store.view === 'studio'" />
       <ResView v-show="store.view === 'res'" />
+      <TopicView v-show="store.view === 'topic'" />
       <SkillView v-show="store.view === 'skill'" />
       <SkillPlazaView v-show="store.view === 'skills'" />
       <ShareView v-show="store.view === 'share'" />
@@ -64,6 +67,7 @@ onMounted(() => installDelegation())
       <LineageView v-show="store.view === 'lineage'" />
       <NotifyView v-show="store.view === 'notify'" />
       <MyLibraryView v-show="store.view === 'mylib'" />
+      <ChatView v-show="store.view === 'chat'" />
     </div>
     <ReviewPanel />
   </div>

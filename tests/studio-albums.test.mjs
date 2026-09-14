@@ -20,15 +20,18 @@ import {
 
 const draft = (patch = {}) => ({ id: 'new', name: '', intro: '', workIds: [], ...patch })
 
-test('专辑摘要合并类型、讲数与使用数', () => {
-  assert.equal(albumSummary(SEED_ALBUMS[0]), '应用 · 2 讲 · 43 使用')
-  assert.equal(albumSummary({ workIds: ['feihualing', 'picture-book-questions'] }), '应用+技能 · 2 讲 · 30 使用')
+test('专题卡只展示资源数，讲次不带类型', () => {
+  assert.equal(albumSummary(SEED_ALBUMS[0]), '共 2 个资源')
+  assert.equal(albumSummary({ workIds: ['feihualing', 'picture-book-questions', 'missing'] }), '共 2 个资源')
+  assert.doesNotMatch(renderAlbumList(SEED_ALBUMS), /st-album-ls| 讲 · |使用/)
+  assert.doesNotMatch(renderAlbumList(SEED_ALBUMS), /nav-res/)
+  assert.match(renderAlbumList(SEED_ALBUMS), /class="st-album" data-album-id="album-poetry" role="link"/)
 })
 
-test('专辑名称必填、不超长、不与其它专辑重名', () => {
-  assert.equal(validateAlbumInfo(SEED_ALBUMS, draft({ name: '   ' })), '请填写专辑名称')
-  assert.equal(validateAlbumInfo(SEED_ALBUMS, draft({ name: '一'.repeat(21) })), '专辑名称最多 20 个字')
-  assert.equal(validateAlbumInfo(SEED_ALBUMS, draft({ name: ' 古诗文课堂互动 ' })), '已有同名专辑，换个名字吧')
+test('专题名称必填、不超长、不与其它专题重名', () => {
+  assert.equal(validateAlbumInfo(SEED_ALBUMS, draft({ name: '   ' })), '请填写专题名称')
+  assert.equal(validateAlbumInfo(SEED_ALBUMS, draft({ name: '一'.repeat(21) })), '专题名称最多 20 个字')
+  assert.equal(validateAlbumInfo(SEED_ALBUMS, draft({ name: ' 古诗文课堂互动 ' })), '已有同名专题，换个名字吧')
   assert.equal(validateAlbumInfo(SEED_ALBUMS, { ...SEED_ALBUMS[0] }), '')
 })
 
@@ -37,16 +40,16 @@ test('至少选 1 个作品才能保存', () => {
   assert.equal(validateAlbumWorks(draft({ workIds: ['luoluobi'] })), '')
 })
 
-test('新专辑放在最前，编辑保持原位置', () => {
-  const created = saveAlbum(SEED_ALBUMS, draft({ name: ' 新专辑 ', workIds: ['luoluobi'] }))
+test('新专题放在最前，编辑保持原位置', () => {
+  const created = saveAlbum(SEED_ALBUMS, draft({ name: ' 新专题 ', workIds: ['luoluobi'] }))
   assert.deepEqual(created.map((a) => a.id), ['new', 'album-poetry', 'album-writing'])
-  assert.equal(created[0].name, '新专辑')
+  assert.equal(created[0].name, '新专题')
 
   const edited = saveAlbum(SEED_ALBUMS, { ...SEED_ALBUMS[1], name: '写作课' })
   assert.deepEqual(edited.map((a) => a.name), ['古诗文课堂互动', '写作课'])
 })
 
-test('删除专辑与调整专辑顺序', () => {
+test('删除专题与调整专题顺序', () => {
   assert.deepEqual(deleteAlbum(SEED_ALBUMS, 'album-poetry').map((a) => a.id), ['album-writing'])
   assert.deepEqual(moveAlbum(SEED_ALBUMS, 'album-writing', -1).map((a) => a.id), ['album-writing', 'album-poetry'])
   assert.equal(moveAlbum(SEED_ALBUMS, 'album-poetry', -1), SEED_ALBUMS)
@@ -66,7 +69,7 @@ test('未改动（含只加空格）不算有未保存内容', () => {
   assert.equal(isDraftDirty({ ...initial, workIds: ['a', 'b'] }, initial), true)
 })
 
-test('专辑卡菜单首个不可上移、末个不可下移，名称做转义', () => {
+test('专题卡菜单首个不可上移、末个不可下移，名称做转义', () => {
   const albums = [{ ...SEED_ALBUMS[0], name: '<b>古诗</b>' }, SEED_ALBUMS[1]]
   const first = renderAlbumList(albums, 'album-poetry')
   assert.match(first, /data-album-act="up" disabled/)

@@ -1,3 +1,5 @@
+import { reactive } from 'vue'
+import { store } from '../store'
 import {
   OWNER_WORKS,
   SEED_ALBUMS,
@@ -14,6 +16,11 @@ import {
   validateAlbumWorks,
 } from '../studio-albums.mjs'
 
+// 我的主页专题数据：教师主页与专题详情页共用，编辑 / 排序 / 删除后专题页同步
+export const ownerAlbumState = reactive({
+  albums: SEED_ALBUMS.map((a) => ({ ...a, workIds: [...a.workIds] })),
+})
+
 function showToast(message) {
   const toast = document.createElement('div')
   toast.className = 'fx-toast'
@@ -23,8 +30,17 @@ function showToast(message) {
   window.setTimeout(() => toast.remove(), 1600)
 }
 
-// 我的主页 · 专辑管理：列表（编辑 / 上下移 / 删除）、新建与编辑弹窗、确认框。
-// 事件挂在 #view-studio 上并阻止冒泡，避免全局导航委托把菜单点击当成进详情。
+function openTopic(id) {
+  store.topicId = id
+  store.topicReturn = 'studio'
+  store.view = 'topic'
+  requestAnimationFrame(() => {
+    document.querySelectorAll('#view-topic main').forEach((main) => { main.scrollTop = 0 })
+  })
+}
+
+// 我的主页 · 专题管理：列表（编辑 / 上下移 / 删除 / 进专题页）、新建与编辑弹窗、确认框。
+// 事件挂在 #view-studio 上并阻止冒泡，避免全局导航委托把这些点击当成进资源详情。
 export function mountStudioAlbums(root) {
   const list = root?.querySelector('[data-owner-albums]')
   const modal = root?.querySelector('.album-modal')
@@ -32,7 +48,6 @@ export function mountStudioAlbums(root) {
   if (!list || !modal || !confirmBox) return () => {}
 
   const $ = (selector) => modal.querySelector(selector)
-  let albums = SEED_ALBUMS.map((a) => ({ ...a, workIds: [...a.workIds] }))
   let openMenuId = ''
   let draft = null
   let initial = null
@@ -40,11 +55,11 @@ export function mountStudioAlbums(root) {
   let keyword = ''
   let pendingConfirm = null
 
-  const isEditing = () => albums.some((a) => a.id === draft.id)
+  const isEditing = () => ownerAlbumState.albums.some((a) => a.id === draft.id)
 
   function renderList() {
-    list.innerHTML = renderAlbumList(albums, openMenuId)
-    root.querySelectorAll('[data-album-count]').forEach((el) => { el.textContent = albums.length })
+    list.innerHTML = renderAlbumList(ownerAlbumState.albums, openMenuId)
+    root.querySelectorAll('[data-album-count]').forEach((el) => { el.textContent = ownerAlbumState.albums.length })
   }
 
   function renderPicks() {
@@ -53,8 +68,8 @@ export function mountStudioAlbums(root) {
 
   function renderModal() {
     const editing = isEditing()
-    $('.album-title').textContent = editing ? '编辑专辑' : '新建专辑'
-    $('.album-modal-submit').textContent = editing ? '保存修改' : '创建专辑'
+    $('.album-title').textContent = editing ? '编辑专题' : '新建专题'
+    $('.album-modal-submit').textContent = editing ? '保存修改' : '创建专题'
     modal.querySelectorAll('.album-step').forEach((s) => { s.style.display = s.dataset.step === String(step) ? '' : 'none' })
     modal.querySelectorAll('.album-stepdot').forEach((d) => d.classList.toggle('on', d.dataset.sd === String(step)))
     $('.album-prev').style.display = step === 2 ? '' : 'none'
@@ -113,7 +128,7 @@ export function mountStudioAlbums(root) {
     if (!isDraftDirty(draft, initial)) return closeModal()
     const editing = isEditing()
     askConfirm({
-      title: editing ? '放弃修改？' : '放弃新建专辑？',
+      title: editing ? '放弃修改？' : '放弃新建专题？',
       sub: editing ? '修改的内容不会保存。' : '已填内容不会保存。',
       ok: '放弃',
       onOk: closeModal,
@@ -121,7 +136,7 @@ export function mountStudioAlbums(root) {
   }
 
   function handleAlbumAction(action, id) {
-    const album = albums.find((a) => a.id === id)
+    const album = ownerAlbumState.albums.find((a) => a.id === id)
     if (!album) return
     if (action === 'menu') {
       openMenuId = openMenuId === id ? '' : id
@@ -129,19 +144,21 @@ export function mountStudioAlbums(root) {
       return
     }
     openMenuId = ''
-    if (action === 'up' || action === 'down') albums = moveAlbum(albums, id, action === 'up' ? -1 : 1)
+    if (action === 'up' || action === 'down') {
+      ownerAlbumState.albums = moveAlbum(ownerAlbumState.albums, id, action === 'up' ? -1 : 1)
+    }
     renderList()
     if (action === 'edit') openModal(album)
     if (action === 'delete') {
       askConfirm({
-        title: `删除专辑「${album.name}」？`,
-        sub: '专辑里的作品不会被删除，只是不再成组展示在主页上。',
+        title: `删除专题「${album.name}」？`,
+        sub: '专题里的作品不会被删除，只是不再成组展示在主页上。',
         ok: '删除',
         danger: true,
         onOk: () => {
-          albums = deleteAlbum(albums, id)
+          ownerAlbumState.albums = deleteAlbum(ownerAlbumState.albums, id)
           renderList()
-          showToast('专辑已删除')
+          showToast('专题已删除')
         },
       })
     }
@@ -150,7 +167,7 @@ export function mountStudioAlbums(root) {
   function handleModalClick(target) {
     if (target === modal || target.closest('.album-modal-close, .album-modal-cancel')) return requestCloseModal()
     if (target.closest('.album-next')) {
-      const error = validateAlbumInfo(albums, draft)
+      const error = validateAlbumInfo(ownerAlbumState.albums, draft)
       setError(error)
       if (!error) { step = 2; renderModal() }
       return
@@ -183,10 +200,10 @@ export function mountStudioAlbums(root) {
       setError(error)
       if (error) return
       const editing = isEditing()
-      albums = saveAlbum(albums, draft)
+      ownerAlbumState.albums = saveAlbum(ownerAlbumState.albums, draft)
       closeModal()
       renderList()
-      showToast(editing ? '专辑已更新' : '专辑已创建 · 已加入你的主页')
+      showToast(editing ? '专题已更新' : '专题已创建 · 已加入你的主页')
     }
   }
 
@@ -220,10 +237,16 @@ export function mountStudioAlbums(root) {
       return
     }
     if (openMenuId) {
-      // 菜单打开时点任意处只收起菜单，不触发进详情
+      // 菜单打开时点任意处只收起菜单，不进专题页
       e.stopPropagation()
       openMenuId = ''
       renderList()
+      return
+    }
+    const topicCard = target.closest('.st-album[data-album-id], [data-topic-id]')
+    if (topicCard) {
+      e.stopPropagation()
+      openTopic(topicCard.dataset.albumId || topicCard.dataset.topicId)
     }
   }
 
@@ -249,10 +272,12 @@ export function mountStudioAlbums(root) {
       else if (openMenuId) { openMenuId = ''; renderList() }
       return
     }
-    const pick = (e.key === 'Enter' || e.key === ' ') && draft && e.target.closest?.('.album-wk[data-work-id]')
-    if (pick) {
+    if (e.key !== 'Enter' && e.key !== ' ') return
+    const pick = draft && e.target.closest?.('.album-wk[data-work-id]')
+    const card = !draft && root.contains(e.target) && e.target.matches?.('.st-album[data-album-id], [data-topic-id]')
+    if (pick || card) {
       e.preventDefault()
-      pick.click()
+      e.target.click()
     }
   }
 

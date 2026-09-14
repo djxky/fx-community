@@ -17,7 +17,8 @@ const directViewOwners = Object.freeze({
   mylib: 'mylib',
 })
 
-const fullscreenViews = new Set(['creator', 'share', 'report'])
+// 有「返回」按钮的页面不显示侧边导航（二者互斥）
+const fullscreenViews = new Set(['creator', 'share', 'report', 'topic'])
 
 export function getPrimaryNavItem(key) {
   return itemsByKey.get(key) ?? null

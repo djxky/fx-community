@@ -7,7 +7,9 @@ const activeKey = computed(() => store.primaryNav)
 const meOn = computed(() => store.view === 'notify')
 function collapse() { store.sidebarCollapsed = true }
 function expand() { store.sidebarCollapsed = false }
+// 第一条是已复刻的对话页（发布到社区入口）
 const history = [
+  '改编《英语词汇连连看游戏》',
   '改编《古文沉浸式漫游·桃花源记》',
   '生成 AI 写作编辑器应用方案代码',
   '魔法冥想盆灵感捕捉应用代码',
@@ -60,7 +62,7 @@ const history = [
       </button>
     </div>
     <div class="side-history" style="display:flex; flex-direction:column; gap:2px; overflow:hidden;">
-      <div v-for="(h, i) in history" :key="i" class="side-history-item">
+      <div v-for="(h, i) in history" :key="i" class="side-history-item" :class="{ 'nav-chat': i === 0, on: i === 0 && store.view === 'chat' }">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H10l-5 3v-3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"></path><path d="M8 11h.01M12 11h.01M16 11h.01"></path></svg>
         <span>{{ h }}</span>
       </div>
@@ -179,6 +181,9 @@ const history = [
 .side-history-item { min-width:0; display:flex; align-items:center; gap:8px; padding:7px 8px; color:#7A7C7C; font-size:13px; line-height:1.35; white-space:nowrap; }
 .side-history-item svg { flex:0 0 auto; }
 .side-history-item span { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.side-history-item.nav-chat { border-radius:10px; color:#141F1B; cursor:pointer; transition:background .15s; }
+.side-history-item.nav-chat:hover { background:#F4F4F4; }
+.side-history-item.nav-chat.on { background:#EFEFEF; font-weight:500; }
 .side-campus { width:100%; min-height:40px; display:flex; align-items:center; justify-content:center; gap:6px; padding:9px; border:0; border-radius:10px; color:#141F1B; background:linear-gradient(100deg, #aaff78 0%, #8dff9c 50%, #a8ffd7 100%); box-shadow:inset 0 0 18px rgba(255,255,255,.38); font-size:13.5px; font-weight:600; cursor:pointer; }
 .side-campus:hover { filter:saturate(1.05) brightness(.99); }
 .avatar-trigger { width:100%; border:0; background:transparent; text-align:left; }

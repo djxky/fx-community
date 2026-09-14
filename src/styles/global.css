@@ -687,6 +687,7 @@ a:hover { color: #141F1B; }
     /* 讨论触底自动加载 footer + 加载动画 */
     #view-res .fg-v2-comment-more { min-height:44px; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:8px; color:#9AA19E; font-size:12px; }
     #view-res .fg-v2-comment-more.is-end { color:#B4BAB6; }
+    #view-res .fg-v2-comment-empty { padding:32px 0 40px; text-align:center; color:#9AA19E; font-size:13.5px; }
     #view-res .fg-spinner { width:15px; height:15px; border-radius:50%; border:2px solid #DDE3E0; border-top-color:#8A928E; animation:fg-spin .7s linear infinite; }
     @keyframes fg-spin { to { transform:rotate(360deg); } }
     #view-res .fg-cmt-reply-to { color:#4C7C63; font-weight:600; }
@@ -871,6 +872,20 @@ a:hover { color: #141F1B; }
     #view-res .fg-toast .fg-toast-go { font-weight:700; color:#FFC53D; white-space:nowrap; }
     .fg-toast-enter-active, .fg-toast-leave-active { transition:opacity .2s ease, transform .2s ease; }
     .fg-toast-enter-from, .fg-toast-leave-to { opacity:0; transform:translate(-50%,8px); }
+    /* 删除二次确认弹窗 */
+    #view-res .fg-dialog-mask { position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; background:rgba(16,35,28,.32); }
+    #view-res .fg-dialog { width:300px; max-width:86vw; background:#fff; border-radius:16px; padding:22px 20px 16px; box-shadow:0 20px 60px rgba(16,35,28,.28); text-align:center; }
+    #view-res .fg-dialog-title { font-size:15.5px; font-weight:700; color:#10231C; }
+    #view-res .fg-dialog-text { margin-top:8px; font-size:13px; color:#8A928E; }
+    #view-res .fg-dialog-actions { display:flex; gap:10px; margin-top:20px; }
+    #view-res .fg-dialog-btn { flex:1; padding:10px 0; border-radius:10px; border:1px solid #E7EBE9; background:#fff; color:#3A423E; font-size:14px; font-weight:600; cursor:pointer; }
+    #view-res .fg-dialog-btn:hover { background:#F5F8F6; }
+    #view-res .fg-dialog-btn.is-danger { border-color:#E5484D; background:#E5484D; color:#fff; }
+    #view-res .fg-dialog-btn.is-danger:hover { background:#D33A3F; }
+    .fg-dialog-enter-active, .fg-dialog-leave-active { transition:opacity .18s ease; }
+    .fg-dialog-enter-from, .fg-dialog-leave-to { opacity:0; }
+    .fg-dialog-enter-active .fg-dialog, .fg-dialog-leave-active .fg-dialog { transition:transform .18s ease; }
+    .fg-dialog-enter-from .fg-dialog, .fg-dialog-leave-to .fg-dialog { transform:scale(.94); }
     #view-res .fg-v2-comment-input { flex:1 1 auto; min-width:0; text-align:left; padding:10px 13px; border:0; border-radius:999px; background:#F5F7F5; color:#9AA19E; font:inherit; font-size:12px; cursor:text; }
     #view-res .fg-v2-discussion-actions { flex:0 0 auto; }
     #view-res .fg-v2-discussion-actions .fg-action-buttons { display:none; }
@@ -1431,7 +1446,7 @@ a:hover { color: #141F1B; }
 }
 
 
-/* ===== 名师主页 · 主态(我的主页) owner 态 · 新建专辑 ===== */
+/* ===== 名师主页 · 主态(我的主页) owner 态 · 新建专题 ===== */
 .st-owner-acts{ display:none; }
 #view-studio.owner .st-owner-acts{ display:flex; gap:10px; padding-top:6px; }
 #view-studio.owner .st-guest-acts{ display:none !important; }
@@ -1482,8 +1497,11 @@ a:hover { color: #141F1B; }
 .owner-id { font-size:11px; font-weight:600; color:#7A7C7C; background:#EFEFEF; border:1px solid #E3E4E3; border-radius:5px; padding:2px 8px; }
 
 .st-owner-tabs { display:flex; gap:28px; }
+.st-follow-btn { min-width:104px; white-space:nowrap; background:#141F1B; color:#fff; border:1px solid #141F1B; border-radius:10px; padding:10px 26px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; transition:background .15s, color .15s, border-color .15s; }
+.st-follow-btn.is-on { background:#fff; color:#7A7C7C; border-color:#DADBDA; font-weight:600; }
+.st-follow-btn.is-on:hover { color:#141F1B; border-color:#141F1B; }
 
-/* ===== 新建专辑 · 两步向导 ===== */
+/* ===== 新建专题 · 两步向导 ===== */
 .album-steps { display:flex; align-items:center; gap:8px; margin-top:14px; }
 .album-stepdot { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:#9A9A9A; font-weight:600; }
 .album-stepdot b { display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; border-radius:50%; background:#ECECEC; color:#9A9A9A; font-size:11px; }
@@ -1527,7 +1545,7 @@ a:hover { color: #141F1B; }
 .album-confirm-t { font-size:17px; font-weight:700; color:#141F1B; line-height:1.4; }
 .album-confirm-s { font-size:13px; color:#7A7C7C; margin-top:8px; line-height:1.6; }
 .album-confirm-ft { display:flex; justify-content:flex-end; gap:10px; margin-top:20px; }
-/* 我的主页 · 专辑卡（版式对齐客态专题卡） */
+/* 我的主页 · 专题卡（版式对齐客态专题卡） */
 .st-album { background:#fff; border:1px solid #ECECEC; border-radius:16px; padding:18px 20px; margin-bottom:16px; cursor:pointer; transition:border-color .15s; }
 .st-album:hover { border-color:#DADBDA; }
 .st-album-hd { display:flex; align-items:center; gap:8px; min-width:0; }
@@ -1548,7 +1566,6 @@ a:hover { color: #141F1B; }
 .st-album-cover { height:96px; border-radius:10px; position:relative; }
 .st-album-cover span { position:absolute; top:8px; left:8px; background:rgba(255,255,255,0.92); color:#141F1B; font-size:11px; font-weight:600; padding:2px 7px; border-radius:6px; }
 .st-album-lt { font-size:12.5px; color:#141F1B; margin-top:7px; line-height:1.4; font-weight:500; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-.st-album-ls { font-size:11.5px; color:#9A9A9A; margin-top:2px; }
 
 /* === v3 右列重排:操作按钮上移 + 预览铺满 === */
 #view-res .fg-v2-ops { margin:15px 0 4px; }

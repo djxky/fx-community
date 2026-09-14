@@ -2,8 +2,13 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import '../styles/community.css'
 import PostCard from '../components/PostCard.vue'
+import { store } from '../store'
 import { POSTS } from '../data/discover'
 import { FEED } from '../data/feed'
+import { TOPICS } from '../data/topics'
+import { RESOURCES } from '../data/resources'
+import { COVERS } from '../data/covers'
+import { buildTopicPosts, mixTopicPosts } from '../lib/discover-topics.mjs'
 import {
   availableFacetOptions,
   availableScenes,
@@ -25,13 +30,25 @@ const activeStage = ref('all')
 // 关注下选中的作者；空 = 全部关注对象
 const activeAuthor = ref('')
 
+// 推荐 = 资源 + 发布到社区的专题（混排）
+const TOPIC_POSTS = buildTopicPosts(TOPICS, RESOURCES, COVERS)
+const RECOMMEND_POSTS = mixTopicPosts(POSTS, TOPIC_POSTS)
+
 const FOLLOW_AUTHORS = buildFollowAuthors(FEED)
-const FOLLOW_POSTS = buildFollowPosts(FEED, POSTS)
+const FOLLOW_POSTS = buildFollowPosts(FEED, RECOMMEND_POSTS)
 
 const basePosts = computed(() => activeMode.value === 'follow'
   ? filterByAuthor(FOLLOW_POSTS, activeAuthor.value)
-  : POSTS)
-const sceneOptions = computed(() => availableScenes([...POSTS, ...FOLLOW_POSTS]))
+  : RECOMMEND_POSTS)
+const sceneOptions = computed(() => availableScenes([...RECOMMEND_POSTS, ...FOLLOW_POSTS]))
+
+// 专题卡 → 专题详情页，「返回」回到发现页
+function openTopic(post) {
+  if (post.kind !== 'topic') return
+  store.topicId = post.topicId
+  store.topicReturn = 'discover'
+  store.view = 'topic'
+}
 const primaryTabs = computed(() => [
   ...MODE_OPTIONS,
   ...sceneOptions.value.filter((scene) => scene.key !== 'all'),
@@ -207,7 +224,16 @@ function selectTask(task) {
           </div>
 
           <div class="flow" data-sec="5">
-            <PostCard v-for="(post, i) in visiblePosts" :key="post.resourceId || post.title || i" :post="post" compact data-track="/click/discoverPage/resourceCard | 点击灵感卡片 | tab,position" />
+            <PostCard
+              v-for="(post, i) in visiblePosts"
+              :key="post.topicId || post.resourceId || post.title || i"
+              :post="post"
+              compact
+              :data-track="post.kind === 'topic'
+                ? '/click/discoverPage/topicCard | 点击专题卡 | topicId,tab,position'
+                : '/click/discoverPage/resourceCard | 点击灵感卡片 | tab,position'"
+              @click="openTopic(post)"
+            />
           </div>
           <div v-if="visiblePosts.length === 0 && activeMode === 'follow'" class="empty-state">
             <strong>{{ activeAuthor ? '这位作者还没有公开的资源' : '关注的作者还没有公开的资源' }}</strong>

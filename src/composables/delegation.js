@@ -231,9 +231,9 @@ export function installDelegation() {
     }
 
     var sp = e.target.closest('[data-stab]'); if (sp) { switchSPanel(sp.getAttribute('data-stab')); return }
-    var myp = e.target.closest('.nav-mypage'); if (myp) { store.studioMode = 'owner'; go('studio'); return }
-    var nstu = e.target.closest('.nav-studio'); if (nstu) { store.studioMode = 'guest'; go('studio'); return }
-    // 教师主页专辑管理（新建 / 编辑 / 排序 / 删除）见 composables/studio-albums.js
+    var myp = e.target.closest('.nav-mypage'); if (myp) { store.studioMode = 'owner'; switchSPanel('s-wk'); go('studio'); return }
+    var nstu = e.target.closest('.nav-studio'); if (nstu) { store.studioMode = 'guest'; switchSPanel('s-wk'); go('studio'); return }
+    // 教师主页专题管理（新建 / 编辑 / 排序 / 删除）见 composables/studio-albums.js
     for (const item of PRIMARY_NAV_ITEMS) {
       if (e.target.closest(item.selector)) {
         if (item.externalUrl) return
@@ -246,7 +246,7 @@ export function installDelegation() {
       ['.nav-rank', 'rank'], ['.nav-discover', 'discover'],
       ['.nav-community', 'rank'], ['.nav-share', 'share'],
       ['.nav-report', 'report'], ['.nav-creator', 'creator'],
-      ['.nav-monthly', 'monthly'], ['.nav-activity', 'activity'], ['.nav-lineage', 'lineage'], ['.nav-notify', 'notify'],
+      ['.nav-monthly', 'monthly'], ['.nav-activity', 'activity'], ['.nav-lineage', 'lineage'], ['.nav-notify', 'notify'], ['.nav-chat', 'chat'],
     ]
     for (var i = 0; i < map.length; i++) {
       if (e.target.closest(map[i][0])) { go(map[i][1]); return }

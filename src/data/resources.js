@@ -52,7 +52,6 @@ export const RESOURCES = [
     forkedFromVersion: 'V10',
     forks: ['res-xl-l2'],
     contributors: [],
-    topicMembership: { id: 'classic-remix', title: '整本书阅读 · 经典重构' },
     topic: '整本书阅读·经典重构',
   },
   {
@@ -73,7 +72,6 @@ export const RESOURCES = [
     forkedFromVersion: 'V11',
     forks: [],
     contributors: [],
-    topicMembership: { id: 'classic-remix', title: '整本书阅读 · 经典重构' },
     topic: '整本书阅读·经典重构',
   },
   {
@@ -89,6 +87,63 @@ export const RESOURCES = [
     versions: [{ v: 'V1', note: '基于周涛县中简化版完成二级 fork' }],
     forkedFrom: 'res-xl-zhoutao',
     forkedFromVersion: 'V3',
+    forks: [],
+    contributors: [],
+    topic: '整本书阅读·经典重构',
+  },
+  {
+    id: 'res-lin-kongyiji',
+    contentType: 'resource',
+    title: '《孔乙己》咸亨酒店证词会',
+    author: { accountId: 'teacher-lin-ruoshui', name: '林若水', type: '人', cert: '认证教师', avatar: null },
+    kind: '剧本杀/课件',
+    fit: { subject: '语文', grade: '初中·九年级', textbook: '统编版', lessonType: '整本书阅读', verified: true },
+    goal: '让掌柜、酒客、小伙计分别作证，学生从叙述视角里找出孔乙己被怎样看待。',
+    cover: EDITORIAL_COVERS.printingPress,
+    stats: { use: 1860, adapt: 18, star: 960 },
+    versions: [
+      { v: 'V1', note: '首版发布：咸亨酒店证词会' },
+      { v: 'V2', note: '补充三类证人角色卡' },
+      { v: 'V3', note: '增加叙述视角对比任务' },
+    ],
+    forkedFrom: null,
+    forks: [],
+    contributors: [],
+    topicMembership: { id: 'classic-remix', title: '整本书阅读 · 经典重构' },
+    topic: '整本书阅读·经典重构',
+  },
+  {
+    id: 'res-lin-guxiang',
+    contentType: 'resource',
+    title: '《故乡》二十年人物对照图',
+    author: { accountId: 'teacher-lin-ruoshui', name: '林若水', type: '人', cert: '认证教师', avatar: null },
+    kind: '互动课件',
+    fit: { subject: '语文', grade: '初中·九年级', textbook: '统编版', lessonType: '整本书阅读', verified: true },
+    goal: '把少年闰土与中年闰土并排对照，学生用原文细节解释“隔膜”从何而来。',
+    cover: EDITORIAL_COVERS.lessonStudy,
+    stats: { use: 920, adapt: 7, star: 433 },
+    versions: [
+      { v: 'V1', note: '首版发布：人物对照图' },
+      { v: 'V2', note: '加入杨二嫂对照线' },
+    ],
+    forkedFrom: null,
+    forks: [],
+    contributors: [],
+    topicMembership: { id: 'classic-remix', title: '整本书阅读 · 经典重构' },
+    topic: '整本书阅读·经典重构',
+  },
+  {
+    id: 'res-lin-zhaohua',
+    contentType: 'resource',
+    title: '《朝花夕拾》人物长廊·整本书导读',
+    author: { accountId: 'teacher-lin-ruoshui', name: '林若水', type: '人', cert: '认证教师', avatar: null },
+    kind: '任务单',
+    fit: { subject: '语文', grade: '初中·七年级', textbook: '统编版', lessonType: '整本书阅读', verified: true },
+    goal: '用人物长廊串起十篇回忆散文，三周读完，每周一次人物展。',
+    cover: EDITORIAL_COVERS.courseAuthoring,
+    stats: { use: 612, adapt: 4, star: 280 },
+    versions: [{ v: 'V1', note: '首版发布：人物长廊导读任务单' }],
+    forkedFrom: null,
     forks: [],
     contributors: [],
     topicMembership: { id: 'classic-remix', title: '整本书阅读 · 经典重构' },
@@ -350,5 +405,54 @@ export const RESOURCES = [
     topic: '语文·古诗词阅读',
   },
 ]
+
+// —— 补充演示改编：给原创资源挂上改编，让「优质改编」在 demo 里尽量有数据（空态属异常逻辑）——
+// 叶子改编本身不再挂下级改编（其空态隐藏是正确的产品逻辑）。
+const mkFork = (motherId, id, title, name, accountId, use, star) => {
+  const m = RESOURCES.find((r) => r.id === motherId)
+  return {
+    id,
+    contentType: m.contentType,
+    title,
+    author: { accountId, name, type: '人', cert: '认证教师', avatar: null },
+    kind: m.kind,
+    fit: { ...m.fit },
+    goal: m.goal,
+    cover: m.cover ?? null,
+    stats: { use, star, adapt: 0 },
+    versions: [{ v: 'V1', note: '基于原作改编发布' }, { v: 'V2', note: '按班级学情微调' }],
+    forkedFrom: motherId,
+    forkedFromVersion: 'V3',
+    forks: [],
+    contributors: [],
+    topic: m.topic || '',
+  }
+}
+const DEMO_FORKS = [
+  ['res-lin-kongyiji', 'res-kyj-junior', '《孔乙己》证词会 · 初中精简版', '周涛', 'teacher-zhou-tao', 640, 288],
+  ['res-lin-kongyiji', 'res-kyj-debate', '《孔乙己》看客群像辩论版', '李敏', 'teacher-li-min', 410, 175],
+  ['res-lin-guxiang', 'res-gx-double', '《故乡》人物对照 · 双师课堂版', '王芳', 'teacher-wang-fang', 520, 236],
+  ['res-lin-guxiang', 'res-gx-timeline', '《故乡》二十年变化时间轴版', '陈见微', 'teacher-chen-jw', 305, 142],
+  ['res-lin-zhaohua', 'res-zh-junior', '《朝花夕拾》人物长廊 · 初中精简版', '沈知微', 'teacher-shen-zw', 458, 201],
+  ['res-lin-zhaohua', 'res-zh-task', '《朝花夕拾》主题任务单版', '赵雪', 'teacher-zhao-xue', 276, 118],
+  ['res-skill-zuowen', 'res-zw-zhongkao', '作文批改 · 中考冲刺版', '郑华', 'teacher-zheng-hua', 1240, 560],
+  ['res-skill-zuowen', 'res-zw-primary', '作文批改 · 小学起步版', '韩雪', 'teacher-han-xue', 880, 402],
+  ['res-skill-fenceng', 'res-fc-math', '分层作业 · 数学专版', '冯磊', 'teacher-feng-lei', 720, 331],
+  ['res-skill-fenceng', 'res-fc-english', '分层作业 · 英语版', '杨帆', 'teacher-yang-fan', 540, 248],
+  ['res-layered-homework', 'res-lh-peiyou', '一课三练 · 培优拓展版', '蒋文', 'teacher-jiang-wen', 366, 160],
+  ['res-layered-homework', 'res-lh-jichu', '一课三练 · 基础巩固版', '朱丽', 'teacher-zhu-li', 512, 233],
+  ['res-error-review', 'res-er-midterm', '错因聚类 · 期中讲评版', '秦岭', 'teacher-qin-ling', 288, 121],
+  ['res-error-review', 'res-er-geometry', '错因聚类 · 几何专题版', '许静', 'teacher-xu-jing', 204, 96],
+  ['res-order-game', 'res-og-lower', '点餐口语游戏 · 低年级版', '何伟', 'teacher-he-wei', 980, 415],
+  ['res-order-game', 'res-og-scene', '点餐口语游戏 · 情景扩展版', '罗敏', 'teacher-luo-min', 660, 302],
+]
+DEMO_FORKS.forEach(([motherId, ...args]) => {
+  const fork = mkFork(motherId, ...args)
+  const mother = RESOURCES.find((r) => r.id === motherId)
+  if (!mother) return
+  RESOURCES.push(fork)
+  mother.forks.push(fork.id)
+  mother.stats.adapt = (mother.stats.adapt || 0) + 1
+})
 
 export const RESOURCES_BY_ID = Object.fromEntries(RESOURCES.map(resource => [resource.id, resource]))
