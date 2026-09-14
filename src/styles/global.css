@@ -684,8 +684,12 @@ a:hover { color: #141F1B; }
     .fg-v2-comment strong { color:#24332D; font-size:12.5px; }
     .fg-v2-comment p { margin:4px 0 5px; color:#626B67; font-size:12px; line-height:1.55; }
     .fg-v2-comment small { color:#9AA19E; font-size:10.5px; }
-    .fg-v2-more-comments { width:100%; margin-top:16px; border:1px solid #E7EBE9; border-radius:10px; background:#fff; color:#8A928E; padding:11px 10px; font-size:12.5px; font-weight:600; letter-spacing:.01em; cursor:pointer; transition:border-color .15s ease, background .15s ease, color .15s ease; }
-    .fg-v2-more-comments:hover { border-color:#D2D8D5; background:#FAFBFA; color:#5A625E; }
+    /* 讨论触底自动加载 footer + 加载动画 */
+    #view-res .fg-v2-comment-more { min-height:44px; margin-top:8px; display:flex; align-items:center; justify-content:center; gap:8px; color:#9AA19E; font-size:12px; }
+    #view-res .fg-v2-comment-more.is-end { color:#B4BAB6; }
+    #view-res .fg-spinner { width:15px; height:15px; border-radius:50%; border:2px solid #DDE3E0; border-top-color:#8A928E; animation:fg-spin .7s linear infinite; }
+    @keyframes fg-spin { to { transform:rotate(360deg); } }
+    #view-res .fg-cmt-reply-to { color:#4C7C63; font-weight:600; }
     #view-res .fg-body-l > #fg-discussion { display:none; }
     /* v2 首屏：左侧预览锁定，右侧信息栏独立滚动；原型状态控件悬浮不占位 */
     /* 线上详情页是单一网页，保留顶栏与全宽内容区 */
@@ -831,6 +835,13 @@ a:hover { color: #141F1B; }
     /* —— 可交互：输入激活态（小红书式面板）—— */
     #view-res .fg-composer-footer.is-composing { padding:14px 18px 12px 0; }
     #view-res .fg-live-panel { width:100%; }
+    #view-res .fg-live-reply-hint { margin-bottom:8px; padding:8px 12px; border-radius:9px; background:#EEF2F0; }
+    #view-res .fg-live-reply-hint-main { display:flex; flex-direction:column; gap:2px; min-width:0; }
+    #view-res .fg-live-reply-to { color:#6A736E; font-size:12px; }
+    #view-res .fg-live-reply-to b { color:#10231C; font-weight:650; }
+    #view-res .fg-live-reply-quote { color:#9AA19E; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    #view-res .fg-live-hint-close { flex-shrink:0; border:0; background:transparent; color:#9AA19E; font-size:13px; line-height:1; cursor:pointer; padding:2px 4px; border-radius:6px; }
+    #view-res .fg-live-hint-close:hover { background:#E1E6E3; color:#10231C; }
     #view-res .fg-live-input { width:100%; box-sizing:border-box; min-height:48px; padding:13px 16px; border:0; border-radius:14px; background:#F4F6F5; color:#10231C; font:inherit; font-size:13.5px; line-height:1.5; outline:none; }
     #view-res .fg-live-input::placeholder { color:#9AA19E; }
     #view-res .fg-live-bar { display:flex; align-items:center; justify-content:flex-end; margin-top:10px; }

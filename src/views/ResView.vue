@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import raw from './raw/res.html?raw'
 import { RESOURCES_BY_ID } from '../data/resources'
 import { COVERS } from '../data/covers'
@@ -32,6 +32,8 @@ const interactions = reactive({
   comments: [],
   seq: 900,
   count: 86,
+  moreState: 'idle', // idle → loading（触底自动加载）
+  visibleCount: 8, // 首屏 8 条，触底 +8
 })
 
 function seedInteractions(resource) {
@@ -41,12 +43,43 @@ function seedInteractions(resource) {
   interactions.composerOpen = false
   interactions.replyingTo = null
   interactions.seq = 900
-  interactions.count = 86
-  interactions.comments = [
-    { id: 'c1', name: '王慧老师', initial: '王', tone: '', text: '“先发人物关系卡”特别适合基础弱的班，学生进入状态快多了。', likes: 62, liked: false, pinned: true, time: '3 天前', authorReply: '谢谢你的反馈，我也把这套卡片放进了最新版本。', mine: false, replies: [] },
-    { id: 'c2', name: '李敏老师', initial: '李', tone: 'is-warm', text: '学生为了当“首席检察官”，提前把课文读了三遍。', likes: 41, liked: false, pinned: false, time: '5 天前', mine: false, replies: [] },
-    { id: 'c3', name: '周涛老师', initial: '周', tone: 'is-muted', text: '我做了一个 1 课时简化版，已经发布到改编版本区。', likes: 28, liked: false, pinned: false, time: '1 周前', mine: false, replies: [] },
+  interactions.moreState = 'idle'
+  interactions.visibleCount = 8
+  interactions.comments = buildSeedComments()
+  interactions.count = interactions.comments.length
+}
+
+const SEED_TONES = ['', 'is-warm', 'is-muted']
+const SEED_TEXTS = [
+  { name: '陈见微老师', text: '证据卡这个设计太巧了，学生开始主动翻书找依据，不再等我给结论。', time: '2 小时前' },
+  { name: '沈知微老师', text: '时长有点紧，我删了一个环节正好一课时，整体节奏很顺。', time: '5 小时前' },
+  { name: '赵雪老师', text: '第一次用这种角色扮演式教学，没想到全班参与度这么高。', time: '昨天 21:36' },
+  { name: '孙宁老师', text: '任务单能不能再放一个空白模板？想按自己班的学情改一改。', time: '昨天 08:12' },
+  { name: '吴敏老师', text: '拿去上了公开课，评委反馈说思路很清晰，谢谢作者。', time: '2 天前' },
+  { name: '郑华老师', text: '小组分工那块我按人数调整了下，配套素材很齐全，省了不少备课时间。', time: '2 天前' },
+  { name: '冯磊老师', text: '建议加一份课后延伸问题清单，孩子们意犹未尽。', time: '4 天前' },
+  { name: '蒋文老师', text: '基础弱的班也能带得动，关键是前面的铺垫做足了。', time: '6 天前' },
+  { name: '韩雪老师', text: '把结论式讨论改成找证据，这个方向我很认同。', time: '09-04' },
+  { name: '杨帆老师', text: '素材清晰、环节完整，改编空间也大，已收藏。', time: '09-03' },
+  { name: '朱丽老师', text: '学生复盘的时候引用了原文好几处，效果超出预期。', time: '08-30' },
+  { name: '秦岭老师', text: '我加了一轮辩论环节，课堂气氛更足了，回头也发个改编版。', time: '08-28' },
+  { name: '许静老师', text: '第一次带整本书阅读，这套流程给了我很大信心。', time: '08-22' },
+  { name: '何伟老师', text: '难度梯度分得好，好几个层次的学生都有事做。', time: '08-20' },
+  { name: '罗敏老师', text: '课件配图很讲究，投影出来质感也在线。', time: '08-13' },
+]
+function buildSeedComments() {
+  const base = [
+    { id: 'c1', name: '王慧老师', initial: '王', tone: '', text: '“先发人物关系卡”特别适合基础弱的班，学生进入状态快多了。', pinned: true, time: '3 天前', authorReply: '谢谢你的反馈，我也把这套卡片放进了最新版本。', mine: false, replies: [] },
+    { id: 'c2', name: '李敏老师', initial: '李', tone: 'is-warm', text: '学生为了当“首席检察官”，提前把课文读了三遍。', pinned: false, time: '5 天前', mine: false, replies: [] },
+    { id: 'c3', name: '周涛老师', initial: '周', tone: 'is-muted', text: '我做了一个 1 课时简化版，已经发布到改编版本区。', pinned: false, time: '09-05', mine: false, replies: [
+      { id: 'c3r1', name: '李敏老师', initial: '李', tone: 'is-warm', text: '求链接，正好想找个简化版！', replyToName: '', time: '6 天前', mine: false },
+    ] },
   ]
+  const more = SEED_TEXTS.map((c, i) => ({
+    id: `cs${i + 1}`, name: c.name, initial: c.name.slice(0, 1), tone: SEED_TONES[i % 3],
+    text: c.text, pinned: false, time: c.time, mine: false, replies: [],
+  }))
+  return [...base, ...more]
 }
 
 function isAuthorView() { return previewEnabled.value && previewState.viewer === 'owner' }
@@ -82,8 +115,19 @@ function readInput(kind) {
 function focusInput(kind) {
   requestAnimationFrame(() => {
     const el = document.querySelector(`#view-res [data-act-input="${kind}"]`)
-    if (el) { el.focus() }
+    if (el) { el.focus({ preventScroll: true }) }
   })
+}
+// 整页 v-html 重渲染会重建右栏滚动容器、scrollTop 归零 —— 改交互状态时保存并还原滚动位置
+function preserveScroll(fn) {
+  const scroller = document.querySelector('#view-res .fg-hero-l-scroll')
+  const top = scroller ? scroller.scrollTop : 0
+  fn()
+  const restore = () => {
+    const s = document.querySelector('#view-res .fg-hero-l-scroll')
+    if (s && s.scrollTop !== top) s.scrollTop = top
+  }
+  nextTick(() => { restore(); requestAnimationFrame(restore) })
 }
 function meInitial() { return String(store.currentUser.name || '我').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').slice(0, 1) || '我' }
 function speaker() {
@@ -107,7 +151,9 @@ function submitReply(id) {
   const target = found ? (found.parent || found.node) : null
   if (!text || !target) { interactions.replyingTo = null; return }
   const who = speaker()
-  target.replies.push({ id: nextId(), name: who.name, initial: who.initial, tone: 'is-muted', text, likes: 0, liked: false, time: '刚刚', mine: who.mine, isAuthor: who.isAuthor })
+  // 回复的是某条回复（而非顶层评论）→ 记录被回复者昵称，正文前缀「回复 @某某」
+  const replyToName = found.parent ? found.node.name : ''
+  target.replies.push({ id: nextId(), name: who.name, initial: who.initial, tone: 'is-muted', text, replyToName, time: '刚刚', mine: who.mine, isAuthor: who.isAuthor })
   interactions.count += 1
   interactions.replyingTo = null
 }
@@ -124,16 +170,19 @@ function removeNode(id) {
   interactions.count = Math.max(0, interactions.count - 1)
 }
 function handleAction(act, id) {
+  preserveScroll(() => runAction(act, id))
+}
+function runAction(act, id) {
   switch (act) {
     case 'favorite':
       interactions.favorited = !interactions.favorited
       interactions.starDelta = interactions.favorited ? 1 : 0
       if (interactions.favorited) showToast('收藏成功，可前往「我的知识库」查看', 'mylib')
       break
-    case 'comment-open': interactions.composerOpen = true; focusInput('comment'); break
+    case 'comment-open': interactions.replyingTo = null; interactions.composerOpen = true; focusInput('comment'); break
     case 'comment-cancel': interactions.composerOpen = false; break
     case 'comment-submit': submitComment(); break
-    case 'reply-open': interactions.replyingTo = id; focusInput('reply'); break
+    case 'reply-open': interactions.composerOpen = false; interactions.replyingTo = id; focusInput('reply'); break
     case 'reply-cancel': interactions.replyingTo = null; break
     case 'reply-submit': submitReply(id); break
     case 'pin': togglePin(id); break
@@ -149,17 +198,13 @@ function renderCmtActions(node, isReply) {
   if (author || node.mine) parts.push(`<button class="fg-cmt-act fg-cmt-del" data-act="delete" data-id="${node.id}" type="button">删除</button>`)
   return `<div class="fg-cmt-actions">${parts.join('')}</div>`
 }
-function renderReplyInput(id) {
-  if (interactions.replyingTo !== id) return ''
-  return `<div class="fg-cmt-reply-box">${renderComposerPanel('reply', 'reply-submit', 'reply-cancel', id)}</div>`
-}
 function renderReply(r) {
-  return `<div class="fg-cmt-reply"><div class="fg-v2-comment-avatar ${r.tone || 'is-muted'}">${escapeHtml(r.initial)}</div><div class="fg-cmt-body"><div class="fg-v2-comment-meta"><strong>${escapeHtml(r.name)}</strong>${r.isAuthor ? '<span class="fg-cmt-author-badge">作者</span>' : (r.mine ? '<span class="fg-cmt-me">我</span>' : '')}</div><p>${escapeHtml(r.text)}</p><small>${escapeHtml(r.time)}</small>${renderCmtActions(r, true)}${renderReplyInput(r.id)}</div></div>`
+  return `<div class="fg-cmt-reply"><div class="fg-v2-comment-avatar ${r.tone || 'is-muted'}">${escapeHtml(r.initial)}</div><div class="fg-cmt-body"><div class="fg-v2-comment-meta"><strong>${escapeHtml(r.name)}</strong>${r.isAuthor ? '<span class="fg-cmt-author-badge">作者</span>' : ''}</div><p>${r.replyToName ? `回复 <b class="fg-cmt-reply-to">@${escapeHtml(r.replyToName)}</b>：` : ''}${escapeHtml(r.text)}</p><small>${escapeHtml(r.time)}</small>${renderCmtActions(r, true)}</div></div>`
 }
 function renderComment(c) {
   const replies = c.replies.map(renderReply).join('')
   const authorReply = c.authorReply ? `<div class="fg-v2-author-reply"><strong>作者回复</strong><span>${escapeHtml(c.authorReply)}</span></div>` : ''
-  return `<article class="fg-v2-comment${c.pinned ? ' is-pinned' : ''}"><div class="fg-v2-comment-avatar ${c.tone}">${escapeHtml(c.initial)}</div><div class="fg-cmt-body"><div class="fg-v2-comment-meta"><strong>${escapeHtml(c.name)}</strong>${c.isAuthor ? '<span class="fg-cmt-author-badge">作者</span>' : (c.mine ? '<span class="fg-cmt-me">我</span>' : '')}${c.pinned ? '<span class="fg-v2-pinned-badge">置顶</span>' : ''}</div><p>${escapeHtml(c.text)}</p><small>${escapeHtml(c.time)}</small>${authorReply}${renderCmtActions(c, false)}${renderReplyInput(c.id)}${replies ? `<div class="fg-cmt-replies">${replies}</div>` : ''}</div></article>`
+  return `<article class="fg-v2-comment${c.pinned ? ' is-pinned' : ''}"><div class="fg-v2-comment-avatar ${c.tone}">${escapeHtml(c.initial)}</div><div class="fg-cmt-body"><div class="fg-v2-comment-meta"><strong>${escapeHtml(c.name)}</strong>${c.isAuthor ? '<span class="fg-cmt-author-badge">作者</span>' : ''}${c.pinned ? '<span class="fg-v2-pinned-badge">置顶</span>' : ''}</div><p>${escapeHtml(c.text)}</p><small>${escapeHtml(c.time)}</small>${authorReply}${renderCmtActions(c, false)}${replies ? `<div class="fg-cmt-replies">${replies}</div>` : ''}</div></article>`
 }
 
 function escapeHtml(value) {
@@ -357,13 +402,17 @@ function renderRecentActivities(resource, limit = 2, withHeader = true) {
   </section>`
 }
 
-function renderComposerPanel(kind, submitAct, cancelAct, id) {
+function renderComposerPanel(kind, submitAct, cancelAct, id, opts = {}) {
   const idAttr = id ? ` data-id="${id}"` : ''
+  const hint = opts.hint ? `<div class="fg-live-reply-hint">${opts.hint}</div>` : ''
+  const cancelBtn = opts.hideCancel ? '' : `<button class="fg-live-cancel-btn" data-act="${cancelAct}" type="button">取消</button>`
+  const placeholder = opts.placeholder || (kind === 'reply' ? '回复…' : '说点什么…')
   return `<div class="fg-live-panel">
-    <input class="fg-live-input" data-act-input="${kind}" type="text" placeholder="${kind === 'reply' ? '回复…' : '说点什么…'}" maxlength="200">
+    ${hint}
+    <input class="fg-live-input" data-act-input="${kind}" type="text" placeholder="${placeholder}" maxlength="200">
     <div class="fg-live-bar">
       <div class="fg-live-send-group">
-        <button class="fg-live-cancel-btn" data-act="${cancelAct}" type="button">取消</button>
+        ${cancelBtn}
         <button class="fg-live-send" data-act="${submitAct}"${idAttr} type="button">发送</button>
       </div>
     </div>
@@ -371,6 +420,13 @@ function renderComposerPanel(kind, submitAct, cancelAct, id) {
 }
 
 function renderComposerFooter(resource) {
+  if (interactions.replyingTo) {
+    const found = findComment(interactions.replyingTo)
+    const name = found ? found.node.name : ''
+    const quote = found ? found.node.text : ''
+    const hint = `<div class="fg-live-reply-hint-main"><span class="fg-live-reply-to">回复 <b>@${escapeHtml(name)}</b></span><span class="fg-live-reply-quote">${escapeHtml(quote)}</span></div>`
+    return `<div class="fg-composer-footer is-composing">${renderComposerPanel('reply', 'reply-submit', 'reply-cancel', interactions.replyingTo, { hint, placeholder: '写下你的回复…' })}</div>`
+  }
   if (interactions.composerOpen) {
     return `<div class="fg-composer-footer is-composing">${renderComposerPanel('comment', 'comment-submit', 'comment-cancel')}</div>`
   }
@@ -386,12 +442,25 @@ function renderComposerFooter(resource) {
   </div></div>`
 }
 
+// 讨论底部：触底自动加载（无「加载更多」按钮）——加载中转圈、还有则放哨兵、到底显示没有更多
+function renderMoreFooter(hasMore) {
+  if (interactions.moreState === 'loading') {
+    return '<div class="fg-v2-comment-more"><span class="fg-spinner" aria-hidden="true"></span>加载中…</div>'
+  }
+  if (hasMore) {
+    return '<div class="fg-v2-comment-more" data-more-sentinel aria-hidden="true"></div>'
+  }
+  return '<div class="fg-v2-comment-more is-end">— 没有更多了 —</div>'
+}
 function renderResourceDiscussionPanel(resource) {
-  const list = sortedComments().map(renderComment).join('')
+  const sorted = sortedComments()
+  const shown = sorted.slice(0, interactions.visibleCount)
+  const hasMore = interactions.visibleCount < sorted.length
+  const list = shown.map(renderComment).join('')
   return `<section class="fg-v2-discussion-panel" data-sec="6" aria-labelledby="fg-v2-discussion-title">
-    <div class="fg-v2-discussion-head"><h3 id="fg-v2-discussion-title">讨论 <span>${formatNumber(interactions.count)}</span></h3><button type="button" class="fg-v2-follow-link" data-act="comment-open">参与讨论</button></div>
+    <div class="fg-v2-discussion-head"><h3 id="fg-v2-discussion-title">讨论 <span>${formatNumber(interactions.count)}</span></h3></div>
     <div class="fg-v2-comment-list" aria-label="精选评论">${list}</div>
-    <button type="button" class="fg-v2-more-comments" data-loadmore>加载更多讨论</button>
+    ${renderMoreFooter(hasMore)}
   </section>`
 }
 
@@ -686,6 +755,30 @@ const renderedRaw = computed(() => {
     ? renderAdaptedResourceHtml(raw, resource)
     : renderMotherResourceHtml(raw, resource)
 })
+
+// —— 讨论触底自动加载：观察底部哨兵，进入视口就加载下一页 ——
+let moreObserver = null
+function observeMore() {
+  if (moreObserver) { moreObserver.disconnect(); moreObserver = null }
+  if (interactions.moreState !== 'idle') return
+  const sentinel = document.querySelector('#view-res [data-more-sentinel]')
+  if (!sentinel) return
+  const root = document.querySelector('#view-res .fg-hero-l-scroll') || null
+  moreObserver = new IntersectionObserver((entries) => {
+    const hasMore = interactions.visibleCount < sortedComments().length
+    if (entries.some((e) => e.isIntersecting) && interactions.moreState === 'idle' && hasMore) {
+      preserveScroll(() => { interactions.moreState = 'loading' })
+      setTimeout(() => preserveScroll(() => {
+        interactions.visibleCount += 8 // 加载下一批
+        interactions.moreState = 'idle'
+      }), 800)
+    }
+  }, { root, threshold: 0.1 })
+  moreObserver.observe(sentinel)
+}
+watch(renderedRaw, () => nextTick(observeMore), { flush: 'post' })
+onMounted(() => nextTick(observeMore))
+onBeforeUnmount(() => { if (moreObserver) moreObserver.disconnect() })
 </script>
 
 <template>
